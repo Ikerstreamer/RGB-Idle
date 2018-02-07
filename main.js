@@ -6,6 +6,7 @@ var player = {
     unlock: false
 }
 
+var tab = "RGB";
 var price = { red: 5, green: 5, blue: [0, 0, 0, 0] };
 var income = {red:0, green:0, blue: 0};
 var click = 5;
@@ -20,17 +21,18 @@ function bar(n,r,g,b,elemid) {
     this.color = [r, g, b];
     this.width = 0;
     this.element = document.getElementById(elemid);
-    this.mouse;
+    this.mouse = 0;
     this.draw = function () {
-        if (this.mouse) increase(click)
+        if (this.mouse == 1) increase(click)
         if ((this.name == "red" && click >= 100) || income[this.name] >= 100) this.element.style.width = "100%";
         else this.element.style.width = this.width + "%";
         this.element.style.background = RGBstring(this.color);
     }
     this.setup = function () {
         var temp = this.name;
-        this.element.parentNode.onmousedown = function () { press(temp, true) };
-        this.element.parentNode.onmouseup = function () { press(temp, false) };
+        this.element.parentNode.onmousedown = function () { press(temp, 1) };
+        this.element.parentNode.onmouseup = function () { press(temp, 0) };
+        this.element.parentNode.onmouseleave = function () { press(temp, 0) };
     }
 }
 
@@ -57,10 +59,21 @@ function gameLoop() {
         var tempKey = Object.keys(player.money)[i];
         var tempValue = Object.values(player.money)[i];
         document.getElementById(tempKey + "Count").innerHTML = formatNum(tempValue);
+        if (income[tempKey] >= 1) document.getElementById(tempKey + "Bar").innerHTML = formatNum(income[tempKey]) + "/s";
         if (tempKey == "blue") {
             for (var j = 0; j < 3; j++) {
                 document.getElementById(tempKey + "Button" + j).childNodes[1].innerHTML = "Level: " + formatNum(player.level[tempKey][j], 0);
                 document.getElementById(tempKey + "Button" + j).childNodes[2].innerHTML = "Price: " + formatNum(price[tempKey][j]) + " " + tempKey;
+                switch (j) {
+                    case 0: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current multi: " + formatNum(RSM) + "x";
+                        break
+                    case 1: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current multi: " + formatNum(PD) + "x";
+                        break
+                    case 2: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current increase: " + formatNum(IG) + "%";
+                        break
+                    case 3:
+                        break
+                }
             }
         } else {
             document.getElementById(tempKey + "Button").childNodes[1].innerHTML = "Level: " + formatNum(player.level[tempKey], 0);
@@ -69,8 +82,8 @@ function gameLoop() {
     }
 }
 
-function press(name, active) {
-    player.bars[name].mouse = active;
+function press(name, num) {
+    player.bars.red.mouse = num;
 }
 
 function increase(amnt) {
@@ -110,7 +123,7 @@ function updateStats() {
     RSM = 1 + player.level.blue[0] * 0.1;
     IG = 5 * Math.pow(1.1, player.level.blue[2])
     RSS = Math.pow(0.95, player.level.blue[2]);
-    click = Math.floor(((5 + player.level.red) * (((Math.floor(player.level.red / 25)) * 0.5) + 1)) * RSS);
+    click = Math.floor(((5 + player.level.red) * (((Math.floor(player.level.red / 25)) * 0.25) + 1)) * RSS);
     auto = (((player.level.green * 10) * (((Math.floor(player.level.green / 25)) * 0.5) + 1)) * RSS) * RSM;
     price.red = 5 * Math.pow(1+(0.1 * PD), player.level.red);
     price.green = 5 * Math.pow(1+(0.05 * PD), player.level.green);
@@ -119,7 +132,7 @@ function updateStats() {
     price.blue[2] = 15 * Math.pow(1.18, player.level.blue[2]);
     price.blue[3] = 50 * Math.pow(10, player.level.blue[3]);
     income.red = click / 100;
-    income.green = income.red / 100;
+    income.green = income.red*IG / 100;
     income.blue = income.green / 100;
 }
 

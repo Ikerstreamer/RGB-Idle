@@ -1,8 +1,11 @@
 ﻿body {
     -webkit-user-select: none;
-    -moz-user-select: none; 
-    -ms-user-select: none; 
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
+    color: #d4d4cc;
+    background: grey;
+    
 }
 
 .progress {
@@ -12,28 +15,33 @@
 }
 
     .progress .bar {
-        width:100%;
-        height: 100px;
+        width: 100%;
+        height: 90px;
+        text-align: center;
+        font: 90px bold;
+        padding-bottom:15px;
+        font-family: Verdana;
     }
 
 .count {
     margin-left: 25px;
     margin-right: 25px;
     font: 100px bold;
-    font-family: Verdana;
     display: inline-block;
-    width:300px;
+    font-family: Verdana;
+    width: 300px;
 }
 
 .button {
-    padding:5px;
-    width:400px;
+    border-radius: 10px;
+    padding: 5px;
+    width: 350px;
     margin-left: 25px;
     margin-right: 25px;
     font: 25px bold;
-    font-family: Verdana;
     display: inline-block;
-    cursor:pointer;
+    font-family: Verdana;
+    cursor: pointer;
 }
 
 .hidden{

@@ -8,23 +8,28 @@
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
-    <div id="redDiv" style="margin-bottom:10px">
+    <div id="tabRGB">
+    <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
     <div class="progress">
         <div id="redBar" class="bar"></div>
     </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div>
         </div>
-    <div id="greenDiv">
+    <div id="greenDiv" style="padding-bottom:10px; padding-top:10px">
         <div class="progress">
             <div id="greenBar" class="bar"></div>
         </div><div id="greenCount" class="count" style="color: rgb(0,255,0);"></div><div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div>
         </div>
     <div id="unlockBtn" class="hidden" onclick="unlockBlue()">Buy Blue bar for 50 green!</div>
-    <div id="blueDiv" class="hidden">       
+    <div id="blueDiv" class="hidden" style="padding-bottom:10px; padding-top:10px">       
         <div class="progress">
             <div id="blueBar" class="bar"></div>
         </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
         <br>
-        <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Red speed multi</div><div>Level 0</div><div>Price 5 blue</div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Decrease Price scaling</div><div>Level 0</div><div>Price 10 blue</div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase green bar gain</div><div>Level 0</div><div>Price 15 blue</div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>Coming soon</div><div>NaN</div><div>Price 50 blue</div></div>
+        <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Red Speed Multi</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Decrease Price Scaling</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>Coming soon</div><div>NaN</div><div>Price 50 blue</div><div></div></div>
     </div>
+        </div>
+    <div id="tabSpectrum" class="hidden">
+
+        </div>
 </body>
 </html>
