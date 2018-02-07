@@ -1,6 +1,6 @@
 
 var player = {
-    version : 0.001,
+    version : 0.002,
     money: { red: 0, green: 0, blue: 0 },
     level: { red: 0, green: 0, blue: [0,0,0,0]},
     unlock: false
@@ -17,9 +17,9 @@ var PD = 0;
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
-    this.element = document.getElementById(elemid);
     this.color = [r, g, b];
     this.width = 0;
+    this.element = document.getElementById(elemid);
     this.mouse;
     this.draw = function () {
         if (this.mouse) increase(click)
@@ -35,11 +35,15 @@ function bar(n,r,g,b,elemid) {
 }
 
 function init() {
-    if (load().version >= 0.001 && load() != false) player = load();
-    if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
-    updateStats();
-    player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+    player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar")};
     player.bars.red.setup();
+    if (load() != false) {
+        if (load().version >= 0.001) player = load();
+        if (load().version < 0.002) player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+        if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
+        updateStats();
+        player.version = 0.002;
+    }
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     setInterval(gameLoop, 20);
     setInterval(save, 1000);
@@ -54,7 +58,7 @@ function gameLoop() {
         var tempValue = Object.values(player.money)[i];
         document.getElementById(tempKey + "Count").innerHTML = formatNum(tempValue);
         if (tempKey == "blue") {
-            for (var j = 1; j < 3; j++) {
+            for (var j = 0; j < 3; j++) {
                 document.getElementById(tempKey + "Button" + j).childNodes[1].innerHTML = "Level: " + formatNum(player.level[tempKey][j], 0);
                 document.getElementById(tempKey + "Button" + j).childNodes[2].innerHTML = "Price: " + formatNum(price[tempKey][j]) + " " + tempKey;
             }
@@ -108,8 +112,8 @@ function updateStats() {
     RSS = Math.pow(0.95, player.level.blue[2]);
     click = Math.floor(((5 + player.level.red) * (((Math.floor(player.level.red / 25)) * 0.5) + 1)) * RSS);
     auto = (((player.level.green * 10) * (((Math.floor(player.level.green / 25)) * 0.5) + 1)) * RSS) * RSM;
-    price.red = 5 * Math.pow(1.1 * PD, player.level.red);
-    price.green = 5 * Math.pow(1.05 * PD, player.level.green);
+    price.red = 5 * Math.pow(1+(0.1 * PD), player.level.red);
+    price.green = 5 * Math.pow(1+(0.05 * PD), player.level.green);
     price.blue[0] = 5 * Math.pow(1.14, player.level.blue[0]);
     price.blue[1] = 10 * Math.pow(1.22, player.level.blue[1]);
     price.blue[2] = 15 * Math.pow(1.18, player.level.blue[2]);
@@ -136,9 +140,28 @@ function unlockBlue() {
 }
 
 function save() {
-  localStorage.setItem("RGBsave",btoa(JSON.stringify(player)));
+    localStorage.setItem("RGBsave", btoa(JSON.stringify(player)));
 }
 function load() {
-    if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) return JSON.parse(atob(localStorage.getItem("RGBsave")));
-    else return false;
+    if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
+        var temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
+        var tempSave = JSON.parse(atob(localStorage.getItem("RGBsave")));
+        tempSave.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+        tempSave.bars.red.width = temp.bars.red.width;
+        tempSave.bars.green.width = temp.bars.green.width;
+        tempSave.bars.blue.width = temp.bars.blue.width;
+        return tempSave;
+    } else return false;
+}
+
+function reset(start) {
+    player = {
+        version : 0.002,
+        money: { red: 0, green: 0, blue: 0 },
+        level: { red: 0, green: 0, blue: [0,0,0,0]},
+        unlock: false
+    };
+        player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+        player.bars.red.setup();
+        updateStats();
 }
