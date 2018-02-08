@@ -101,8 +101,7 @@ function gameLoop() {
         }
     }
     document.getElementById("spectrumCount").innerHTML ="You have " + formatNum(Math.floor(player.spectrum), 0) + " Spectrum";
-    document.getElementById("specResetCount").innerHTML = formatNum(Math.floor(player.specreset), 0);
-    document.getElementById("spectrumReset").childNodes[1].innerHTML = formatNum(Math.floor(player.specreset), 0) + "Spectrum";
+    document.getElementById("spectrumReset").childNodes[1].innerHTML = formatNum(Math.floor(player.specreset), 0) + " Spectrum";
     for (var i = 0; i < player.spectrumLevel.length; i++) {
         document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = "Level: " + formatNum(player.spectrumLevel[i], 0) + "/" + SML[i];
         document.getElementById("spectrumButton" + i).childNodes[2].innerHTML = "Price: " + formatNum(SpecPrice[i], 0) + " Spectrum ";
