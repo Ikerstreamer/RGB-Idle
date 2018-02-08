@@ -78,7 +78,7 @@ function gameLoop() {
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
         document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
-        if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(income[tempKey]) + "/s";
+        if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
         else document.getElementById(tempKey + "Bar").innerHTML = "";
         if (tempKey == "blue") {
             for (var j = 0; j < 4; j++) {
@@ -175,8 +175,8 @@ function updateStats() {
     SpecPrice[2] = Math.ceil(8 * Math.pow(1.75, player.spectrumLevel[2]-1));
     SpecPrice[3] = Math.ceil(15 * Math.pow(1.85, player.spectrumLevel[3]-1));
     if (player.bars.red.mouse == 1) income.red = (auto + (click*50)) / 100;
-    else income.red = (auto / 100) * player.spectrumLevel[2];
-    income.green = (income.red*IG / 100) * player.spectrumLevel[3];
+    else income.red = (auto / 100);
+    income.green = (income.red*IG / 100);
     income.blue = income.green*5 / 100;
 }
 
@@ -221,12 +221,12 @@ function reset(type) {
             unlock: player.spectrumLevel[5] == 1,
             spectrum: Math.floor(player.specreset) + player.spectrum,
             specreset: 0,
-            spectrumLevel: [1, 1, 1, 1, 0, 0],
+            spectrumLevel: player.spectrumLevel,
             specced: player.specced +1,
         };
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
         player.bars.red.setup();
-        if(!unlock){
+        if(!player.unlock){
           document.getElementById('unlockBtn').classList.add('hidden');
         document.getElementById('blueDiv').classList.add('hidden');  
         }
@@ -255,4 +255,10 @@ function reset(type) {
 
 function switchTab(name) {
     tab = name;
+}
+
+function displayIncome(num) {
+    if (num == income.red) num *= player.spectrumLevel[2];
+    if (num == income.green) num *= player.spectrumLevel[3];
+    return(num)
 }
