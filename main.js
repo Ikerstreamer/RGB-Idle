@@ -71,7 +71,7 @@ function gameLoop() {
     increase(auto / 50);
     if (player.money.green >= 10 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
     if (player.specreset >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
-    if (player.spectrum >= 1) for (var i = 0; i < document.getElementsByClassName("switch").length; i++)document.getElementsByClassName("switch")[i].classList.remove("hidden");
+    if (player.spectrum >= 1 || player.spectrumLevel.contains(2)) for (var i = 0; i < document.getElementsByClassName("switch").length; i++)document.getElementsByClassName("switch")[i].classList.remove("hidden");
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
@@ -115,6 +115,11 @@ function increase(amnt) {
     var next = amnt;
     for (var i = 0; i < (player.unlock ? 3 : 2) ;i++){
         var temp = player.bars[Object.keys(player.bars)[i]];
+        if(amnt >= 10000){
+        player.money[temp.name] += income[temp.name];
+        if (temp.name == "blue") player.specreset += SG * amnt/100;
+        next = (temp.name == "red" ? IG : 5) * amnt/100;
+        }else{
         temp.width += next;
         next = 0;
      while (temp.width > 100) {
@@ -123,6 +128,7 @@ function increase(amnt) {
         if (temp.name == "blue") player.specreset += SG;
         next += (temp.name == "red" ? IG : 5);
     }
+  }
 }
 }
 
@@ -149,16 +155,16 @@ function buyUpgrade(name, Bindex) {
 }
 
 function updateStats() {
-    RUM = (player.spectrumLevel[4] == 1 ? Math.max(Math.log(player.money.red) / Math.log(10000),1) : 1)
+    RUM = (player.spectrumLevel[4] == 1 ? 1 + Math.log(Math.sqrt(player.money.red)) / Math.log(1e15) : 1);
     PD = Math.pow(0.95, player.level.blue[1]);
     RSM = 1 + player.level.blue[0] * (0.1 * player.spectrumLevel[0]);
     IG = 5 * Math.pow(1.1, player.level.blue[2]);
     RSS = Math.pow(0.95, player.level.blue[2]);
     SG = player.level.blue[3] * 0.01;
-    click = Math.floor(((5 + player.level.red) * (((Math.floor(player.level.red / 25)) * 0.25) + 1)) * RSS);
-    auto = Math.pow(((((player.level.green * 10) * (((Math.floor(player.level.green / 25)) * 0.5) + 1)) * RSS) * RSM) * player.spectrumLevel[1], RUM);
-    price.red = 5 * Math.pow(1+(0.1 * PD), player.level.red);
-    price.green = 5 * Math.pow(1+(0.05 * PD), player.level.green);
+    click = Math.floor(((5 + player.level.red) * (((Math.floor(player.level.red / 10)) * 0.1) + 1)) * RSS);
+    auto = Math.pow(((((player.level.green * 10) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * RSS) * RSM) * player.spectrumLevel[1], RUM);
+    price.red = (5 * Math.pow(1+((0.1 * (Math.pow(1.25, (Math.floor(player.level.red / 100))))* PD), player.level.red));
+    price.green = 5 * Math.pow(1+((0.05 * (Math.pow(1.25, (Math.floor(player.level.green / 100)))) * PD), player.level.green);
     price.blue[0] = 5 * Math.pow(1.13, player.level.blue[0]);
     price.blue[1] = 10 * Math.pow(1.22, player.level.blue[1]);
     price.blue[2] = 25 * Math.pow(1.16, player.level.blue[2]);
@@ -168,8 +174,8 @@ function updateStats() {
     SpecPrice[2] = Math.ceil(8 * Math.pow(1.75, player.spectrumLevel[2]-1));
     SpecPrice[3] = Math.ceil(15 * Math.pow(1.85, player.spectrumLevel[3]-1));
     if (player.bars.red.mouse == 1) income.red = (auto + (click*50)) / 100;
-    else income.red = auto / 100;
-    income.green = income.red*IG / 100;
+    else income.red = (auto / 100) * player.spectrumLevel[2];
+    income.green = (income.red*IG / 100) * player.spectrumLevel[3];
     income.blue = income.green*5 / 100;
 }
 
@@ -218,6 +224,11 @@ function reset(type) {
         };
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
         player.bars.red.setup();
+        if(!unlock){
+          document.getElementById('unlockBtn').classList.add('hidden');
+        document.getElementById('blueDiv').classList.add('hidden');  
+        }
+        document.getElementById("spectrumDiv").classList.add("hidden");
         updateStats();
     } else {
         player = {
