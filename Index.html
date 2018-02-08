@@ -8,7 +8,8 @@
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
-    <div id="tabRGB">
+    <div class="button hidden switch" onclick="switchTab('RGB')">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum')">Spectrum</div>
+    <div id="tabRGB" class="tab">
     <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
     <div class="progress">
         <div id="redBar" class="bar"></div>
@@ -25,11 +26,21 @@
             <div id="blueBar" class="bar"></div>
         </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
         <br>
-        <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Red Speed Multi</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Decrease Price Scaling</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>Coming soon</div><div>NaN</div><div>Price 50 blue</div><div></div></div>
+        <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Red Speed Multi</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Decrease Price Scaling</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>Increase Spectrum Gain</div><div>level 0</div><div>Price 50 blue</div><div></div></div>
     </div>
+        <div id="spectrumDiv" class="hidden" style="width: 50%; padding-bottom:10px; padding-top:10px; align-self:center; background:white; text-shadow:none; color:black;">
+            <div id="specResetCount" class="count" style="color:black;"></div><div id="spectrumReset" onclick="reset(1)" class="button"><div >Reset all progress and gain</div><div></div></div>
         </div>
-    <div id="tabSpectrum" class="hidden">
-
+        </div>
+    <div id="tabSpectrum" class="hidden tab">
+       <div id="spectrumCount" class="count" style="text-align:center; width:100%;"></div><br>
+        <div style="text-align:center">
+        <div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Increase Red Speed Multi Effect</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Increase the Tickspeed for Auto Red</div><div>Level 0/100</div><div>Price 5 Spectrum</div><div></div></div>
+        <br>
+        <div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Increase Red Bar's Output</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Increase Green Bar's Ouput</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div>
+        <br>
+        <div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Increase Speed Based on Red</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Start With blue Unlocked</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div>
+            </div>
         </div>
 </body>
 </html>
