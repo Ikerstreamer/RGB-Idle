@@ -1,4 +1,4 @@
-var v = 0.003;
+var v = 0.004;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -6,6 +6,7 @@ var player = {
     spectrum: 0,
     specreset: 0,
     spectrumLevel: [1,1,1,1,0,0],
+    specced: 0,
 }
 
 var RUM = 1;
@@ -53,6 +54,7 @@ function init() {
             player.spectrum = 0;
             player.spectrumLevel = [1, 1, 1, 1, 0, 0];
         }
+        if(load().version < 0.004) player.specced = 0;
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
         player.version = v;
@@ -71,7 +73,7 @@ function gameLoop() {
     increase(auto / 50);
     if (player.money.green >= 10 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
     if (player.specreset >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
-    if (player.spectrum >= 1 || player.spectrumLevel.contains(2)) for (var i = 0; i < document.getElementsByClassName("switch").length; i++)document.getElementsByClassName("switch")[i].classList.remove("hidden");
+    if (player.specced > 0) for (var i = 0; i < document.getElementsByClassName("switch").length; i++)document.getElementsByClassName("switch")[i].classList.remove("hidden");
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
@@ -163,8 +165,8 @@ function updateStats() {
     SG = player.level.blue[3] * 0.01;
     click = Math.floor(((5 + player.level.red) * (((Math.floor(player.level.red / 10)) * 0.1) + 1)) * RSS);
     auto = Math.pow(((((player.level.green * 10) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * RSS) * RSM) * player.spectrumLevel[1], RUM);
-    price.red = (5 * Math.pow(1+((0.1 * (Math.pow(1.25, (Math.floor(player.level.red / 100))))* PD), player.level.red));
-    price.green = 5 * Math.pow(1+((0.05 * (Math.pow(1.25, (Math.floor(player.level.green / 100)))) * PD), player.level.green);
+    price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
+    price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 5 * Math.pow(1.13, player.level.blue[0]);
     price.blue[1] = 10 * Math.pow(1.22, player.level.blue[1]);
     price.blue[2] = 25 * Math.pow(1.16, player.level.blue[2]);
@@ -214,13 +216,14 @@ function load() {
 function reset(type) {
     if (type >= 1) {
         player = {
-            version: 0.003,
+            version: v,
             money: { red: 0, green: 0, blue: 0 },
             level: { red: 0, green: 0, blue: [0, 0, 0, 0]},
             unlock: player.spectrumLevel[5] == 1,
-            spectrum: player.specreset + player.spectrum,
+            spectrum: Math.floor(player.specreset) + player.spectrum,
             specreset: 0,
             spectrumLevel: [1, 1, 1, 1, 0, 0],
+            specced: player.specced +1,
         };
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
         player.bars.red.setup();
@@ -232,13 +235,14 @@ function reset(type) {
         updateStats();
     } else {
         player = {
-            version: 0.003,
+            version: v,
             money: { red: 0, green: 0, blue: 0 },
             level: { red: 0, green: 0, blue: [0, 0, 0, 0] },
             unlock: false,
             spectrum: 0,
             specreset: 0,
             spectrumLevel: [1, 1, 1, 1, 0, 0],
+            specced: 0,
         };
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
         player.bars.red.setup();
