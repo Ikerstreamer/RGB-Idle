@@ -181,7 +181,7 @@ function updateStats() {
     IG = 8 + (8 * player.level.blue[2]);
     Cores = Math.pow(2,player.level.blue[3]);
     click = Math.floor((4 + player.level.red) * ((Math.floor(player.level.red / 10) * 0.1) + 1));
-    auto = ((player.level.green * 16) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * Math.pow(Clock,Math.sqrt(Cores));
+    auto = ((player.level.green * 8) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * Math.pow(Clock,Math.sqrt(Cores));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
