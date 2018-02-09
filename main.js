@@ -193,8 +193,8 @@ function updateStats() {
     SpecPrice[2] = Math.ceil(8 * Math.pow(1.75, player.spectrumLevel[2]-1));
     SpecPrice[3] = Math.ceil(15 * Math.pow(1.85, player.spectrumLevel[3]-1));
     if (player.bars.red.mouse == 1) income.red = (auto + (click*50)) / 100;
-    else income.red = (auto / 256);
-    income.green = (income.red*IG / 256);
+    else income.red = (auto * IR / 256);
+    income.green = (income.red * IG / 256);
     income.blue = income.green*8 / 256;
 }
 
