@@ -181,13 +181,13 @@ function updateStats() {
     IG = 8 + (8 * player.level.blue[2]);
     Cores = Math.pow(2,player.level.blue[3]);
     click = Math.floor((4 + player.level.red) * ((Math.floor(player.level.red / 10) * 0.1) + 1));
-    auto = ((player.level.green * 16) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * Math.pow(Clock,Cores);
+    auto = ((player.level.green * 16) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * Math.pow(Clock,Math.sqrt(Cores));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
     price.blue[1] = 4 * Math.pow(4, player.level.blue[1]);
     price.blue[2] = 8 * Math.pow(4, player.level.blue[2]);
-    price.blue[3] = 1048576 * Math.pow(64, player.level.blue[3]);
+    price.blue[3] = 1048576 * Math.pow(512, player.level.blue[3]);
     SpecPrice[0] = Math.ceil(1 * Math.pow(1.5, player.spectrumLevel[0]-1));
     SpecPrice[1] = Math.ceil(3 * Math.pow(1.35, player.spectrumLevel[1]-1));
     SpecPrice[2] = Math.ceil(8 * Math.pow(1.75, player.spectrumLevel[2]-1));
