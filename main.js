@@ -33,7 +33,7 @@ function bar(n,r,g,b,elemid) {
     this.mouse = 0;
     this.draw = function () {
         if (this.mouse == 1) increase(click);
-        if (income[this.name] >= 1) this.element.style.width = "100%";
+        if (income[this.name] >= 5) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
         this.element.style.background = RGBstring(this.color);
     }
@@ -97,7 +97,7 @@ function gameLoop() {
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
         document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
-        if (income[tempKey] >= 1) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
+        if (income[tempKey] >= 5) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
         else document.getElementById(tempKey + "Bar").innerHTML = "";
         if (tempKey == "blue") {
             for (var j = 0; j < 4; j++) {
@@ -177,11 +177,11 @@ function buyUpgrade(name, Bindex) {
 function updateStats() {
     PD = Math.pow(0.95, player.spectrumLevel[1]);
     Clock = Math.pow(2, player.level.blue[0]);
-    IR = 8 + (8 * player.level.blue[1]);
-    IG = 8 + (8 * player.level.blue[2]);
+    IR = 2 + (2 * player.level.blue[1]);
+    IG = 2 + (2 * player.level.blue[2]);
     Cores = Math.pow(2,player.level.blue[3]);
-    click = Math.floor((4 + player.level.red) * ((Math.floor(player.level.red / 10) * 0.1) + 1));
-    auto = ((player.level.green * 8) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * (Clock * (Cores + Math.pow(1.01,Cores)));
+    click = Math.floor((1 + player.level.red/2) * ((Math.floor(player.level.red / 10) * 0.1) + 1));
+    auto = ((player.level.green * 2) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * (Clock * (Cores + Math.pow(1.01,Cores)));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
