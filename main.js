@@ -175,14 +175,13 @@ function buyUpgrade(name, Bindex) {
 }
 
 function updateStats() {
-    RUM = (player.spectrumLevel[4] == 1 ? Math.max(1 + Math.log(Math.sqrt(player.money.red)) / Math.log(1e15),1) : 1);
     PD = Math.pow(0.95, player.spectrumLevel[1]);
     Clock = Math.pow(2, player.level.blue[0]);
     IR = 8 + (8 * player.level.blue[1]);
     IG = 8 + (8 * player.level.blue[2]);
     Cores = Math.pow(2,player.level.blue[3]);
-    click = Math.floor(((8 + (player.level.red*1.5)) * ((Math.floor(player.level.red / 10)) * 0.1) + 1));
-    auto = Math.pow(((player.level.green * 16) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * (Clock^Cores), RUM);
+    click = Math.floor((4 + player.level.red) * ((Math.floor(player.level.red / 10) * 0.1) + 1));
+    auto = ((player.level.green * 16) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * Math.pow(Clock,Cores);
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
