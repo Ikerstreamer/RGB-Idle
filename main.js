@@ -33,7 +33,7 @@ function bar(n,r,g,b,elemid) {
     this.mouse = 0;
     this.draw = function () {
         if (this.mouse == 1) increase(click);
-        if (income[this.name] >= 5) this.element.style.width = "100%";
+        if (income[this.name] >= 10) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
         this.element.style.background = RGBstring(this.color);
     }
@@ -97,7 +97,7 @@ function gameLoop() {
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
         document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
-        if (income[tempKey] >= 5) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
+        if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
         else document.getElementById(tempKey + "Bar").innerHTML = "";
         if (tempKey == "blue") {
             for (var j = 0; j < 4; j++) {
@@ -181,7 +181,7 @@ function updateStats() {
     IG = 2 + (2 * player.level.blue[2]);
     Cores = Math.pow(2,player.level.blue[3]);
     click = Math.floor((1 + player.level.red/2) * ((Math.floor(player.level.red / 10) * 0.1) + 1));
-    auto = ((player.level.green * 2) * (((Math.floor(player.level.green / 10)) * 0.20) + 1)) * (Clock * (Cores + Math.pow(1.01,Cores)));
+    auto = ((player.level.green * 4) * (((Math.floor(player.level.green / 10)) * 0.25) + 1)) * (Clock * (Cores + Math.pow(1.01,Cores)));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
@@ -202,7 +202,7 @@ function formatNum(num, dp, type) {
     if (dp == undefined) dp = 2;
     var suffix = ["K", "M", "B", "T", "Qu", "Qi", "Sx", "Sp", "Oc", "No", "Dc"]
     if (type == "Hz") {
-        suffix = ["nHz", "µHz", "mHz", "Hz", "kHz", "MHz", "GHz", "THz", "PHz", "EHz", "ZHz", "YHz"]
+        suffix = ["nHz", "&mu;Hz", "mHz", "Hz", "kHz", "MHz", "GHz", "THz", "PHz", "EHz", "ZHz", "YHz"]
         return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1024)))) + suffix[Math.floor(Math.log(num) / Math.log(1024))]
     } else if (num < 10000) return num.toFixed(Math.min(Math.max(2 - Math.floor(Math.log10(num)), 0), dp));
     else if (num < 1e36) return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))))) + suffix[Math.floor(Math.log(num) / Math.log(1000)) - 1];
@@ -218,12 +218,40 @@ function unlockBlue() {
     }
 }
 
-function save() {
+function save(name) {
+    if (name == "Export")
+    {
+        var temp = document.createElement("textarea");
+        temp.value = btoa(JSON.stringify(player));
+        document.getElementById("tabSettings").appendChild(temp);
+        temp.select()
+        document.execCommand('copy')
+        temp.parentNode.removeChild(temp);
+    }
     localStorage.setItem("RGBsave", btoa(JSON.stringify(player)));
     console.log("Saved");
 }
-function load() {
-    if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
+
+function load(name) {
+    if (name == "Import") {
+        var temp = prompt("Enter you save:", "");
+        if (temp != null && temp != undefined && temp != "" && temp != false) {
+            localStorage.setItem("RGBsave", temp);
+            if (load() != false) {
+                if (load().version >= 0.001) player = load();
+                if (load().version < 0.002) player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+                if (load().version < 0.003) {
+                    player.specreset = 0;
+                    player.spectrum = 0;
+                    player.spectrumLevel = [1, 1, 1, 1, 0, 0];
+                }
+                if (load().version < 0.004) player.specced = 0;
+                if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
+                updateStats();
+                player.version = v;
+            }
+        }
+    }else if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
         var temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
         var tempSave = JSON.parse(atob(localStorage.getItem("RGBsave")));
         tempSave.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
@@ -265,12 +293,13 @@ function reset(type) {
             spectrumLevel: [1, 1, 1, 1, 0, 0],
             specced: 0,
         };
+        tab = "RGB";
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
         player.bars.red.setup();
         updateStats();
         document.getElementById('unlockBtn').classList.add('hidden');
         document.getElementById('blueDiv').classList.add('hidden');
-        for (var i = 0; i < document.getElementsByClassName("switch").length; i++) document.getElementsByClassName("switch")[i].classList.add("hidden");
+         document.getElementsByClassName("switch")[2].classList.add("hidden");
         document.getElementById("spectrumDiv").classList.add("hidden");
     }
 }

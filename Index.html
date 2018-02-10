@@ -8,7 +8,7 @@
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
-    <div class="button hidden switch" onclick="switchTab('RGB')">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum')">Spectrum</div>
+    <div class="button switch" onclick="switchTab('RGB')">RGB</div><div class="button switch" onclick="switchTab('Settings')">Settings</div><div class="button hidden switch" onclick="switchTab('Spectrum')">Spectrum</div>
     <div id="tabRGB" class="tab">
     <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
     <div class="progress">
@@ -40,6 +40,15 @@
         <div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Increase Red Bar's Output</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Increase Green Bar's Ouput</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div>
         <br>
         <div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Increase Speed Based on Red</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Start With blue Unlocked</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div>
+            </div>
+        </div>
+    <div id="tabSettings" class="hidden tab">
+        <div class="count" style="text-align:center; width:100%;"> Settings</div><br>
+        <div style="text-align:center">
+            <div class="button setting" onclick="save()"><div>Save Game</div></div>
+            <div class="button setting" onclick="save('Export')"><div>Export</div></div>
+            <div class="button setting" onclick="load('Import')"><div>Import</div></div>
+            <div class="button setting" onclick="reset()"><div>Reset Game</div></div>
             </div>
         </div>
 </body>
