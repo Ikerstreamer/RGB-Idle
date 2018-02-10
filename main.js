@@ -34,9 +34,9 @@ function bar(n,r,g,b,elemid) {
     this.mouse = 0;
     this.draw = function () {
         if (this.mouse == 1) {
-            CM += 0.05;
+            CM += 0.1;
             increase(click);
-        } else if (this.name == "red" && CM > 1) CM -= 0.1;
+        } else if (this.name == "red" && CM > 1) CM -= 0.15;
         if (income[this.name] >= 10) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
         this.element.style.background = RGBstring(this.color);
@@ -184,7 +184,7 @@ function updateStats() {
     IR = 2 + (2 * player.level.blue[1]);
     IG = 2 + (2 * player.level.blue[2]);
     Cores = Math.pow(2,player.level.blue[3]);
-    click = (1 + player.level.red/2) * ((Math.floor(player.level.red / 10) * 0.1) + 1) * Math.log10(CM*10);
+    click = (1 + player.level.red/2) * ((Math.floor(player.level.red / 10) * 0.1) + 1) * Math.log10(CM);
     auto = ((player.level.green * 4) * (((Math.floor(player.level.green / 10)) * 0.25) + 1)) * (Clock * (Cores + Math.pow(1.01,Cores)));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
