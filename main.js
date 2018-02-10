@@ -9,6 +9,7 @@ var player = {
     specced: 0,
 }
 
+var CM = 1;
 var Cores = 1;
 var Clock = 1;
 var RUM = 1;
@@ -32,7 +33,10 @@ function bar(n,r,g,b,elemid) {
     this.element = document.getElementById(elemid);
     this.mouse = 0;
     this.draw = function () {
-        if (this.mouse == 1) increase(click);
+        if (this.mouse == 1) {
+            CM += 0.05;
+            increase(click);
+        } else if (this.name == "red" && CM > 1) CM -= 0.1;
         if (income[this.name] >= 10) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
         this.element.style.background = RGBstring(this.color);
@@ -180,7 +184,7 @@ function updateStats() {
     IR = 2 + (2 * player.level.blue[1]);
     IG = 2 + (2 * player.level.blue[2]);
     Cores = Math.pow(2,player.level.blue[3]);
-    click = Math.floor((1 + player.level.red/2) * ((Math.floor(player.level.red / 10) * 0.1) + 1));
+    click = (1 + player.level.red/2) * ((Math.floor(player.level.red / 10) * 0.1) + 1) * Math.log10(CM*10);
     auto = ((player.level.green * 4) * (((Math.floor(player.level.green / 10)) * 0.25) + 1)) * (Clock * (Cores + Math.pow(1.01,Cores)));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.25, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.25, Math.floor(player.level.green / 100))) * PD), player.level.green);
@@ -203,10 +207,10 @@ function formatNum(num, dp, type) {
     var suffix = ["K", "M", "B", "T", "Qu", "Qi", "Sx", "Sp", "Oc", "No", "Dc"]
     if (type == "Hz") {
         suffix = ["nHz", "&mu;Hz", "mHz", "Hz", "kHz", "MHz", "GHz", "THz", "PHz", "EHz", "ZHz", "YHz"]
-        return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1024)))) + suffix[Math.floor(Math.log(num) / Math.log(1024))]
+        return (num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024)))) + suffix[Math.floor(Math.log(num) / Math.log(1024))]
     } else if (num < 10000) return num.toFixed(Math.min(Math.max(2 - Math.floor(Math.log10(num)), 0), dp));
     else if (num < 1e36) return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))))) + suffix[Math.floor(Math.log(num) / Math.log(1000)) - 1];
-    else return num.toFixed(2);
+    else return (num / Math.pow(10, Math.floor(Math.log10(num)))).toFixed(1) + "e" +Math.floor(Math.log10(num));
 }
 
 function unlockBlue() {
