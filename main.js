@@ -1,4 +1,4 @@
-var v = 0.006;
+var v = 0.0065;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -6,7 +6,8 @@ var player = {
     spliced: { red: 0, green: 0, blue: 0 },
     spectrum: 0,
     specced: 0,
-    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0 , 0],
+    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    options:{fast:false, fps: 50},
 }
 
 var CM = 1;
@@ -34,7 +35,7 @@ function bar(n,r,g,b,elemid) {
     this.draw = function () {
         if (this.mouse == 1) {
             CM += 0.1;
-            increase(click);
+            increase(click * (50 / player.options.fps));
         } else if (this.name == "red" && CM > 1) CM -= 0.15;
         if (income[this.name] >= 10) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
@@ -48,6 +49,21 @@ function bar(n,r,g,b,elemid) {
     }
 }
 
+function loop() {
+    var now = Date.now();
+    clock += frameTime;
+    var dif = now - start - clock;
+
+    gameLoop();
+
+    while (dif >= frameTime) {
+        gameLoop();
+        clock += frameTime;
+        dif -= frameTime;
+    }
+
+}
+
 function init() {
     setupPlayer();
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
@@ -57,19 +73,7 @@ function init() {
     window.clock = 0;
     window.frameTime = 20;
 
-    setInterval(function () {
-        var now = Date.now();
-        clock += frameTime;
-        var dif = now - start - clock;
-
-        gameLoop();
-
-        while (dif >= frameTime) {
-            gameLoop();
-            clock += frameTime;
-            dif -= frameTime;
-        }
-    }, 20)
+   window.mainLoop = setInterval(loop, frameTime)
 }
 
 function gameLoop() {
@@ -78,7 +82,7 @@ function gameLoop() {
         else document.getElementsByClassName("tab")[i].classList.add("hidden");
     }
     updateStats();
-    increase(auto / 50);
+    increase(auto / player.options.fps);
     if (player.money.green >= 10 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
     if (player.level.blue[3] >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
     if (player.specced > 0) for (var i = 0; i < document.getElementsByClassName("switch").length; i++)document.getElementsByClassName("switch")[i].classList.remove("hidden");
@@ -115,6 +119,8 @@ function gameLoop() {
         document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = player.spectrumLevel[i] == 1 ? "Bought" : "Not Bought" ;
         document.getElementById("spectrumButton" + i).childNodes[2].innerHTML = "Price: " + formatNum(SpecPrice[i], 0) + " Spectrum ";
     }
+    document.getElementsByClassName("setting")[4].childNodes[1].innerHTML = player.options.fast ? "On" : "Off";
+    document.getElementsByClassName("setting")[5].childNodes[1].innerHTML = player.options.fps;
 }
 
 function press(name, num) {
@@ -125,7 +131,7 @@ function increase(amnt) {
     var next = amnt * IR;
     for (var i = 0; i < (player.unlock ? 3 : 2) ;i++){
         var temp = player.bars[Object.keys(player.bars)[i]];
-        if (next >= 10000) {
+        if (next >= player.options.fast ? 256:5120) {
             player.money[temp.name] += (player.spectrumLevel[1] + 1) * (next/256);
         next = (temp.name == "red" ? IG : 8) * next/256;
         }else{
@@ -242,6 +248,7 @@ function setupPlayer() {
             for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
             player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         }
+        if (player.version < 0.0065) player.options = { fast: false, fps: 50 };
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
         player.version = v;
@@ -278,7 +285,8 @@ function reset(type) {
             spectrum: SR + player.spectrum,
             spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9]],
             spliced: { red: 0, green: 0, blue: 0 },
-            specced: player.specced +1,
+            specced: player.specced + 1,
+            options: player.options,
         };
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
         player.bars.red.setup();
@@ -298,6 +306,7 @@ function reset(type) {
             spectrumLevel: [0,0,0,0,0,0,0,0,0,0],
             specced: 0,
             spliced: { red: 0, green: 0, blue: 0 },
+            options: { fast: false, fps: 50 },
         };
         tab = "RGB";
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
@@ -308,6 +317,16 @@ function reset(type) {
          document.getElementsByClassName("switch")[1].classList.add("hidden");
         document.getElementById("spectrumDiv").classList.add("hidden");
     }
+}
+
+function flip(option) {
+    if (option == "fps") {
+        var temp = [10, 20, 40, 50];
+        player.options.fps = temp[(temp.indexOf(player.options.fps) + 1) % 4];
+        frameTime = 1000 / player.options.fps;
+        clearInterval(mainLoop);
+        mainLoop = setInterval(loop,frameTime)
+    }else player.options[option] = !player.options[option];
 }
 
 function switchTab(name) {
