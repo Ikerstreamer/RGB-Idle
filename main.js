@@ -186,7 +186,7 @@ function updateStats() {
     IG = 2 + (2 * player.level.blue[2]);
     Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[7] == 2 ? 1024 : 1);
     click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[3] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
-    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[3] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.01,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[2] == 1 ? player.level.red : 1) * (player.spectrumLevel[6] == 1 ? Math.log10(player.spectrum) + 1 : 1);
+    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[3] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.025,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[2] == 1 ? player.level.red : 1) * (player.spectrumLevel[6] == 1 ? Math.log10(player.spectrum) + 1 : 1);
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.2, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.2, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
