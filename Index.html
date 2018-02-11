@@ -2,54 +2,60 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <link rel="stylesheet" type="text/css" href="interface.css"/>
+    <link rel="stylesheet" type="text/css" href="interface.css" />
     <script type="text/javascript" src="main.js"></script>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
     <div class="button switch" onclick="switchTab('RGB')">RGB</div><div class="button switch" onclick="switchTab('Settings')">Settings</div><div class="button hidden switch" onclick="switchTab('Spectrum')">Spectrum</div>
     <div id="tabRGB" class="tab">
-    <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
-    <div class="progress">
-        <div id="redBar" class="bar"></div>
-    </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div>
+        <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
+            <div class="progress">
+                <div id="redBar" class="bar"></div>
+            </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div>
         </div>
-    <div id="greenDiv" style="padding-bottom:10px; padding-top:10px">
-        <div class="progress">
-            <div id="greenBar" class="bar"></div>
-        </div><div id="greenCount" class="count" style="color: rgb(0,255,0);"></div><div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div>
+        <div id="greenDiv" style="padding-bottom:10px; padding-top:10px">
+            <div class="progress">
+                <div id="greenBar" class="bar"></div>
+            </div><div id="greenCount" class="count" style="color: rgb(0,255,0);"></div><div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div>
         </div>
-    <div id="unlockBtn" class="hidden" onclick="unlockBlue()">Buy Blue bar for 50 green!</div>
-    <div id="blueDiv" class="hidden" style="padding-bottom:10px; padding-top:10px">       
-        <div class="progress">
-            <div id="blueBar" class="bar"></div>
-        </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
-        <br>
-        <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div>
-    </div>
-        <div id="spectrumDiv" class="hidden" style="width: 100%; padding-bottom:10px; padding-top:10px; align-self:center; text-align:center; color:black;">
-            <div id="spectrumReset" onclick="reset(1)" class="button" style=" background:white; text-shadow:none;"><div >Reset all progress and gain</div><div></div></div>
+        <div id="unlockBtn" class="hidden" onclick="unlockBlue()">Buy Blue bar for 50 green!</div>
+        <div id="blueDiv" class="hidden" style="padding-bottom:10px; padding-top:10px">
+            <div class="progress">
+                <div id="blueBar" class="bar"></div>
+            </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
+            <br>
+            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div>
+        </div>
+        <div id="spectrumDiv" class="hidden" style="width: 100%; padding-bottom:10px; padding-top:10px; align-self:center; text-align:center;">
+            <div class="button" id="redSplice" onclick="spliceColor('red')" style="background: rgb(255,0,0);"><div>Splice 10% red into a spectrum</div><div>Spliced red:</div></div>
+            <div class="button" id="greenSplice" onclick="spliceColor('green')" style="background: rgb(0,255,0);"><div>Splice 10% green into a spectrum</div><div>Spliced green:</div></div>
+            <div class="button" id="blueSplice" onclick="spliceColor('blue')" style="background: rgb(0,0,255);"><div>Splice 10% of your blue into a spectrum</div><div>Spliced blue:</div></div>
+            <br>
+            <br>
+            <div id="spectrumReset" onclick="reset(1)" class="button" style=" background:white; text-shadow:none;  color:black;"><div>Reset all progress and gain</div><div></div></div>
         </div>
         </div>
-    <div id="tabSpectrum" class="hidden tab">
-       <div id="spectrumCount" class="count" style="text-align:center; width:100%;"></div><br>
-        <div style="text-align:center">
-        <div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Increase Red Speed Multi Effect</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Decrease Price Scaling (R&G)</div><div>Level 0/100</div><div>Price 5 Spectrum</div><div></div></div>
-        <br>
-        <div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Increase Red Bar's Output</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Increase Green Bar's Ouput</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div>
-        <br>
-        <div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Increase Speed Based on Red</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Start With blue Unlocked</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div>
+        <div id="tabSpectrum" class="hidden tab">
+            <div style="text-align:center">
+                <div id="spectrumCount" class="count" style="text-align:center; width:100%;"></div><br>
+                <table align="center">
+                    <tr><td><div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Click Multi Effects Auto</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Double Output of All Bars</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Auto Bonus based on Red Lvl</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Increase per 10 Bonus</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Start With blue Unlocked</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton6" class="button spec" onclick="buyUpgrade('spectrum', 6)"><div>Auto Bonus Based on Spectrum</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton7" class="button spec" onclick="buyUpgrade('spectrum', 7)"><div>Switch to GPU Rendering</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                </table>
+                    </div>
+        </div>
+        <div id="tabSettings" class="hidden tab">
+            <div class="count" style="text-align:center; width:100%;"> Settings</div><br>
+            <div style="text-align:center">
+                <div class="button setting" onclick="save()"><div>Save Game</div></div>
+                <div class="button setting" onclick="save('Export')"><div>Export</div></div>
+                <div class="button setting" onclick="load('Import')"><div>Import</div></div>
+                <div class="button setting" onclick="reset()"><div>Reset Game</div></div>
             </div>
-        </div>
-    <div id="tabSettings" class="hidden tab">
-        <div class="count" style="text-align:center; width:100%;"> Settings</div><br>
-        <div style="text-align:center">
-            <div class="button setting" onclick="save()"><div>Save Game</div></div>
-            <div class="button setting" onclick="save('Export')"><div>Export</div></div>
-            <div class="button setting" onclick="load('Import')"><div>Import</div></div>
-            <div class="button setting" onclick="reset()"><div>Reset Game</div></div>
             </div>
-        </div>
 </body>
 </html>
