@@ -142,9 +142,10 @@ function increase(amnt) {
     var next = amnt * IR;
     for (var i = 0; i < (player.unlock ? 3 : 2) ;i++){
         var temp = player.bars[Object.keys(player.bars)[i]];
-        if(amnt >= 10000){
-        player.money[temp.name] +=displayIncome(income[temp.name]);
-        next = (temp.name == "red" ? IG : 5) * amnt/100;
+        if (amnt >= 10000) {
+            console.log(temp);
+            player.money[temp.name] += player.spectrumLevel[1] + 1 * (amnt/256);
+        next = (temp.name == "red" ? IG : 8) * amnt/256;
         }else{
         temp.width += next;
         next = 0;
@@ -198,7 +199,7 @@ function updateStats() {
     income.green = (income.red * IG / 256);
     income.blue = income.green * 8 / 256;
     SR = Math.max(Math.floor(Math.log(Math.cbrt((player.spliced.red * player.spliced.green * player.spliced.blue) / 16777216))/Math.log(1000)),0);
-}
+}       
 
 function formatNum(num, dp, type) {
     if (dp == undefined) dp = 2;

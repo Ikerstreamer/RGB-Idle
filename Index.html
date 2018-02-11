@@ -8,7 +8,7 @@
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
-    <div class="button switch" onclick="switchTab('RGB')">RGB</div><div class="button switch" onclick="switchTab('Settings')">Settings</div><div class="button hidden switch" onclick="switchTab('Spectrum')">Spectrum</div>
+    <div class="button switch" onclick="switchTab('RGB')">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum')">Spectrum</div><div class="button switch" onclick="switchTab('Settings')">Settings</div>
     <div id="tabRGB" class="tab">
         <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress">
@@ -43,7 +43,7 @@
                 <table align="center">
                     <tr><td><div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Click Multi Effects Auto</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Double Output of All Bars</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                     <tr><td><div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Auto Bonus based on Red Lvl</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Increase per 10 Bonus</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
-                    <tr><td><div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Start With blue Unlocked</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Start with Blue Unlocked</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                     <tr><td><div id="spectrumButton6" class="button spec" onclick="buyUpgrade('spectrum', 6)"><div>Auto Bonus Based on Spectrum</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton7" class="button spec" onclick="buyUpgrade('spectrum', 7)"><div>Switch to GPU Rendering</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                 </table>
                     </div>
@@ -51,10 +51,9 @@
         <div id="tabSettings" class="hidden tab">
             <div class="count" style="text-align:center; width:100%;"> Settings</div><br>
             <div style="text-align:center">
-                <div class="button setting" onclick="save()"><div>Save Game</div></div>
-                <div class="button setting" onclick="save('Export')"><div>Export</div></div>
-                <div class="button setting" onclick="load('Import')"><div>Import</div></div>
-                <div class="button setting" onclick="reset()"><div>Reset Game</div></div>
+                <table align="center">
+                    <tr><td><div class="button setting" onclick="save()"><div>Save Game</div></div></td><td><div class="button setting" onclick="save('Export')"><div>Export</div></div></td><td><div class="button setting" onclick="load('Import')"><div>Import</div></div></td><td><div class="button setting" onclick="reset()"><div>Reset Game</div></div></td></tr>
+                </table>
             </div>
             </div>
 </body>

@@ -57,9 +57,9 @@
 .button.spec {
     background: rgb(0,0,0);
     width: 600px;
-    height:300px;
+    height:200px;
     margin: 10px;
-    font: 50px bold;
+    font: 40px bold;
     font-family: Verdana;
 }
 
