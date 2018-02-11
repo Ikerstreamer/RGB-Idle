@@ -143,7 +143,6 @@ function increase(amnt) {
     for (var i = 0; i < (player.unlock ? 3 : 2) ;i++){
         var temp = player.bars[Object.keys(player.bars)[i]];
         if (amnt >= 10000) {
-            console.log(temp);
             player.money[temp.name] += player.spectrumLevel[1] + 1 * (amnt/256);
         next = (temp.name == "red" ? IG : 8) * amnt/256;
         }else{
