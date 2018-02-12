@@ -24,7 +24,7 @@ var IR = 0;
 var RSS = 0;
 var PD = 0;
 var SR = 0;
-var SpecPrice = [1, 1, 3, 5 ,8 , 15, 35, 50, 200, 500];
+var SpecPrice = [1, 1, 3, 5 ,8 , 15, 50, 100, 500, 2000];
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
@@ -180,7 +180,7 @@ function updateStats() {
     }
     Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[9] == 2 ? 1024 : 1);
     click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[5] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
-    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[5] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[4] == 1 ? player.level.red : 1) * (player.spectrumLevel[8] == 1 ? Math.log10(player.spectrum) + 1 : 1);
+    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[5] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[7] == 1 ? player.level.red : 1) * (player.spectrumLevel[8] == 1 ? Math.cbrt(player.spectrum) + 1 : 1);
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.2, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.2, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
@@ -281,7 +281,7 @@ function reset(type) {
             version: v,
             money: { red: 0, green: 0, blue: 0 },
             level: { red: 0, green: 0, blue: [0, 0, 0, 0]},
-            unlock: player.spectrumLevel[7] == 1,
+            unlock: player.spectrumLevel[5] == 1,
             spectrum: SR + player.spectrum,
             spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9]],
             spliced: { red: 0, green: 0, blue: 0 },
