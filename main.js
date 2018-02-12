@@ -296,6 +296,7 @@ function reset(type) {
         }
         document.getElementById("spectrumDiv").classList.add("hidden");
         updateStats();
+        CM = 0;
     } else {
         player = {
             version: v,
