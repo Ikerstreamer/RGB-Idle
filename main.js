@@ -114,7 +114,8 @@ function gameLoop() {
         }
     }
     document.getElementById("spectrumCount").innerHTML = "You have " + formatNum(player.spectrum, 0) + " Spectrum";
-    document.getElementById("spectrumReset").childNodes[1].innerHTML = formatNum(SR,0) + " Spectrum";
+    document.getElementById("spectrumReset").childNodes[1].innerHTML ="<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
+    document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
     for (var i = 0; i < player.spectrumLevel.length; i++) {
         document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = player.spectrumLevel[i] == 1 ? "Bought" : "Not Bought" ;
         document.getElementById("spectrumButton" + i).childNodes[2].innerHTML = "Price: " + formatNum(SpecPrice[i], 0) + " Spectrum ";
@@ -168,7 +169,7 @@ function buyUpgrade(name, Bindex) {
     }else if (player.money[name] >= price[name]) {
         player.money[name] -= price[name]
         player.level[name]++;
-    }
+    }else return false
     updateStats()
 }
 
@@ -195,7 +196,7 @@ function updateStats() {
     else income.red = (auto * IR / 256);
     income.green = (income.red * IG / 256);
     income.blue = income.green * 8 / 256;
-    SR = Math.max(Math.floor(Math.log(Math.cbrt((player.spliced.red * player.spliced.green * player.spliced.blue) / 16777216))/Math.log(1000)),0);
+    SR = Math.max(Math.log(Math.cbrt((player.spliced.red * player.spliced.green * player.spliced.blue) / 16777216))/Math.log(1000),0);
 }       
 
 function formatNum(num, dp, type) {
@@ -286,7 +287,7 @@ function reset(type) {
             money: { red: 0, green: 0, blue: 0 },
             level: { red: 0, green: 0, blue: [0, 0, 0, 0]},
             unlock: player.spectrumLevel[4] == 1,
-            spectrum: SR + player.spectrum,
+            spectrum: Math.floor(SR) + player.spectrum,
             spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9]],
             spliced: { red: 0, green: 0, blue: 0 },
             specced: player.specced + 1,
@@ -348,3 +349,13 @@ function spliceColor(name) {
     player.spliced[name] += (player.money[name] / 10) * (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
     player.money[name] -= player.money[name] / 10;
 }
+
+window.addEventListener("keypress",function(event) {
+    var key = event.keyCode || event.which;
+    if (key == 114) {
+        while (buyUpgrade("red") != false);
+    }
+    if (key == 103) {
+        while (buyUpgrade("green") != false);
+    }
+},false)
