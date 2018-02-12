@@ -345,6 +345,6 @@ function displayIncome(num) {
 }
 
 function spliceColor(name) {
-    player.spliced[name] += Math.pow((player.money[name] / 10), (name == "red" ? 0.85 : (name == "green" ? 1 : 1.25)));
+    player.spliced[name] += Math.pow((player.money[name] / 10), (name == "red" ? 0.9 : (name == "green" ? 1.05 : 1.20)));
     player.money[name] -= player.money[name] / 10;
 }
