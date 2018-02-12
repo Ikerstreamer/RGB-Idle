@@ -71,7 +71,7 @@ function init() {
 
     window.start = Date.now();
     window.clock = 0;
-    window.frameTime = player.options.fps;
+    window.frameTime = 1000 / player.options.fps;
 
    window.mainLoop = setInterval(loop, frameTime)
 }
