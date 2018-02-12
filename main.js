@@ -153,6 +153,10 @@ function RGBstring(color) {
 function buyUpgrade(name, Bindex) {
     if (name == "spectrum") {
         if (player.spectrum >= SpecPrice[Bindex] && player.spectrumLevel[Bindex] < 1) {
+            if(Bindex == 4) {
+                player.unlock = true;
+                document.getElementById('blueDiv').classList.remove('hidden');
+            }
             player.spectrum -= SpecPrice[Bindex];
             player.spectrumLevel[Bindex]++;
         }
