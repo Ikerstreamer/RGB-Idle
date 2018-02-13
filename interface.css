@@ -56,10 +56,10 @@
 
 .button.spec {
     background: rgb(0,0,0);
-    width: 600px;
-    height:200px;
+    width: 400px;
+    height:150px;
     margin: 10px;
-    font: 40px bold;
+    font: 30px bold;
     font-family: Verdana;
 }
 
@@ -72,4 +72,10 @@
     font-family: Verdana;
     color:black;
     text-shadow:none;
+}
+
+.button.spec.bought{
+    border:double thick;
+    border-width: 5px;
+    border-color:forestgreen;
 }

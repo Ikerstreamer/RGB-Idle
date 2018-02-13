@@ -7,7 +7,7 @@ var player = {
     spectrum: 0,
     specced: 0,
     spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    options:{fast:false, fps: 50},
+    options:{fast:false, fps: 50, notation:"Default"},
 }
 
 var CM = 1;
@@ -119,9 +119,12 @@ function gameLoop() {
     for (var i = 0; i < player.spectrumLevel.length; i++) {
         document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = player.spectrumLevel[i] == 1 ? "Bought" : "Not Bought" ;
         document.getElementById("spectrumButton" + i).childNodes[2].innerHTML = "Price: " + formatNum(SpecPrice[i], 0) + " Spectrum ";
+        if (player.spectrumLevel[i] == 1) document.getElementById("spectrumButton" + i).classList.add("bought");
+        else document.getElementById("spectrumButton" + i).classList.remove("bought");
     }
     document.getElementsByClassName("setting")[4].childNodes[1].innerHTML = player.options.fast ? "On" : "Off";
     document.getElementsByClassName("setting")[5].childNodes[1].innerHTML = player.options.fps;
+    document.getElementsByClassName("setting")[6].childNodes[1].innerHTML = "<b>" + player.options.notation + "</b>";
 }
 
 function press(name, num) {
@@ -206,7 +209,7 @@ function formatNum(num, dp, type) {
         suffix = ["nHz", "&mu;Hz", "mHz", "Hz", "kHz", "MHz", "GHz", "THz", "PHz", "EHz", "ZHz", "YHz"]
         return (num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024)))) + suffix[Math.floor(Math.log(num * 1024) / Math.log(1024))]
     } else if (num < 10000) return num.toFixed(Math.min(Math.max(2 - Math.floor(Math.log10(num)), 0), dp));
-    else if (num < 1e36) return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))))) + suffix[Math.floor(Math.log(num) / Math.log(1000)) - 1];
+    else if (num < 1e36 && player.options.notation == "Default") return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))))) + suffix[Math.floor(Math.log(num) / Math.log(1000)) - 1];
     else return (num / Math.pow(10, Math.floor(Math.log10(num)))).toFixed(1) + "e" +Math.floor(Math.log10(num));
 }
 
@@ -254,6 +257,7 @@ function setupPlayer() {
             player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         }
         if (player.version < 0.0065) player.options = { fast: false, fps: 50 };
+        if (player.version < 0.007) player.options.notation = "Default";
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
         player.version = v;
@@ -314,7 +318,7 @@ function reset(type) {
             spectrumLevel: [0,0,0,0,0,0,0,0,0,0],
             specced: 0,
             spliced: { red: 0, green: 0, blue: 0 },
-            options: { fast: false, fps: 50 },
+            options: { fast: false, fps: 50, notation:"Default" },
         };
         tab = "RGB";
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
@@ -334,6 +338,9 @@ function flip(option) {
         frameTime = 1000 / player.options.fps;
         clearInterval(mainLoop);
         mainLoop = setInterval(loop,frameTime)
+    }else if(option == "notation"){
+        var temp = ["Default", "Scientific"];
+        player.options.notation = temp[(temp.indexOf(player.options.notation) + 1) % 2];
     }else player.options[option] = !player.options[option];
 }
 
@@ -360,4 +367,16 @@ window.addEventListener("keypress",function(event) {
     if (key == 103) {
         while (buyUpgrade("green") != false);
     }
-},false)
+}, false)
+window.addEventListener("keydown", function (event) {
+    var key = event.keyCode || event.which;
+    if (key == 32) {
+        press("red",1)
+    }
+}, false)
+window.addEventListener("keyup", function (event) {
+    var key = event.keyCode || event.which;
+    if (key == 32) {
+        press("red", 0)
+    }
+}, false)
