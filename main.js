@@ -282,26 +282,28 @@ function load(name) {
 
 function reset(type) {
     if (type >= 1) {
-        player = {
-            version: v,
-            money: { red: 0, green: 0, blue: 0 },
-            level: { red: 0, green: 0, blue: [0, 0, 0, 0]},
-            unlock: player.spectrumLevel[4] == 1,
-            spectrum: Math.floor(SR) + player.spectrum,
-            spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9]],
-            spliced: { red: 0, green: 0, blue: 0 },
-            specced: player.specced + 1,
-            options: player.options,
-        };
-        player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
-        player.bars.red.setup();
-        if(!player.unlock){
-          document.getElementById('unlockBtn').classList.add('hidden');
-        document.getElementById('blueDiv').classList.add('hidden');  
+        if (SR >= 1) {
+            player = {
+                version: v,
+                money: { red: 0, green: 0, blue: 0 },
+                level: { red: 0, green: 0, blue: [0, 0, 0, 0] },
+                unlock: player.spectrumLevel[4] == 1,
+                spectrum: Math.floor(SR) + player.spectrum,
+                spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9]],
+                spliced: { red: 0, green: 0, blue: 0 },
+                specced: player.specced + 1,
+                options: player.options,
+            };
+            player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+            player.bars.red.setup();
+            if (!player.unlock) {
+                document.getElementById('unlockBtn').classList.add('hidden');
+                document.getElementById('blueDiv').classList.add('hidden');
+            }
+            document.getElementById("spectrumDiv").classList.add("hidden");
+            updateStats();
+            CM = 1;
         }
-        document.getElementById("spectrumDiv").classList.add("hidden");
-        updateStats();
-        CM = 1;
     } else {
         player = {
             version: v,
