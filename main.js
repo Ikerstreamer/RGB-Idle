@@ -56,10 +56,11 @@ function loop() {
 
     gameLoop();
 
-    while (dif >= frameTime) {
-        gameLoop();
-        clock += frameTime;
-        dif -= frameTime;
+    if (dif >= frameTime) {
+        console.log(dif);
+        increase(auto * (Math.floor(dif / frameTime)) / player.options.fps);
+        dif -= Math.floor(dif / frameTime);
+        clock += Math.floor(dif / frameTime);
     }
 
 }
@@ -77,15 +78,16 @@ function init() {
 }
 
 function gameLoop() {
-    for (var i = 0; i < document.getElementsByClassName("tab").length; i++) {
-        if ("tab" + tab == document.getElementsByClassName("tab")[i].id) document.getElementsByClassName("tab")[i].classList.remove("hidden");
-        else document.getElementsByClassName("tab")[i].classList.add("hidden");
-    }
     updateStats();
     increase(auto / player.options.fps);
-    if (player.money.green >= 10 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
+    if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
     if (player.level.blue[3] >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
-    if (player.specced > 0) for (var i = 0; i < document.getElementsByClassName("switch").length; i++)document.getElementsByClassName("switch")[i].classList.remove("hidden");
+    if (player.money.blue >= 1) document.getElementsByClassName("switch")[1].classList.remove("hidden");
+    if (player.specced > 0) {
+        document.getElementsByClassName("switch")[1].classList.remove("hidden");
+        document.getElementById("tabSpectrum").childNodes[1].classList.add("hidden");
+        document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
+    }
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
@@ -307,6 +309,7 @@ function reset(type) {
             document.getElementById("spectrumDiv").classList.add("hidden");
             updateStats();
             CM = 1;
+            tab = "Spectrum";
         }
     } else {
         player = {
@@ -344,8 +347,14 @@ function flip(option) {
     }else player.options[option] = !player.options[option];
 }
 
-function switchTab(name) {
+function switchTab(name , num) {
     tab = name;
+    for (var i = 0; i < document.getElementsByClassName("tab").length; i++) {
+        if ("tab" + tab == document.getElementsByClassName("tab")[i].id) document.getElementsByClassName("tab")[i].classList.remove("hidden");
+        else document.getElementsByClassName("tab")[i].classList.add("hidden");
+    }
+    for (var i = 0; i < document.getElementsByClassName("switch").length; i++) document.getElementsByClassName("switch")[i].classList.remove("active");
+    document.getElementsByClassName("switch")[num].classList.add("active");
 }
 
 function displayIncome(num) {
