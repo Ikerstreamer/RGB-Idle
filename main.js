@@ -130,8 +130,8 @@ function increase(amnt) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
         player.money[temp.name] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256);
-        temp.width = temp.width % 256;
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : 8);
+        temp.width = temp.width % 256;
     }
 }
 
