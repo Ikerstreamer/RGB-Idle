@@ -13,6 +13,7 @@ var player = {
     lastUpdate: Date.now(),
 }
 
+var AB = true;
 var CM = 1;
 var Cores = 1;
 var Clock = 1;
@@ -61,8 +62,10 @@ function init() {
 }
 
 function autoBuyer() {
-    if (player.spectrumLevel[4] == 1) while (buyUpgrade("red") != false);
-    if (player.spectrumLevel[5] == 1) while (buyUpgrade("green") != false);
+    if (AB) {
+        if (player.spectrumLevel[4] == 1) while (buyUpgrade("red") != false);
+        if (player.spectrumLevel[5] == 1) while (buyUpgrade("green") != false);
+    }
 }
 
 function gameLoop() {
@@ -378,16 +381,11 @@ function statPage() {
     }
 }
 
-
-
 window.addEventListener("keypress",function(event) {
     var key = event.keyCode || event.which;
-    if (key == 114) {
-        while (buyUpgrade("red") != false);
-    }
-    if (key == 103) {
-        while (buyUpgrade("green") != false);
-    }
+    if (key == 114) while (buyUpgrade("red") != false);
+    if (key == 103) while (buyUpgrade("green") != false);
+    if (key == 65) AB = !AB;
 }, false)
 window.addEventListener("keydown", function (event) {
     var key = event.keyCode || event.which;
