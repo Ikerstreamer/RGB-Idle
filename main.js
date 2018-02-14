@@ -57,7 +57,6 @@ function loop() {
     gameLoop();
 
     if (dif >= frameTime) {
-        console.log(dif);
         increase(auto * (Math.floor(dif / frameTime)) / player.options.fps);
         dif -= Math.floor(dif / frameTime);
         clock += Math.floor(dif / frameTime);
