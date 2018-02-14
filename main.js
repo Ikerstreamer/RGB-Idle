@@ -385,13 +385,13 @@ window.addEventListener("keypress",function(event) {
     var key = event.keyCode || event.which;
     if (key == 114) while (buyUpgrade("red") != false);
     if (key == 103) while (buyUpgrade("green") != false);
-    if (key == 65) AB = !AB;
 }, false)
 window.addEventListener("keydown", function (event) {
     var key = event.keyCode || event.which;
     if (key == 32) {
         press("red",1)
     }
+    if (key == 65) AB = !AB;
 }, false)
 window.addEventListener("keyup", function (event) {
     var key = event.keyCode || event.which;
