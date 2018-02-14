@@ -1,4 +1,4 @@
-var v = 0.0085;
+var v = 0.009;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -6,7 +6,7 @@ var player = {
     spliced: { red: 0, green: 0, blue: 0 },
     spectrum: 0,
     specced: 0,
-    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     options: { fast: false, fps: 50, notation: "Default" },
     spectrumTimer: 0,
     previousSpectrums: [{ time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}],
@@ -27,7 +27,7 @@ var IR = 0;
 var RSS = 0;
 var PD = 0;
 var SR = 0;
-var SpecPrice = [1, 1, 3, 5 ,10 , 15, 50, 100, 500, 2000];
+var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 15, 50, 100, 500, 2000];
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
@@ -56,11 +56,18 @@ function init() {
     setupPlayer();
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     setInterval(save, 3000);
-   window.mainLoop = setInterval(gameLoop,1000 / player.options.fps);
+    window.mainLoop = setInterval(gameLoop, 1000 / player.options.fps);
+    window.ABLoop = setInterval(autoBuyer, 5000);
+}
+
+function autoBuyer() {
+    if (player.spectrumLevel[4] == 1) while (buyUpgrade("red") != false);
+    if (player.spectrumLevel[5] == 1) while (buyUpgrade("green") != false);
 }
 
 function gameLoop() {
     var dif = Date.now() - player.lastUpdate;
+    player.lastUpdate = Date.now();
     updateStats();
     increase(auto * (dif / 1000));
     if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
@@ -119,21 +126,13 @@ function press(name, num) {
 
 function increase(amnt) {
     var next = amnt * IR;
-    for (var i = 0; i < (player.unlock ? 3 : 2) ;i++){
+    for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
-        if (next >= (player.options.fast ? 256:5120)) {
-            player.money[temp.name] += (player.spectrumLevel[1] + 1) * (next/256);
-        next = (temp.name == "red" ? IG : 8) * next/256;
-        }else{
         temp.width += next;
-        next = 0;
-     while (temp.width > 256) {
-        temp.width -= 256;
-        player.money[temp.name] += player.spectrumLevel[1] + 1;
-        next += (temp.name == "red" ? IG : 8);
+        player.money[temp.name] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256);
+        temp.width = temp.width % 256;
+        next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : 8);
     }
-  }
-}
 }
 
 function RGBstring(color) {
@@ -163,8 +162,8 @@ function buyUpgrade(name, Bindex) {
 }
 
 function updateStats() {
-    PD = player.spectrumLevel[6] == 1 ? 0.5 : 1;
-    Clock = Math.pow(2, player.level.blue[0]) / (player.spectrumLevel[9] == 1 ? 1024 : 1);
+    PD = player.spectrumLevel[8] == 1 ? 0.5 : 1;
+    Clock = Math.pow(2, player.level.blue[0]) / (player.spectrumLevel[11] == 1 ? 1024 : 1);
     if (player.spectrumLevel[2] == 1) {
         IR = 4 + (4 * player.level.blue[1]);
         IG = 4 + (4 * player.level.blue[2]);
@@ -172,9 +171,9 @@ function updateStats() {
         IR = 2 + (2 * player.level.blue[1]);
         IG = 2 + (2 * player.level.blue[2]);
     }
-    Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[9] == 1 ? 4 : 1);
-    click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[4] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
-    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[4] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[7] == 1 ? player.level.red : 1) * (player.spectrumLevel[8] == 1 ? Math.cbrt(player.spectrum) + 1 : 1);
+    Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[11] == 1 ? 4 : 1);
+    click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[6] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
+    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[6] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[9] == 1 ? player.level.red : 1) * (player.spectrumLevel[10] == 1 ? Math.cbrt(player.spectrum) + 1 : 1);
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.2, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.2, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
@@ -250,10 +249,11 @@ function setupPlayer() {
         }
         if(player.version < 0.0085){
             player.lastUpdate = Date.now();
-            if(player.spectrumLevel[4] == 1) player.spectrum += 8;
-            if(player.spectrumLevel[5] == 1) player.spectrum += 15;
-            player.spectrumLevel[4] = 0;
-            player.spectrumLevel[5] = 0;
+        }
+        if (player.version < 0.009) {
+            var temp = [1, 1, 3, 5, 10, 15, 50, 100, 500, 2000];
+            for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
+            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
@@ -289,7 +289,7 @@ function reset(type) {
                 version: v,
                 money: { red: 0, green: 0, blue: 0 },
                 level: { red: 0, green: 0, blue: [0, 0, 0, 0] },
-                unlock: player.spectrumLevel[5] == 1,
+                unlock: player.spectrumLevel[7] == 1,
                 spectrum: Math.floor(SR) + player.spectrum,
                 spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9]],
                 spliced: { red: 0, green: 0, blue: 0 },
