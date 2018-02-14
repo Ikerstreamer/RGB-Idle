@@ -294,7 +294,7 @@ function reset(type) {
                 level: { red: 0, green: 0, blue: [0, 0, 0, 0] },
                 unlock: player.spectrumLevel[7] == 1,
                 spectrum: Math.floor(SR) + player.spectrum,
-                spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9]],
+                spectrumLevel: [player.spectrumLevel[0], player.spectrumLevel[1], player.spectrumLevel[2], player.spectrumLevel[3], player.spectrumLevel[4], player.spectrumLevel[5], player.spectrumLevel[6], player.spectrumLevel[7], player.spectrumLevel[8], player.spectrumLevel[9], player.spectrumLevel[10], player.spectrumLevel[11]],
                 spliced: { red: 0, green: 0, blue: 0 },
                 specced: player.specced + 1,
                 options: player.options,
