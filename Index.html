@@ -8,7 +8,7 @@
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
-    <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div>
+    <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 3)">Stats</div>
     <div id="tabRGB" class="tab">
         <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress" style="cursor:pointer">
@@ -64,5 +64,15 @@
                 </p>
             </div>
             </div>
+    <div id="tabStats" class="hidden tab" style="text-align:center">
+        <h1>Last 5 Spectrums</h1>
+        <table align="center" id="last5" style="font-size:25px">
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+        </table>
+        </div>
 </body>
 </html>

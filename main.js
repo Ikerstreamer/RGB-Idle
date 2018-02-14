@@ -1,4 +1,4 @@
-var v = 0.0065;
+var v = 0.008;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -7,7 +7,9 @@ var player = {
     spectrum: 0,
     specced: 0,
     spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    options:{fast:false, fps: 50, notation:"Default"},
+    options: { fast: false, fps: 50, notation: "Default" },
+    spectrumTimer: 0,
+    previousSpectrums: [{ time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}]
 }
 
 var CM = 1;
@@ -52,6 +54,7 @@ function bar(n,r,g,b,elemid) {
 function loop() {
     var now = Date.now();
     clock += frameTime;
+    player.spectrumTimer += frameTime;
     var dif = now - start - clock;
 
     gameLoop();
@@ -60,6 +63,7 @@ function loop() {
         increase(auto * (Math.floor(dif / frameTime)) / player.options.fps);
         dif -= Math.floor(dif / frameTime);
         clock += Math.floor(dif / frameTime);
+        player.spectrumTimer += Math.floor(dif / frameTime);
     }
 
 }
@@ -84,6 +88,7 @@ function gameLoop() {
     if (player.money.blue >= 1) document.getElementsByClassName("switch")[1].classList.remove("hidden");
     if (player.specced > 0) {
         document.getElementsByClassName("switch")[1].classList.remove("hidden");
+        document.getElementsByClassName("switch")[3].classList.remove("hidden");
         document.getElementById("tabSpectrum").childNodes[1].classList.add("hidden");
         document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
     }
@@ -259,9 +264,14 @@ function setupPlayer() {
         }
         if (player.version < 0.0065) player.options = { fast: false, fps: 50 };
         if (player.version < 0.007) player.options.notation = "Default";
+        if(player.version < 0.008){
+            player.spectrumTimer = 0;
+            player.previousSpectrums = [{ time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }];
+        }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
         player.version = v;
+        statPage();
     }
 }
 
@@ -298,6 +308,8 @@ function reset(type) {
                 spliced: { red: 0, green: 0, blue: 0 },
                 specced: player.specced + 1,
                 options: player.options,
+                previousSpectrums: [{ time: player.spectrumTimer, amount: Math.floor(SR) }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]],
+                spectrumTimer: 0,
             };
             player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
             player.bars.red.setup();
@@ -309,6 +321,7 @@ function reset(type) {
             updateStats();
             CM = 1;
             tab = "Spectrum";
+            statPage();
         }
     } else {
         player = {
@@ -320,7 +333,9 @@ function reset(type) {
             spectrumLevel: [0,0,0,0,0,0,0,0,0,0],
             specced: 0,
             spliced: { red: 0, green: 0, blue: 0 },
-            options: { fast: false, fps: 50, notation:"Default" },
+            options: { fast: false, fps: 50, notation: "Default" },
+            spectrumTimer: 0,
+            previousSpectrums: [{ time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }]
         };
         tab = "RGB";
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
@@ -366,6 +381,15 @@ function spliceColor(name) {
     player.spliced[name] += (player.money[name] / 10) * (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
     player.money[name] -= player.money[name] / 10;
 }
+
+function statPage() {
+    var table = document.getElementById("last5");
+    for (var i = 0; i < table.rows.length; i++) {
+        if (player.previousSpectrums[i].time != 0) table.rows[i].cells[0].innerHTML = (i == 0 ? "Your last Spectrum" : "Your Spectrum " + (i + 1) + " Spectrums ago") + " took " + (player.previousSpectrums[i].time >= 3600000 ? Math.floor(player.previousSpectrums[i].time / 3600000) + " hours and " + Math.floor((player.previousSpectrums[i].time % 3600000) / 60000) + " minutes" : (player.previousSpectrums[i].time >= 60000 ? Math.floor(player.previousSpectrums[i].time / 60000) + " minutes and " + Math.floor((player.previousSpectrums[i].time % 60000) / 1000) + " seconds" : (player.previousSpectrums[i].time >= 10000 ? Math.floor(player.previousSpectrums[i].time / 1000) + " seconds" : (player.previousSpectrums[i].time > 0 ? player.previousSpectrums[i].time + " millis" : 0)))) + " and earned you " + formatNum(player.previousSpectrums[i].amount, 0) + " Spectrum";
+    }
+}
+
+
 
 window.addEventListener("keypress",function(event) {
     var key = event.keyCode || event.which;
