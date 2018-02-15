@@ -63,8 +63,8 @@ function init() {
 
 function autoBuyer() {
     if (AB) {
-        if (player.spectrumLevel[4] == 1) while (buyUpgrade("red") != false);
-        if (player.spectrumLevel[5] == 1) while (buyUpgrade("green") != false);
+        if (player.spectrumLevel[4] == 1) while (buyUpgrade("red"));
+        if (player.spectrumLevel[5] == 1) while (buyUpgrade("green"));
     }
 }
 
@@ -151,17 +151,22 @@ function buyUpgrade(name, Bindex) {
             }
             player.spectrum -= SpecPrice[Bindex];
             player.spectrumLevel[Bindex]++;
+            updateStats();
+            return true;
         }
     }else if (name == "blue") {
         if (player.money[name] >= price[name][Bindex]) {
             player.money[name] -= price[name][Bindex]
             player.level[name][Bindex]++;
+            updateStats();
+            return true;
         }
     }else if (player.money[name] >= price[name]) {
         player.money[name] -= price[name]
         player.level[name]++;
-    }else return false
-    updateStats()
+        updateStats();
+        return true;
+    }
 }
 
 function updateStats() {
@@ -383,8 +388,10 @@ function statPage() {
 
 window.addEventListener("keypress",function(event) {
     var key = event.keyCode || event.which;
-    if (key == 114) while (buyUpgrade("red") != false);
-    if (key == 103) while (buyUpgrade("green") != false);
+    if (key == 114) while (buyUpgrade("red"));
+    if (key == 103) while (buyUpgrade("green"));
+    if (key >= 49 && key <= 52) while (buyUpgrade("blue", key % 49));
+
 }, false)
 window.addEventListener("keydown", function (event) {
     var key = event.keyCode || event.which;
