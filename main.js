@@ -188,7 +188,7 @@ function updateStats() {
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
     price.blue[1] = 4 * Math.pow(2, player.level.blue[1]);
     price.blue[2] = 8 * Math.pow(2, player.level.blue[2]);
-    price.blue[3] = 1048576 * Math.pow(Math.pow(512, Math.max(Math.floor(Math.pow(player.level.blue[3] - 4, 1.5)) + 1, 1)), player.level.blue[3]);
+    price.blue[3] = 1048576 * Math.pow(Math.pow(512, Math.max(Math.floor(Math.pow(Math.max(player.level.blue[3] - 4, 0), 1.5)) + 1, 1)), player.level.blue[3]);
     if (player.bars.red.mouse == 1) income.red = ((auto + (click * 50)) * IR) / 256;
     else income.red = (auto * IR / 256);
     income.green = (income.red * IG / 256);
