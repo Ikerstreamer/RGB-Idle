@@ -71,6 +71,7 @@ function autoBuyer() {
 function gameLoop() {
     var dif = Date.now() - player.lastUpdate;
     player.lastUpdate = Date.now();
+    player.spectrumTimer += dif;
     updateStats();
     increase(auto * (dif / 1000));
     if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
@@ -171,7 +172,7 @@ function buyUpgrade(name, Bindex) {
 
 function updateStats() {
     PD = player.spectrumLevel[8] == 1 ? 0.5 : 1;
-    Clock = Math.pow(2, player.level.blue[0]) / (player.spectrumLevel[11] == 1 ? 1024 : 1);
+    Clock = Math.pow(2, player.level.blue[0]) / (player.spectrumLevel[11] == 1 ? 512 : 1);
     if (player.spectrumLevel[2] == 1) {
         IR = 4 + (4 * player.level.blue[1]);
         IG = 4 + (4 * player.level.blue[2]);
@@ -179,7 +180,7 @@ function updateStats() {
         IR = 2 + (2 * player.level.blue[1]);
         IG = 2 + (2 * player.level.blue[2]);
     }
-    Cores = Math.pow(2 * (player.spectrumLevel[11] == 1 ? Math.max(Math.floor(player.level.blue[3]/5)  * 2, 1) : 1), player.level.blue[3]);
+    Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[11] == 1 ? (player.level.blue[3] + 1) * 2 : 1);
     click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[6] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
     auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[6] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[9] == 1 ? player.level.red : 1) * (player.spectrumLevel[10] == 1 ? Math.cbrt(player.spectrum) + 1 : 1);
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.2, Math.floor(player.level.red / 100))) * PD), player.level.red);
@@ -187,8 +188,8 @@ function updateStats() {
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
     price.blue[1] = 4 * Math.pow(2, player.level.blue[1]);
     price.blue[2] = 8 * Math.pow(2, player.level.blue[2]);
-    price.blue[3] = 1048576 * Math.pow(Math.pow(512,Math.floor(player.level.blue[3]/5)+1), player.level.blue[3]);
-    if (player.bars.red.mouse == 1) income.red = ((auto + (click*50)) * IR) / 256;
+    price.blue[3] = 1048576 * Math.pow(Math.pow(512, Math.max(Math.floor(Math.pow(player.level.blue[3] - 4, 1.5)) + 1, 1)), player.level.blue[3]);
+    if (player.bars.red.mouse == 1) income.red = ((auto + (click * 50)) * IR) / 256;
     else income.red = (auto * IR / 256);
     income.green = (income.red * IG / 256);
     income.blue = income.green * 8 / 256;
