@@ -179,7 +179,7 @@ function updateStats() {
         IR = 2 + (2 * player.level.blue[1]);
         IG = 2 + (2 * player.level.blue[2]);
     }
-    Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[11] == 1 ? 4 : 1);
+    Cores = Math.pow(player.spectrumLevel[11] == 1 ? 4 : 2, player.level.blue[3]);
     click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[6] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
     auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[6] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[9] == 1 ? player.level.red : 1) * (player.spectrumLevel[10] == 1 ? Math.cbrt(player.spectrum) + 1 : 1);
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.2, Math.floor(player.level.red / 100))) * PD), player.level.red);
