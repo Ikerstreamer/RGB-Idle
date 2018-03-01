@@ -150,7 +150,7 @@ function buyUpgrade(name, Bindex) {
                 player.unlock = true;
                 document.getElementById('blueDiv').classList.remove('hidden');
             }
-            if(Bindex == 8) {
+            if(Bindex == 9) {
                 if (player.level.red < 100) player.level.red = 100;
                 if (player.level.green < 100) player.level.green = 100;
             }
