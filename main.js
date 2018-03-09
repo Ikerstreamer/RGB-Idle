@@ -13,7 +13,7 @@ var player = {
     lastUpdate: Date.now(),
 }
 
-var AB = true;
+var AB = {red:true,green:true};
 var CM = 1;
 var Cores = 1;
 var Clock = 1;
@@ -28,7 +28,7 @@ var IR = 0;
 var RSS = 0;
 var PD = 0;
 var SR = 0;
-var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 15, 25, 50, 100, 250, 500, 2500, 10000];
+var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 15, 25, 50, 100, 250, 500, 2500, 5000];
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
@@ -62,10 +62,8 @@ function init() {
 }
 
 function autoBuyer() {
-    if (AB) {
-        if (player.spectrumLevel[4] == 1) while (buyUpgrade("red"));
-        if (player.spectrumLevel[5] == 1) while (buyUpgrade("green"));
-    }
+        if (player.spectrumLevel[4] == 1 && AB.red) while (buyUpgrade("red"));
+        if (player.spectrumLevel[5] == 1 && AB.green) while (buyUpgrade("green"));
 }
 
 function gameLoop() {
@@ -114,7 +112,7 @@ function gameLoop() {
     document.getElementById("spectrumReset").childNodes[1].innerHTML ="<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
     document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
     for (var i = 0; i < player.spectrumLevel.length; i++) {
-        document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = player.spectrumLevel[i] == 1 ? "Bought" : "Not Bought" ;
+        document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = SUInfo(i);
         document.getElementById("spectrumButton" + i).childNodes[2].innerHTML = "Price: " + formatNum(SpecPrice[i], 0) + " Spectrum ";
         if (player.spectrumLevel[i] == 1) document.getElementById("spectrumButton" + i).classList.add("bought");
         else document.getElementById("spectrumButton" + i).classList.remove("bought");
@@ -174,9 +172,43 @@ function buyUpgrade(name, Bindex) {
     }
 }
 
+function SUInfo(num){
+    switch(num){
+        case 0:
+            return "Current CM: " + Math.max(Math.log10(CM), 1).toFixed(1) + "x";
+        case 1:
+            return "Currency Gain: " + (player.spectrumLevel[1] + 1) + " per fill"
+        case 2:
+            return "Base Bar Increase: " + (2 + player.spectrumLevel[2] * 2) + "/256";
+        case 3:
+            return player.spectrumLevel[3] == 1 ? "Resets on Spectrum" : "Constantly Decaying";
+        case 4:
+            return player.spectrumLevel[4] == 1 ? "<button onclick='ToggleAB(`red`)' class='button'>" + (AB.red ? "On" : "Off") + "</button>" : "Buy Red Yourself!";
+        case 5:
+            return player.spectrumLevel[5] == 1 ? "<button onclick='ToggleAB(`green`)' class='button'>" + (AB.green ? "On" : "Off") + "</button>" : "Buy Green Yourself!";
+        case 6:
+            return "Current Multi per 10: " + (player.spectrumLevel[6] + 1) + "x";
+        case 7:
+            return "Current Multi per 10: " + (player.spectrumLevel[7] / 10 + 1.15) + "x";
+        case 8:
+            return player.spectrumLevel[8] == 1 ? "Blue is Unlocked Permanetly" : "Blue Still Costs 50G";
+        case 9:
+            return "You start with " + (player.spectrumLevel[9] * 100) + " lvls of Red and Green";
+        case 10:
+            return "R&G cost " + ((1 - PD) * 100) + "% less";
+        case 11:
+            return "Current Multi: " + player.level.red + "x";
+        case 12:
+            return "Current Multi: " + Math.max(player.spectrum, 1) + "x";
+        case 13:
+            return player.spectrumLevel[13] == 1 ? "Better Formula" : "Regular Formula";
+        case 14:
+            return "Base Core Count: " + (player.spectrumLevel[13] == 1 ? 8 : 1);
+    }
+}
+
 function updateStats() {
     PD = player.spectrumLevel[10] == 1 ? 0.5 : 1;
-    //Clock = Math.pow(2, player.level.blue[0]) / (player.spectrumLevel[14] == 1 ? 512 : 1);
     Clock = Math.pow(2, player.level.blue[0]);
     if (player.spectrumLevel[2] == 1) {
         IR = (4 + (4 * player.level.blue[1])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[1] / 10), 1) : 1);
@@ -185,10 +217,9 @@ function updateStats() {
         IR = (2 + (2 * player.level.blue[1])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[1] / 10), 1) : 1);
         IG = (2 + (2 * player.level.blue[2])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[2] / 10), 1) : 1);
     }
-    //Cores = Math.pow(2 * (player.spectrumLevel[14] == 1 ? Math.max(Math.floor(player.level.blue[3] / 5) * 2, 1) : 1), player.level.blue[3]);
     Cores = Math.pow(2, player.level.blue[3])* (player.spectrumLevel[14] == 1 ? 8 : 1);
     click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
-    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15),Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.cbrt(player.spectrum) + 1 : 1);
+    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15), Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.05,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(player.spectrum, 1) : 1);
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.2, Math.floor(player.level.red / 100))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.2, Math.floor(player.level.green / 100))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
@@ -398,19 +429,30 @@ function statPage() {
     }
 }
 
+function ToggleAB(name){
+    if (name == "all") {
+        AB.red = !AB.red;
+        AB.green = !AB.green;
+    } else AB[name] = !AB[name];
+}
+
 window.addEventListener("keypress",function(event) {
     var key = event.keyCode || event.which;
     if (key == 114) while (buyUpgrade("red"));
     if (key == 103) while (buyUpgrade("green"));
     if (key >= 49 && key <= 52) while (buyUpgrade("blue", key % 49));
-
+    if (key == 109) {
+        while (buyUpgrade("green"));
+        while (buyUpgrade("red"));
+        for (var i = 0; i < 4; i++) while (buyUpgrade("blue", i));
+    }
 }, false)
 window.addEventListener("keydown", function (event) {
     var key = event.keyCode || event.which;
     if (key == 32) {
         press("red",1)
     }
-    if (key == 65) AB = !AB;
+    if (key == 65) ToggleAB("all");
 }, false)
 window.addEventListener("keyup", function (event) {
     var key = event.keyCode || event.which;
