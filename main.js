@@ -95,9 +95,9 @@ function gameLoop() {
                 switch (j) {
                     case 0: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current speed: " + formatNum(Clock, 0, "Hz");
                         break
-                    case 1: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (IR / 256 >= 1 ? formatNum(Math.floor(IR / 256), 0) + " & " : "") + formatNum(IR % 256,0) + "/256";
+                    case 1: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (IR / 256 >= 100 ? "~" + formatNum(Math.floor(IR / 256), 0) : (IR / 256 >= 1 ? formatNum(Math.floor(IR / 256), 0) + " & " : "") + formatNum(IR % 256, 0) + "/256");
                         break
-                    case 2: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (IG / 256 >= 1 ? formatNum(Math.floor(IG / 256), 0) + " & " : "") + formatNum(IG % 256, 0) + "/256";
+                    case 2: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (IG / 256 >= 100 ? "~" + formatNum(Math.floor(IG / 256), 0) : (IG / 256 >= 1 ? formatNum(Math.floor(IG / 256), 0) + " & " : "") + formatNum(IG % 256, 0) + "/256");
                         break
                     case 3: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Core Count: " + formatNum(Cores, 0);
                         break
@@ -112,7 +112,7 @@ function gameLoop() {
     document.getElementById("spectrumReset").childNodes[1].innerHTML ="<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
     document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
     for (var i = 0; i < player.spectrumLevel.length; i++) {
-        document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = SUInfo(i);
+        if(i!=5 && i!=4)document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = SUInfo(i);
         document.getElementById("spectrumButton" + i).childNodes[2].innerHTML = "Price: " + formatNum(SpecPrice[i], 0) + " Spectrum ";
         if (player.spectrumLevel[i] == 1) document.getElementById("spectrumButton" + i).classList.add("bought");
         else document.getElementById("spectrumButton" + i).classList.remove("bought");
@@ -152,6 +152,9 @@ function buyUpgrade(name, Bindex) {
                 if (player.level.red < 100) player.level.red = 100;
                 if (player.level.green < 100) player.level.green = 100;
             }
+            if (Bindex == 5 || Bindex == 4) {
+                document.getElementById("spectrumButton" + Bindex).childNodes[1].innerHTML = SUInfo(Bindex);
+            }
             player.spectrum -= SpecPrice[Bindex];
             player.spectrumLevel[Bindex]++;
             updateStats();
@@ -183,9 +186,9 @@ function SUInfo(num){
         case 3:
             return player.spectrumLevel[3] == 1 ? "Resets on Spectrum" : "Constantly Decaying";
         case 4:
-            return player.spectrumLevel[4] == 1 ? "<button onclick='ToggleAB(`red`)' class='button'>" + (AB.red ? "On" : "Off") + "</button>" : "Buy Red Yourself!";
+            return player.spectrumLevel[4] == 1 ? "<div onclick='ToggleAB(`red`)' class='button' style='height:100%;width:50%;background-color:" + (AB.red ? "green" : "red") + "'>" + (AB.red ? "On" : "Off") + "</div>" : "Buy Red Yourself!";
         case 5:
-            return player.spectrumLevel[5] == 1 ? "<button onclick='ToggleAB(`green`)' class='button'>" + (AB.green ? "On" : "Off") + "</button>" : "Buy Green Yourself!";
+            return player.spectrumLevel[5] == 1 ? "<div onclick='ToggleAB(`green`)' class='button' style='height:100%;width:50%;background-color:" + (AB.green ? "green" : "red") + "'>" + (AB.green ? "On" : "Off") + "</div>" : "Buy Green Yourself!";
         case 6:
             return "Current Multi per 10: " + (player.spectrumLevel[6] + 1) + "x";
         case 7:
@@ -197,9 +200,9 @@ function SUInfo(num){
         case 10:
             return "R&G cost " + ((1 - PD) * 100) + "% less";
         case 11:
-            return "Current Multi: " + player.level.red + "x";
+            return "Current Multi: " + formatNum(player.level.red,0) + "x";
         case 12:
-            return "Current Multi: " + Math.max(player.spectrum, 1) + "x";
+            return "Current Multi: " + formatNum(Math.max(player.spectrum, 1),0) + "x";
         case 13:
             return player.spectrumLevel[13] == 1 ? "Better Formula" : "Regular Formula";
         case 14:
@@ -230,7 +233,8 @@ function updateStats() {
     else income.red = (auto * IR / 256);
     income.green = (income.red * IG / 256);
     income.blue = income.green * 8 / 256;
-    SR = Math.max(Math.log(Math.pow((player.spliced.red * player.spliced.green * player.spliced.blue) / 16777216, 1 / (3 - player.spectrumLevel[13])) )/Math.log(1000),0);
+    if (player.spliced.red * player.spliced.green * player.spliced.blue > Number.MAX_VALUE) SR = Math.max(Math.log(Math.pow((player.spliced.red) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.green) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.blue) / 16777216, 1 / (3 - player.spectrumLevel[13]))) / Math.log(1000), 0);
+        else SR = Math.max(Math.log(Math.pow((player.spliced.red * player.spliced.green * player.spliced.blue) / 16777216, 1 / (3 - player.spectrumLevel[13]))) / Math.log(1000), 0);
 }       
 
 function formatNum(num, dp, type) {
@@ -310,10 +314,10 @@ function setupPlayer() {
         updateStats();
         player.version = v;
         statPage();
+        document.getElementById("spectrumButton" + 4).childNodes[1].innerHTML = SUInfo(4);
+        document.getElementById("spectrumButton" + 5).childNodes[1].innerHTML = SUInfo(5);
     }
 }
-
-
 
 function load(name) {
     if (name == "Import") {
@@ -394,7 +398,7 @@ function flip(option) {
         player.options.fps = temp[(temp.indexOf(player.options.fps) + 1) % 4];
         frameTime = 1000 / player.options.fps;
         clearInterval(mainLoop);
-        mainLoop = setInterval(loop,frameTime)
+        mainLoop = setInterval(gameLoop,frameTime)
     }else if(option == "notation"){
         var temp = ["Default", "Scientific"];
         player.options.notation = temp[(temp.indexOf(player.options.notation) + 1) % 2];
@@ -434,6 +438,8 @@ function ToggleAB(name){
         AB.red = !AB.red;
         AB.green = !AB.green;
     } else AB[name] = !AB[name];
+    document.getElementById("spectrumButton" + 4).childNodes[1].innerHTML = SUInfo(4);
+    document.getElementById("spectrumButton" + 5).childNodes[1].innerHTML = SUInfo(5);
 }
 
 window.addEventListener("keypress",function(event) {
