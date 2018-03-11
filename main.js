@@ -50,6 +50,8 @@ function bar(n,r,g,b,elemid) {
         this.element.parentNode.onmousedown = function () { press(temp, 1) };
         this.element.parentNode.onmouseup = function () { press(temp, 0) };
         this.element.parentNode.onmouseleave = function () { press(temp, 0) };
+        this.element.parentNode.ontouchstart = function () { press(temp, 1) };
+        this.element.parentNode.ontouchstop = function () { press(temp, 0) };
     }
 }
 
