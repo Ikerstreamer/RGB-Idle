@@ -1,4 +1,4 @@
-var v = 0.0091;
+var v = 1.0;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -275,41 +275,7 @@ function setupPlayer() {
     player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
     player.bars.red.setup();
     if (load() != false) {
-        if (load().version >= 0.001) player = load();
-        if (player.version < 0.002) player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
-        if (player.version < 0.003) {
-            player.spectrum = 0;
-            player.spectrumLevel = [1, 1, 1, 1, 0, 0];
-        }
-        if (player.version < 0.004) player.specced = 0;
-        if (player.version < 0.005) {
-            player.spliced = { red: 0, green: 0, blue: 0 };
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0];
-        }
-        if (player.version < 0.006) {
-            var temp = [1, 3, 7, 12, 35, 50, 200, 500]
-            for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        }
-        if (player.version < 0.0065) player.options = { fast: false, fps: 50 };
-        if (player.version < 0.007) player.options.notation = "Default";
-        if(player.version < 0.008){
-            player.spectrumTimer = 0;
-            player.previousSpectrums = [{ time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }];
-        }
-        if(player.version < 0.0085){
-            player.lastUpdate = Date.now();
-        }
-        if (player.version < 0.009) {
-            var temp = [1, 1, 3, 5, 10, 15, 50, 100, 500, 2000];
-            for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        }
-        if (player.version < 0.0091) {
-            var temp = [1, 1, 3, 5, 5, 7, 10, 15, 50, 100, 500, 2000];
-            for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        }
+        if (load().version >= 1) player = load();
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
         player.version = v;
