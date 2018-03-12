@@ -342,7 +342,7 @@ function reset(type) {
             level: { red: 0, green: 0, blue: [0, 0, 0, 0] },
             unlock: false,
             spectrum: 0,
-            spectrumLevel: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            spectrumLevel: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
             specced: 0,
             spliced: { red: 0, green: 0, blue: 0 },
             options: { fast: false, fps: 50, notation: "Default" },
