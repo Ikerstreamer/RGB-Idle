@@ -1,4 +1,4 @@
-var v = 1.0;
+var v = 1.01;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -279,6 +279,7 @@ function setupPlayer() {
     player.bars.red.setup();
     if (load() != false) {
         if (load().version >= 1) player = load();
+        if(player.version < 1.01) while(player.spectrumLevel.length < 15) player.spectrumLevel.push(0);
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
         statPage();
