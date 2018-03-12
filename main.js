@@ -281,11 +281,11 @@ function setupPlayer() {
         if (load().version >= 1) player = load();
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
-        player.version = v;
         statPage();
         document.getElementById("spectrumButton" + 4).childNodes[1].innerHTML = SUInfo(4);
         document.getElementById("spectrumButton" + 5).childNodes[1].innerHTML = SUInfo(5);
     }
+    player.version = v;
 }
 
 function load(name) {
