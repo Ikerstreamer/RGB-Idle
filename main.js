@@ -40,7 +40,8 @@ function bar(n,r,g,b,elemid) {
         if (this.mouse == 1) {
             CM += 0.1 * (50 / player.options.fps);
             increase(click * (50 / player.options.fps));
-        } else if (this.name == "red" && CM > 1 && player.spectrumLevel[3] == 0) CM -= 0.15 * (50 / player.options.fps);
+        } else if (this.name == "red" && player.spectrumLevel[3] == 0)if(CM > 1) CM -= 0.15 * (50 / player.options.fps);
+        else CM = 1;
         if (income[this.name] >= 10) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
         this.element.style.background = RGBstring(this.color);
