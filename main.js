@@ -1,4 +1,4 @@
-var v = 0.0091;
+var v = 1;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -19,6 +19,7 @@ var Cores = 1;
 var Clock = 1;
 var RUM = 1;
 var tab = "RGB";
+var subtab = {spectrum:"Upgrades"}
 var price = { red: 5, green: 5, blue: [0, 0, 0, 0] };
 var income = {red:0, green:0, blue: 0};
 var click = 5;
@@ -52,6 +53,7 @@ function bar(n,r,g,b,elemid) {
         this.element.parentNode.onmouseleave = function () { press(temp, 0) };
         this.element.parentNode.ontouchstart = function () { press(temp, 1) };
         this.element.parentNode.ontouchstop = function () { press(temp, 0) };
+        this.element.parentNode.ontouchcancel = function () { press(temp, 0) };
     }
 }
 
@@ -75,6 +77,7 @@ function gameLoop() {
     updateStats();
     increase(auto * (dif / 1000));
     if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
+    if (SumOf(player.spectrumLevel) == 15)document.getElementsByClassName("switch")[5].classList.remove("hidden");
     if (player.level.blue[3] >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
     if (player.money.blue >= 1) document.getElementsByClassName("switch")[1].classList.remove("hidden");
     if (player.specced > 0) {
@@ -82,6 +85,18 @@ function gameLoop() {
         document.getElementsByClassName("switch")[3].classList.remove("hidden");
         document.getElementById("tabSpectrum").childNodes[1].classList.add("hidden");
         document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
+    }
+    if (tab == "Spectrum" && subtab.spectrum == "Prism") {
+        window.costSpec = 0;
+        for (var i = 0; i < 3; i++) {
+            var temp = Object.keys(player.money)[i];
+            var row = document.getElementById(temp + "Prism");
+            row.cells[0].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[1].childNodes[0].value) + "," + Math.floor(row.cells[1].childNodes[2].value) + "," + Math.floor(row.cells[1].childNodes[4].value) + ")";
+            var colors = ["Red: ","Green: ","Blue: "]
+            for (var j = 0; j < 5; j += 2) row.cells[2].childNodes[j].innerHTML = colors[j / 2] + formatNum((player.spectrumLevel[1] + 1) * (Math.floor(row.cells[1].childNodes[j].value) / 255), 2);
+            costSpec += Math.floor(row.cells[1].childNodes[0].value + 1) * Math.floor((row.cells[1].childNodes[2].value + 1) * 2) * Math.floor((row.cells[1].childNodes[4].value + 1) * 3);
+            }
+        document.getElementById("mixButton").innerHTML = "Create a New Spectrum Mix<br>This will cost: " + formatNum(costSpec, 2) + " Spectrum";
     }
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
@@ -133,7 +148,9 @@ function increase(amnt) {
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
-        player.money[temp.name] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256);
+        player.money["red"] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0]/255;
+        player.money["green"] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1]/255;
+        player.money["blue"] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2]/255;
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : 8);
         temp.width = temp.width % 256;
     }
@@ -277,48 +294,15 @@ function setupPlayer() {
     player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
     player.bars.red.setup();
     if (load() != false) {
-        if (load().version >= 0.001) player = load();
-        if (player.version < 0.002) player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
-        if (player.version < 0.003) {
-            player.spectrum = 0;
-            player.spectrumLevel = [1, 1, 1, 1, 0, 0];
-        }
-        if (player.version < 0.004) player.specced = 0;
-        if (player.version < 0.005) {
-            player.spliced = { red: 0, green: 0, blue: 0 };
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0];
-        }
-        if (player.version < 0.006) {
-            var temp = [1, 3, 7, 12, 35, 50, 200, 500]
-            for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        }
-        if (player.version < 0.0065) player.options = { fast: false, fps: 50 };
-        if (player.version < 0.007) player.options.notation = "Default";
-        if(player.version < 0.008){
-            player.spectrumTimer = 0;
-            player.previousSpectrums = [{ time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }];
-        }
-        if(player.version < 0.0085){
-            player.lastUpdate = Date.now();
-        }
-        if (player.version < 0.009) {
-            var temp = [1, 1, 3, 5, 10, 15, 50, 100, 500, 2000];
-            for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        }
-        if (player.version < 0.0091) {
-            var temp = [1, 1, 3, 5, 5, 7, 10, 15, 50, 100, 500, 2000];
-            for (var i = 0; i < player.spectrumLevel.length; i++) if (player.spectrumLevel[i] == 1) player.spectrum += temp[i];
-            player.spectrumLevel = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        }
+        if (load().version >= 1) player = load();
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
+        if (SumOf(player.spectrumLevel) == 15)
         updateStats();
-        player.version = v;
         statPage();
         document.getElementById("spectrumButton" + 4).childNodes[1].innerHTML = SUInfo(4);
         document.getElementById("spectrumButton" + 5).childNodes[1].innerHTML = SUInfo(5);
     }
+    player.version = v;
 }
 
 function load(name) {
@@ -407,14 +391,27 @@ function flip(option) {
     }else player.options[option] = !player.options[option];
 }
 
-function switchTab(name , num) {
-    tab = name;
-    for (var i = 0; i < document.getElementsByClassName("tab").length; i++) {
-        if ("tab" + tab == document.getElementsByClassName("tab")[i].id) document.getElementsByClassName("tab")[i].classList.remove("hidden");
-        else document.getElementsByClassName("tab")[i].classList.add("hidden");
+function mix() {
+    if (player.spectrum >= costSpec) {
+        player.spectrum -= costSpec;
+        for (var i = 0; i < 3; i++) {
+            var temp = Object.keys(player.money)[i];
+            var row = document.getElementById(temp + "Prism");
+            player.bars[temp].color = [Math.floor(row.cells[1].childNodes[0].value), Math.floor(row.cells[1].childNodes[2].value), Math.floor(row.cells[1].childNodes[4].value)];
+            console.log(player.bars[temp].color)
+        }
     }
-    for (var i = 0; i < document.getElementsByClassName("switch").length; i++) document.getElementsByClassName("switch")[i].classList.remove("active");
-    document.getElementsByClassName("switch")[num].classList.add("active");
+}
+
+function switchTab(name, num, sub) {
+    if (sub == undefined) tab = name;
+    else subtab[sub] = name;
+    for (var i = 0; i < document.getElementsByClassName("tab").length; i++) {
+        document.getElementsByClassName("tab")[i].classList.add("hidden");
+        document.getElementsByClassName("switch")[i].classList.remove("active");
+        if ("tab" + tab == document.getElementsByClassName("tab")[i].id || "tab" + subtab.spectrum == document.getElementsByClassName("tab")[i].id) document.getElementsByClassName("tab")[i].classList.remove("hidden");
+        if (tab == document.getElementsByClassName("switch")[i].innerHTML || subtab.spectrum == document.getElementsByClassName("switch")[i].innerHTML) document.getElementsByClassName("switch")[i].classList.add("active"); 
+    }
 }
 
 function displayIncome(num) {
@@ -433,6 +430,10 @@ function statPage() {
     for (var i = 0; i < table.rows.length; i++) {
         if (player.previousSpectrums[i].time != 0) table.rows[i].cells[0].innerHTML = (i == 0 ? "Your last Spectrum" : "Your Spectrum " + (i + 1) + " Spectrums ago") + " took " + (player.previousSpectrums[i].time >= 3600000 ? Math.floor(player.previousSpectrums[i].time / 3600000) + " hours and " + Math.floor((player.previousSpectrums[i].time % 3600000) / 60000) + " minutes" : (player.previousSpectrums[i].time >= 60000 ? Math.floor(player.previousSpectrums[i].time / 60000) + " minutes and " + Math.floor((player.previousSpectrums[i].time % 60000) / 1000) + " seconds" : (player.previousSpectrums[i].time >= 10000 ? Math.floor(player.previousSpectrums[i].time / 1000) + " seconds" : (player.previousSpectrums[i].time > 0 ? player.previousSpectrums[i].time + " millis" : 0)))) + " and earned you " + formatNum(player.previousSpectrums[i].amount, 0) + " Spectrum";
     }
+}
+
+function SumOf(arr) {
+    return arr.reduce((acc, num) => acc + num);
 }
 
 function ToggleAB(name){
