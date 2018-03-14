@@ -1,4 +1,4 @@
-var v = 1;
+var v = 1.05;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -11,6 +11,8 @@ var player = {
     spectrumTimer: 0,
     previousSpectrums: [{ time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}],
     lastUpdate: Date.now(),
+    prism: false,
+    black:0,
 }
 
 var AB = {red:true,green:true};
@@ -87,22 +89,29 @@ function gameLoop() {
         document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
     }
     if (tab == "Spectrum" && subtab.spectrum == "Prism") {
-        window.costSpec = 0;
+        window.mixCost = 0;
         for (var i = 0; i < 3; i++) {
             var temp = Object.keys(player.money)[i];
             var row = document.getElementById(temp + "Prism");
+            var PVal = [[64, 1, 0], [64, 0, 1], [0, 0, 0]];
+            if (!player.prism) for (var j = 0; j < 5; j += 2) row.cells[1].childNodes[j].value = PVal[i][j / 2];
             row.cells[0].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[1].childNodes[0].value) + "," + Math.floor(row.cells[1].childNodes[2].value) + "," + Math.floor(row.cells[1].childNodes[4].value) + ")";
-            var colors = ["Red: ","Green: ","Blue: "]
-            for (var j = 0; j < 5; j += 2) row.cells[2].childNodes[j].innerHTML = colors[j / 2] + formatNum((player.spectrumLevel[1] + 1) * (Math.floor(row.cells[1].childNodes[j].value) / 255), 2);
-            costSpec += Math.floor(row.cells[1].childNodes[0].value + 1) * Math.floor((row.cells[1].childNodes[2].value + 1) * 2) * Math.floor((row.cells[1].childNodes[4].value + 1) * 3);
+            var colors = ["Red: ", "Green: ", "Blue: "]
+            if (row.cells[1].childNodes[0].value + row.cells[1].childNodes[2].value + row.cells[1].childNodes[4].value == 0) row.cells[2].innerHTML = "Black: <sup>" + 1 + "</sup>&frasl;<sub>" + formatNum(Math.pow(256, 3)) + "</sub>";
+            else {
+                row.cells[2].innerHTML = "<span></span><br><span></span><br><span></span>";
+                for (var j = 0; j < 5; j += 2) row.cells[2].childNodes[j].innerHTML = colors[j / 2] + formatNum((Math.floor(row.cells[1].childNodes[j].value) / 255), 3);
             }
-        document.getElementById("mixButton").innerHTML = "Create a New Spectrum Mix<br>This will cost: " + formatNum(costSpec, 2) + " Spectrum";
+            if (player.prism) mixCost += Math.pow(1.5, Math.pow(Math.floor(row.cells[1].childNodes[0].value), 0.6) + Math.pow(Math.floor(row.cells[1].childNodes[2].value), 0.7) + Math.pow(Math.floor(row.cells[1].childNodes[4].value), 0.8));
+            }
+        if (player.prism) document.getElementById("mixButton").innerHTML = "Create a New Color Mix<br>This will cost: " + formatNum(mixCost, 2) + " Blackness";
+        else document.getElementById("mixButton").innerHTML = "Activate the Prism and Embrace its Power!"
     }
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
         document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
-        if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
+        if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey],i)  ) + "/s";
         else document.getElementById(tempKey + "Bar").innerHTML = "";
         document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
         if (tempKey == "blue") {
@@ -126,6 +135,7 @@ function gameLoop() {
         }
     }
     document.getElementById("spectrumCount").innerHTML = "You have " + formatNum(player.spectrum, 0) + " Spectrum";
+    document.getElementById("blackCount").innerHTML = "You have " + formatNum(player.black) + " Blackness";
     document.getElementById("spectrumReset").childNodes[1].innerHTML ="<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
     document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
     for (var i = 0; i < player.spectrumLevel.length; i++) {
@@ -148,9 +158,10 @@ function increase(amnt) {
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
-        player.money["red"] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0]/255;
-        player.money["green"] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1]/255;
-        player.money["blue"] += (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2]/255;
+        player.money["red"] += (player.spectrumLevel[1] + !player.prism) * Math.floor(temp.width / 256) * temp.color[0] / 255;
+        player.money["green"] += (player.spectrumLevel[1] + !player.prism) * Math.floor(temp.width / 256) * temp.color[1] / 255;
+        player.money["blue"] += (player.spectrumLevel[1] + !player.prism) * Math.floor(temp.width / 256) * temp.color[2] / 255;
+        player.black += (temp.color[0] + temp.color[1] + temp.color[2] == 0 ? Math.floor(temp.width / 256)/Math.pow(256,3) : 0);
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : 8);
         temp.width = temp.width % 256;
     }
@@ -262,7 +273,7 @@ function formatNum(num, dp, type) {
     if (type == "Hz") {
         suffix = ["nHz", "&mu;Hz", "mHz", "Hz", "kHz", "MHz", "GHz", "THz", "PHz", "EHz", "ZHz", "YHz"]
         return (num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024)))) + suffix[Math.floor(Math.log(num * 1024) / Math.log(1024))]
-    } else if (num < 10000) return num.toFixed(Math.min(Math.max(2 - Math.floor(Math.log10(num)), 0), dp));
+    } else if (num < 10000) return num.toFixed(Math.min(Math.max(dp - Math.floor(Math.log10(num)), 0), dp));
     else if (num < 1e36 && player.options.notation == "Default") return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))))) + suffix[Math.floor(Math.log(num) / Math.log(1000)) - 1];
     else return (num / Math.pow(10, Math.floor(Math.log10(num)))).toFixed(1) + "e" +Math.floor(Math.log10(num));
 }
@@ -295,6 +306,10 @@ function setupPlayer() {
     player.bars.red.setup();
     if (load() != false) {
         if (load().version >= 1) player = load();
+        if (player.version < 1.05) {
+            player.prism = false;
+            player.black = 0;
+        }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         if (SumOf(player.spectrumLevel) == 15)
         updateStats();
@@ -315,7 +330,7 @@ function load(name) {
     }else if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
         var temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
         var tempSave = JSON.parse(atob(localStorage.getItem("RGBsave")));
-        tempSave.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+        tempSave.bars = { red: new bar("red", tempSave.bars.red.color[0], tempSave.bars.red.color[1], tempSave.bars.red.color[2], "redBar"), green: new bar("green", tempSave.bars.green.color[0], tempSave.bars.green.color[1], tempSave.bars.green.color[2], "greenBar"), blue: new bar("blue", tempSave.bars.blue.color[0], tempSave.bars.blue.color[1], tempSave.bars.blue.color[2], "blueBar") };
         tempSave.bars.red.width = temp.bars.red.width;
         tempSave.bars.green.width = temp.bars.green.width;
         tempSave.bars.blue.width = temp.bars.blue.width;
@@ -339,6 +354,8 @@ function reset(type) {
                 previousSpectrums: [{ time: player.spectrumTimer, amount: Math.floor(SR) }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]],
                 spectrumTimer: 0,
                 lastUpdate: player.lastUpdate,
+                prism: player.prism,
+                black: player.black,
             };
             player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
             player.bars.red.setup();
@@ -366,6 +383,8 @@ function reset(type) {
             spectrumTimer: 0,
             previousSpectrums: [{ time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }],
             lastUpdate: Date.now(),
+            prism: false,
+            black: 0,
         };
         tab = "RGB";
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
@@ -392,12 +411,24 @@ function flip(option) {
 }
 
 function mix() {
-    if (player.spectrum >= costSpec) {
-        player.spectrum -= costSpec;
+    if (!player.prism) {
+        if (confirm("The prism rises as you approch it, so many question you want it to answer yet it hovers there dead silent. You stick your hand out to reach for it and as you do all the light around you seems to fade. The blackness of the prism seems to consume everything, your spectrum fades out of exsistence.\n The game is about to change, your 3 colored bars will no longer solely produce red, green and blue respectively. Now each bars production can be altered to produce a certain amount of the base 3 colors, your first prism mix is fixed.")) {
+            SR = 1;
+            reset(1);
+            player.spectrum = 0;
+            player.prism = true;
+            mixCost = 0;
+            player.level.red = 0;
+            player.level.green = 0;
+        }else return
+    }
+    if (player.black >= mixCost) {
+        player.black -= mixCost;
         for (var i = 0; i < 3; i++) {
             var temp = Object.keys(player.money)[i];
             var row = document.getElementById(temp + "Prism");
             player.bars[temp].color = [Math.floor(row.cells[1].childNodes[0].value), Math.floor(row.cells[1].childNodes[2].value), Math.floor(row.cells[1].childNodes[4].value)];
+            tab = "RGB";
             console.log(player.bars[temp].color)
         }
     }
@@ -414,9 +445,11 @@ function switchTab(name, num, sub) {
     }
 }
 
-function displayIncome(num) {
-    if (num == income.red) num *= player.spectrumLevel[1] + 1;
-    if (num == income.green) num *= player.spectrumLevel[1] + 1;
+function displayIncome(num, index) {
+    if (player.prism) {
+        num = 0;
+        for (var i = 0; i < 3; i++) num += income[Object.keys(player.money)[i]] * player.bars[Object.keys(player.money)[i]].color[index]/255;
+    }else num *= player.spectrumLevel[1] + !player.prism;
     return(num)
 }
 
