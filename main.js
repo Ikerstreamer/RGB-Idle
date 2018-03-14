@@ -93,7 +93,7 @@ function gameLoop() {
         for (var i = 0; i < 3; i++) {
             var temp = Object.keys(player.money)[i];
             var row = document.getElementById(temp + "Prism");
-            var PVal = [[64, 1, 0], [64, 0, 1], [0, 0, 0]];
+            var PVal = [[32, 0, 0], [32, 0, 1], [0, 0, 0]];
             if (!player.prism) for (var j = 0; j < 5; j += 2) row.cells[1].childNodes[j].value = PVal[i][j / 2];
             row.cells[0].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[1].childNodes[0].value) + "," + Math.floor(row.cells[1].childNodes[2].value) + "," + Math.floor(row.cells[1].childNodes[4].value) + ")";
             var colors = ["Red: ", "Green: ", "Blue: "]
