@@ -89,6 +89,7 @@ function gameLoop() {
         document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
     }
     if (tab == "Spectrum" && subtab.spectrum == "Prism") renderPrismTab();
+    else for (var i = 0; i < 3; i++) for (var j = 0; j < 5; j += 2) document.getElementById(Object.keys(player.money)[i] + "Prism").cells[1].childNodes[j].value = player.bars[Object.keys(player.money)[i]].color[j / 2];
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
@@ -150,7 +151,7 @@ function renderPrismTab() {
         if (player.prism.active) mixCost *= Math.pow(3, Math.pow(Math.floor(row.cells[1].childNodes[0].value), 0.6) + Math.pow(Math.floor(row.cells[1].childNodes[2].value), 0.7) + Math.pow(Math.floor(row.cells[1].childNodes[4].value), 0.8));
         if (player.prism.active) {
             row.cells[3].childNodes[0].classList.remove("hidden");
-            row.cells[3].childNodes[0].childNodes[1].innerHTML = player.prism.pcost[temp] + " Spectrum";
+            row.cells[3].childNodes[0].childNodes[1].innerHTML = formatNum(player.prism.pcost[temp],0) + " Spectrum";
         }
     }
     if (player.prism.active) document.getElementById("mixButton").innerHTML = "Create a New Color Mix<br>This will cost: " + formatNum(mixCost, 2) + " Blackness";
@@ -167,7 +168,7 @@ function increase(amnt) {
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
-        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255) player.spectrum += Math.floor(Math.log(Math.floor(temp.width / 256)) / Math.log(1000));
+        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255)Math.max(player.spectrum += Math.floor(Math.log(Math.floor(temp.width / 256)) / Math.log(1000)),0);
             else{
             player.money["red"] += (player.prism.active? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255;
             player.money["green"] += (player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255;
