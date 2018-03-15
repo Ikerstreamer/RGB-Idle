@@ -363,22 +363,22 @@ function load(name) {
 function reset(type, force) {
     if (type >= 1) {
         if (SR >= 1 || force) {
-            var colors = [player.bars.red.color, player.bars.green.color, player.bars.blue.color]
+            for (var i = 0; i < 3; i++) player.bars[Object.keys(player.money)[i]].width = 0;
             player.money = { red: 0, green: 0, blue: 0 };
             player.level = { red: player.spectrumLevel[9] * 100, green: player.spectrumLevel[9] * 100, blue: [0, 0, 0, 0] };
             player.unlock = player.spectrumLevel[8] == 1;
             player.spectrum += Math.floor(SR);
             player.previousSpectrums = [{ time: player.spectrumTimer, amount: SR }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
             player.spliced = { red: 0, green: 0, blue: 0 };
-            player.specced++;
+            player.specced += 1;
             player.spectrumTimer = 0;
             if (!player.unlock) {
                 document.getElementById('unlockBtn').classList.add('hidden');
                 document.getElementById('blueDiv').classList.add('hidden');
             }
             document.getElementById("spectrumDiv").classList.add("hidden");
-            updateStats();
             CM = 1;
+            updateStats();
             tab = "Spectrum";
             statPage();
         }
@@ -466,6 +466,7 @@ function displayIncome(num, index) {
 }
 
 function spliceColor(name) {
+    if (player.level.blue[3] === 0) return;
     player.spliced[name] += (player.money[name] / Math.min(player.level.blue[3] * 10, 100)) * (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
     player.money[name] -= player.money[name] / Math.min(player.level.blue[3] * 10, 100);
 }
