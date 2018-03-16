@@ -168,12 +168,12 @@ function increase(amnt) {
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
-        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255)Math.max(player.spectrum += Math.floor(Math.log(Math.floor(temp.width / 256)) / Math.log(1000)),0);
+        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255) player.spectrum += Math.max(Math.floor(Math.log(Math.floor(temp.width / 256)) / Math.log(1000)), 0);
             else{
             player.money["red"] += (player.prism.active? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255;
             player.money["green"] += (player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255;
             player.money["blue"] += (player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2] / 255;
-                player.black += (temp.color[0] + temp.color[1] + temp.color[2] == 0 ? Math.floor(temp.width / 256) * (player.spectrum / Math.max(player.black,Math.pow(256,3))) : 0);
+            player.black += (temp.color[0] + temp.color[1] + temp.color[2] == 0 ? Math.floor(temp.width / 256) * (player.spectrum / Math.max(player.black,Math.pow(256,3))) : 0);
             }
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : 8);
         temp.width = temp.width % 256;
@@ -254,7 +254,7 @@ function SUInfo(num){
         case 11:
             return "Current Multi: " + formatNum(player.level.red,0) + "x";
         case 12:
-            return "Current Multi: " + formatNum(Math.max(player.spectrum, 1),0) + "x";
+            return "Current Multi: " + formatNum(Math.max(Math.floor(Math.sqrt(player.spectrum)), 1), 0) + "x";
         case 13:
             return player.spectrumLevel[13] == 1 ? "Better Formula" : "Regular Formula";
         case 14:
@@ -264,7 +264,6 @@ function SUInfo(num){
 
 function updateStats() {
     PD = player.spectrumLevel[10] == 1 ? 0.5 : 1;
-    Clock = Math.pow(2, player.level.blue[0]);
     if (player.spectrumLevel[2] == 1) {
         IR = (4 + (4 * player.level.blue[1])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[1] / 10), 1) : 1);
         IG = (4 + (4 * player.level.blue[2])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[2] / 10), 1) : 1);
@@ -272,9 +271,10 @@ function updateStats() {
         IR = (2 + (2 * player.level.blue[1])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[1] / 10), 1) : 1);
         IG = (2 + (2 * player.level.blue[2])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[2] / 10), 1) : 1);
     }
-    Cores = Math.pow(2, player.level.blue[3])* (player.spectrumLevel[14] == 1 ? 8 : 1);
+    Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[14] == 1 ? 8 : 1);
+    Clock = Math.pow(2,Math.floor(Math.log(Math.pow(2, player.level.blue[0]) * (Cores * Math.pow(1.025,Cores)))/Math.log(2)));
     click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
-    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15), Math.floor(player.level.green / 10))) * (Clock * (Cores * Math.pow(1.025,Cores)))) * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(player.spectrum, 1) : 1);
+    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15), Math.floor(player.level.green / 10))) * Clock * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(Math.floor(Math.sqrt(player.spectrum)), 1) : 1));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.075, Math.max((player.level.red / 100)-1,0))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.075, Math.max((player.level.red / 100)-1,0))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, player.level.blue[0]);
@@ -293,11 +293,11 @@ function formatNum(num, dp, type) {
     if (dp == undefined) dp = 2;
     var suffix = ["K", "M", "B", "T", "Qu", "Qi", "Sx", "Sp", "Oc", "No", "Dc"]
     if (type == "Hz") {
-        suffix = ["nHz", "&mu;Hz", "mHz", "Hz", "kHz", "MHz", "GHz", "THz", "PHz", "EHz", "ZHz", "YHz"]
-        return (num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024)))) + suffix[Math.floor(Math.log(num * 1024) / Math.log(1024))]
+        var hsuffix = ["nHz", "&mu;Hz", "mHz", "Hz", "kHz", "MHz", "GHz", "THz", "PHz", "EHz", "ZHz", "YHz","XHz","XKHz","XMHz","XGHz","XTHz","XPHz","XEHz","XZHz","XYHz","XNHz","bXHz","bXKHz","bXMHz","bXGHz","bXTHz","bXPHz","bXEHz","bXZHz","bXYHz","bXNHz"]
+        return num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024))) + hsuffix[Math.floor(Math.log(num * 1024) / Math.log(1024))]
     } else if (num < 10000) return num.toFixed(Math.min(Math.max(dp - Math.floor(Math.log10(num)), 0), dp));
     else if (num < 1e36 && player.options.notation == "Default") return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))))) + suffix[Math.floor(Math.log(num) / Math.log(1000)) - 1];
-    else return (num / Math.pow(10, Math.floor(Math.log10(num)))).toFixed(1) + "e" +Math.floor(Math.log10(num));
+    else return (num / Math.pow(10, Math.floor(Math.log10(num)))).toFixed(1) + "e" + Math.floor(Math.log10(num));
 }
 
 function unlockBlue() {
@@ -365,7 +365,7 @@ function reset(type, force) {
         if (SR >= 1 || force) {
             for (var i = 0; i < 3; i++) player.bars[Object.keys(player.money)[i]].width = 0;
             player.money = { red: 0, green: 0, blue: 0 };
-            player.level = { red: player.spectrumLevel[9] * 100, green: player.spectrumLevel[9] * 100, blue: [0, 0, 0, 0] };
+            player.level = { red: player.spectrumLevel[9] * 20, green: player.spectrumLevel[9] * 20, blue: [0, 0, 0, 0] };
             player.unlock = player.spectrumLevel[8] == 1;
             player.spectrum += Math.floor(SR);
             player.previousSpectrums = [{ time: player.spectrumTimer, amount: SR }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
