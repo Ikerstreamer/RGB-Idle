@@ -142,18 +142,19 @@ function renderPrismTab() {
         if (!player.prism.active) for (var j = 0; j < 5; j += 2) row.cells[1].childNodes[j].value = PVal[i][j / 2];
         row.cells[0].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[1].childNodes[0].value) + "," + Math.floor(row.cells[1].childNodes[2].value) + "," + Math.floor(row.cells[1].childNodes[4].value) + ")";
         var colors = ["Red: ", "Green: ", "Blue: "]
-        if (row.cells[1].childNodes[0].value + row.cells[1].childNodes[2].value + row.cells[1].childNodes[4].value == 0) row.cells[2].innerHTML = "Black: <sup>" + formatNum(player.spectrum, 0) + "</sup>&frasl;<sub> " + formatNum(Math.max(player.black, Math.pow(256, 3))) + "</sub>";
+        if (row.cells[1].childNodes[0].value + row.cells[1].childNodes[2].value + row.cells[1].childNodes[4].value == 0) row.cells[2].innerHTML = "Black: <sup>" + formatNum(player.spectrum, 0) + "</sup>&frasl;<sub> " + formatNum(Math.max(player.black * Math.pow(256,3), Math.pow(256, 3))) + "</sub>";
         else if (row.cells[1].childNodes[0].value == 255 && row.cells[1].childNodes[2].value == 255 && row.cells[1].childNodes[4].value == 255) row.cells[2].innerHTML = "Spectrum: log<sub>1000</sub>(x)";
         else {
             row.cells[2].innerHTML = "<span></span><br><span></span><br><span></span>";
-            for (var j = 0; j < 5; j += 2) row.cells[2].childNodes[j].innerHTML = colors[j / 2] + formatNum((Math.floor(row.cells[1].childNodes[j].value) / 255 * player.prism.potency[Object.keys(player.prism.potency)[j / 2]]), 3);
+            for (var j = 0; j < 5; j += 2) row.cells[2].childNodes[j].innerHTML = colors[j / 2] + formatNum((Math.floor(row.cells[1].childNodes[j].value) / 255 * player.prism.potency[Object.keys(player.prism.potency)[i]]), 3);
         }
-        if (player.prism.active) mixCost *= Math.pow(3, Math.pow(Math.floor(row.cells[1].childNodes[0].value), 0.6) + Math.pow(Math.floor(row.cells[1].childNodes[2].value), 0.7) + Math.pow(Math.floor(row.cells[1].childNodes[4].value), 0.8));
+        if (player.prism.active) mixCost *= Math.pow(3, (player.bars[temp].color[0] == Math.floor(row.cells[1].childNodes[0].value) ? 0 : Math.pow(Math.floor(row.cells[1].childNodes[0].value), 0.6)) + (player.bars[temp].color[1] == Math.floor(row.cells[1].childNodes[2].value) ? 0 : Math.pow(Math.max(Math.floor(row.cells[1].childNodes[2].value),0), 0.7)) + (player.bars[temp].color[2] == Math.floor(row.cells[1].childNodes[4].value) ? 0 : Math.pow(Math.max(Math.floor(row.cells[1].childNodes[4].value) - player.bars[temp].color[2],0), 0.8)));
         if (player.prism.active) {
             row.cells[3].childNodes[0].classList.remove("hidden");
             row.cells[3].childNodes[0].childNodes[1].innerHTML = formatNum(player.prism.pcost[temp],0) + " Spectrum";
         }
     }
+    mixCost -= 1;
     if (player.prism.active) document.getElementById("mixButton").innerHTML = "Create a New Color Mix<br>This will cost: " + formatNum(mixCost, 2) + " Blackness";
     else document.getElementById("mixButton").innerHTML = "Activate the Prism and Embrace its Power!"
 
@@ -173,7 +174,7 @@ function increase(amnt) {
             player.money["red"] += (player.prism.active? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255;
             player.money["green"] += (player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255;
             player.money["blue"] += (player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2] / 255;
-            player.black += (temp.color[0] + temp.color[1] + temp.color[2] == 0 ? Math.floor(temp.width / 256) * (player.spectrum / Math.max(player.black,Math.pow(256,3))) : 0);
+            player.black += (temp.color[0] + temp.color[1] + temp.color[2] == 0 ? Math.floor(temp.width / 256) * (player.spectrum / Math.max(player.black * Math.pow(256, 3), Math.pow(256, 3))) : 0);
             }
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : 8);
         temp.width = temp.width % 256;
