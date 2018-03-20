@@ -441,6 +441,7 @@ function mix() {
         mixReset();
     } else if (player.spectrum >= mixCost / Math.max(player.black,1) && confirm("Do you want to pay the missing blackness using Spectrum? \nThis will cost " + formatNum(mixCost / Math.max(player.black,1), 0) + " Spectrum. This will leave with "+ formatNum(player.spectrum - (mixCost / Math.max(player.black,1)),0) +" Spectrum.")) {
         player.spectrum -= mixCost / Math.max(player.black, 1);
+        player.black = 0;
         mixReset();
     }
         function mixReset() {
