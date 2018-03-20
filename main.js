@@ -476,8 +476,8 @@ function displayIncome(num, index) {
 
 function spliceColor(name) {
     if (player.level.blue[3] === 0) return;
-    player.spliced[name] += (player.money[name] / Math.min(player.level.blue[3] * 10, 100)); //* (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
-    player.money[name] -= player.money[name] / Math.min(player.level.blue[3] * 10, 100);
+    player.spliced[name] += (player.money[name] * Math.min(player.level.blue[3] / 10, 1)); //* (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
+    player.money[name] -= player.money[name] * Math.min(player.level.blue[3] / 10, 1);
 }
 
 function statPage() {
