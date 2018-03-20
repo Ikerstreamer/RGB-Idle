@@ -289,7 +289,7 @@ function updateStats() {
     income.blue = income.green * 8 / 256;
     SR = Math.pow((player.spliced.red) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.green) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.blue) / 16777216, 1 / (3 - player.spectrumLevel[13]))
     SR = Math.max(Math.log(SR * (player.specced + 1)) / Math.log(1000), 0);
-    SR *= Math.floor(player.level.green / 1000) + (Math.floor(player.level.red / 500)/2) + 1;
+    SR *= ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
 }       
 
 function formatNum(num, dp, type) {
