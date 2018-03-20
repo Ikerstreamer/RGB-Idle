@@ -152,7 +152,7 @@ function renderPrismTab() {
             row.cells[2].innerHTML = "<span></span><br><span></span><br><span></span>";
             for (var j = 0; j < 5; j += 2) row.cells[2].childNodes[j].innerHTML = colors[j / 2] + formatNum((Math.floor(row.cells[1].childNodes[j].value) / 255 * player.prism.potency[Object.keys(player.prism.potency)[i]]), 3);
         }
-        if (player.prism.active) mixCost *= Math.pow(1.5,Math.pow(Math.floor(row.cells[1].childNodes[0].value), 1) + Math.pow(Math.floor(row.cells[1].childNodes[2].value), 1.05) + Math.pow(Math.floor(row.cells[1].childNodes[4].value), 1.1));
+        if (player.prism.active) mixCost *= Math.pow(1.25,Math.pow(Math.floor(row.cells[1].childNodes[0].value), 1) + Math.pow(Math.floor(row.cells[1].childNodes[2].value), 1.05) + Math.pow(Math.floor(row.cells[1].childNodes[4].value), 1.1));
         if (player.prism.active) {
             row.cells[3].childNodes[0].classList.remove("hidden");
             row.cells[3].childNodes[0].childNodes[1].innerHTML = formatNum(player.prism.pcost[temp],0) + " Spectrum";
@@ -287,8 +287,8 @@ function updateStats() {
     else income.red = (auto * IR / 256);
     income.green = (income.red * IG / 256);
     income.blue = income.green * 8 / 256;
-    if (player.spliced.red * player.spliced.green * player.spliced.blue > Number.MAX_VALUE) SR = Math.max(Math.log(Math.pow((player.spliced.red) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.green) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.blue) / 16777216, 1 / (3 - player.spectrumLevel[13]))) / Math.log(1000), 0);
-    else SR = Math.max(Math.log(Math.pow((player.spliced.red * player.spliced.green * player.spliced.blue) / 16777216, 1 / (3 - player.spectrumLevel[13]))) / Math.log(1000), 0);
+    SR = Math.pow((player.spliced.red) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.green) / 16777216, 1 / (3 - player.spectrumLevel[13])) * Math.pow((player.spliced.blue) / 16777216, 1 / (3 - player.spectrumLevel[13]))
+    SR = Math.max(Math.log(SR * (player.specced + 1)) / Math.log(1000), 0);
     SR *= Math.floor(player.level.green / 1000) + Math.floor(player.level.red / 1000);
 }       
 
@@ -439,7 +439,7 @@ function mix() {
     if (player.black >= mixCost) {
         player.black = 0;
         mixReset();
-    } else if (player.spectrum >= mixCost / Math.max(player.black,1) && confirm("Do you want to pay the missing blackness using Spectrum? \n This will cost " + formatNum(mixCost / Math.max(player.black,1), 0) + " Spectrum. This will leave with"+ formatNum(player.spectrum - (mixCost / Math.max(player.black,1)),0) +" Spectrum.")) {
+    } else if (player.spectrum >= mixCost / Math.max(player.black,1) && confirm("Do you want to pay the missing blackness using Spectrum? \nThis will cost " + formatNum(mixCost / Math.max(player.black,1), 0) + " Spectrum. This will leave with "+ formatNum(player.spectrum - (mixCost / Math.max(player.black,1)),0) +" Spectrum.")) {
         player.spectrum -= mixCost / Math.max(player.black, 1);
         mixReset();
     }
@@ -475,7 +475,7 @@ function displayIncome(num, index) {
 
 function spliceColor(name) {
     if (player.level.blue[3] === 0) return;
-    player.spliced[name] += (player.money[name] / Math.min(player.level.blue[3] * 10, 100)) * (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
+    player.spliced[name] += (player.money[name] / Math.min(player.level.blue[3] * 10, 100)); //* (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
     player.money[name] -= player.money[name] / Math.min(player.level.blue[3] * 10, 100);
 }
 
