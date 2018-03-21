@@ -1,6 +1,7 @@
 var v = 1.07;
 var player = {
-    money: { red: 0, green: 0, blue: 0},
+    money: { red: 0, green: 0, blue: 0 },
+    inf: { red:0,green:0,blue:0 },
     level: { red: 0, green: 0, blue: [0,0,0,0]},
     unlock: false,
     spliced: { red: 0, green: 0, blue: 0 },
@@ -44,7 +45,7 @@ function bar(n,r,g,b,elemid) {
             CM += 0.1 * (50 / player.options.fps);
             increase(click * (50 / player.options.fps));
         } else if (this.name == "red" && CM > 1 && player.spectrumLevel[3] == 0) CM -= 0.15 * (50 / player.options.fps);
-        if (income[this.name] >= 10) this.element.style.width = "100%";
+        if (this.name == "red" ? auto * IR : (this.name == "green" ? auto * IR * IG / 256 : auto * IR * IG * 8 / Math.pow(256, 2)) > 64) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
         this.element.style.background = RGBstring(this.color);
     }
@@ -95,7 +96,7 @@ function gameLoop() {
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
         document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
-        if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey],i)  ) + "/s";
+        if (tempKey == "red" ? auto * IR : (tempKey == "green" ? auto * IR * IG / 256 : auto * IR * IG * 8 / Math.pow(256, 2)) > 64) incomeBarDisplay(tempKey);
         else document.getElementById(tempKey + "Bar").innerHTML = "";
         document.getElementById(tempKey + "Splice").childNodes[0].innerHTML = "Splice " + Math.min(player.level.blue[3]*10, 100) + "% " + tempKey + " into a spectrum";
         document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
@@ -133,6 +134,29 @@ function gameLoop() {
     document.getElementsByClassName("setting")[5].childNodes[1].innerHTML = player.options.fps;
     document.getElementsByClassName("setting")[6].childNodes[1].innerHTML = "<b>" + player.options.notation + "</b>";
 }
+
+function incomeBarDisplay(name) {
+    var elem = document.getElementById(name + "Bar");
+    if (player.prism.active) {
+        var c = ["rgb(255,0,0)", "rgb(0,255,0)", "rgb(0,0,255)"]
+        var show = [1, 1, 1];
+        for (var i = 0; i < 3; i++) if (player.bars[name].color[i] === 0) show[i] = 0;
+        if (SumOf(show) === 0) elem.innerHTML = formatNum(displayIncome(name, "black")) + " Black/s";
+        else if (SumOf(show) == 1) elem.innerHTML = formatNum(displayIncome(name, show.indexOf(1))) + "/s";
+        else {
+            elem.innerHTML = "";
+            for (var i = 0; i < 3; i++) {
+                var temp = document.createElement("div");
+                temp.style.fontSize = (1 / SumOf(show)) + "em";
+                temp.style.color = c[i];
+                temp.innerHTML = formatNum(displayIncome(name, i)) + "/s";
+                if (show[i]) elem.appendChild(temp);
+            }
+        }
+    }else elem.innerHTML = formatNum(displayIncome(name)) + "/s";
+}
+
+
 
 function renderPrismTab() {
     window.mixCost = 1;
@@ -178,11 +202,14 @@ function increase(amnt) {
             player.money["red"] += (player.prism.active? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255;
             player.money["green"] += (player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255;
             player.money["blue"] += (player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2] / 255;
-            player.black += (temp.color[0] + temp.color[1] + temp.color[2] == 0 ? Math.floor(temp.width / 256) * (player.spectrum / Math.max(player.black * Math.pow(256, 3), Math.pow(256, 3))) : 0);
+            player.black += (temp.color[0] + temp.color[1] + temp.color[2] == 0 ? Math.floor(temp.width / 256) * (player.spectrum / Math.max(player.black, Math.pow(256, 3))) : 0);
             }
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : 8);
         temp.width = temp.width % 256;
     }
+    if (player.money.red > 2.56e256) player.money.red = 2.56e256;
+    if (player.money.green > 2.56e256) player.money.green = 2.56e256;
+    if (player.money.blue > 2.56e256) player.money.blue = 2.56e256;
 }
 
 function RGBstring(color) {
@@ -466,17 +493,18 @@ function switchTab(name, num, sub) {
     }
 }
 
-function displayIncome(num, index) {
+function displayIncome(name, index) {
+    var num = 0;
     if (player.prism.active) {
-        num = 0;
-        for (var i = 0; i < 3; i++) num += income[Object.keys(player.money)[i]] * player.prism.potency[Object.keys(player.money)[i]] * player.bars[Object.keys(player.money)[i]].color[index] / 255;
-    }else num *= player.spectrumLevel[1] + !player.prism.active;
+        if (index == "black")num = income[name] * player.prism.potency[name] * (player.spectrum / Math.max(player.black, Math.pow(256, 3)));
+            else num = income[name] * player.prism.potency[name] * player.bars[name].color[index] / 255;
+    }else num = income[name] * (player.spectrumLevel[1] + !player.prism.active);
     return(num)
 }
 
 function spliceColor(name) {
     if (player.level.blue[3] === 0) return;
-    player.spliced[name] += (player.money[name] * Math.min(player.level.blue[3] / 10, 1)); //* (name == "red" ? 0.5 : (name == "green" ? 1 : 128));
+    player.spliced[name] += (player.money[name] * Math.min(player.level.blue[3] / 10, 1));
     player.money[name] -= player.money[name] * Math.min(player.level.blue[3] / 10, 1);
 }
 
