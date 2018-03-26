@@ -8,17 +8,19 @@
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
+    <div class="popup">The prism rises as you approach it, so many question you want it to answer yet it hovers there dead silent. You stick your hand out to reach for it and as you do all the light around you seems to fade. The blackness of the prism seems to consume everything, your spectrum fades out of exsistence.<br> The game is about to change, your 3 colored bars will no longer solely produce red, green and blue respectively. Now each bars production can be altered to produce a certain amount of the base 3 colors, your first prism mix is fixed.<br> Click here to proceed or Press 'esc' to cancel</div>
+    <div class="popup">You have reached the limit of the amount of colors your computer can process. You can now alter these color to become unstable yet allow you further growth.<br> Each unstable color will halve autobuyer interval.<br>Click here to proceed</div>
     <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 3)">Stats</div>
     <div id="tabRGB" class="tab">
         <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress" style="cursor:pointer">
                 <div id="redBar" class="bar"></div>
-            </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div>
+            </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div><div id="redReduce" class="button hidden" style="background: red;width:unset" onclick="reduceProd('red')">Break Red</div>
         </div>
         <div id="greenDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress">
                 <div id="greenBar" class="bar"></div>
-            </div><div id="greenCount" class="count" style="color: rgb(0,255,0);"></div><div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div>
+            </div><div id="greenCount" class="count" style="color: rgb(0,255,0);"></div><div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div><div id="greenReduce" class="button hidden" style="background: rgb(0,255,0);width:unset" onclick="reduceProd('green')">Break Green</div>
         </div>
         <div id="unlockBtn" class="hidden button" onclick="unlockBlue()" style="background:rgb(0,0,255); font-size:40px">Buy Blue bar for 50 green!</div>
         <div id="blueDiv" class="hidden" style="padding-bottom:10px; padding-top:10px">
@@ -27,7 +29,7 @@
                     <div id="blueBar" class="bar"></div>
                 </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
             </div>
-            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div>
+            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);width:unset" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div><div id="blueReduce" class="button hidden" style="background: blue;" onclick="reduceProd('blue')">Break Blue</div>
         </div>
         <div id="spectrumDiv" class="hidden" style="width: 100%; padding-bottom:10px; padding-top:10px; align-self:center; text-align:center;">
             <div class="button" id="redSplice" onclick="spliceColor('red')" style="background: rgb(255,0,0);"><div>Splice 10% red into a spectrum</div><div>Spliced red:</div></div>

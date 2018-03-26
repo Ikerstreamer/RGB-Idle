@@ -143,6 +143,22 @@
         cursor: pointer;
     }
 
+.popup {
+    visibility: hidden;
+    width: 25%;
+    background-color: #555;
+    color: white;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 0;
+    position: absolute;
+    z-index: 1;
+    //bottom: 90%;
+    //left: 50%;
+    //margin-left: -40px;
+    //margin-right: -40px;
+}
+
 @media screen and (max-width: 1660px) {
     .progress {
         background: #D3D3D3;
