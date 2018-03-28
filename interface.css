@@ -30,7 +30,6 @@
 .count {
     margin-left: 25px;
     margin-right: 25px;
-    font:bold;
     font-size:100px;
     display: inline-block;
     font-family: Verdana;
@@ -153,10 +152,6 @@
     padding: 8px 0;
     position: absolute;
     z-index: 1;
-    //bottom: 90%;
-    //left: 50%;
-    //margin-left: -40px;
-    //margin-right: -40px;
 }
 
 @media screen and (max-width: 1660px) {
@@ -179,7 +174,6 @@
     .count {
         margin-left: 25px;
         margin-right: 25px;
-        font: bold;
         font-size: 75px;
         display: inline-block;
         font-family: Verdana;
@@ -202,8 +196,8 @@
             text-align: center;
             margin-left: 25px;
             margin-right: 25px;
+            width:15%;
         }
-
             .button.switch.active {
                 color: gold;
             }
@@ -258,7 +252,6 @@
     .count {
         margin-left: 25px;
         margin-right: 25px;
-        font: bold;
         font-size: 45px;
         display: inline-block;
         font-family: Verdana;

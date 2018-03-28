@@ -15,12 +15,16 @@
         <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress" style="cursor:pointer">
                 <div id="redBar" class="bar"></div>
-            </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div><div id="redReduce" class="button hidden" style="background: red;width:unset" onclick="reduceProd('red')">Break Red</div>
+            </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div><div id="redReduce" class="button hidden" style="background: red;width:100px" onclick="reduceProd('red')">Break Red</div>
         </div>
+
         <div id="greenDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress">
                 <div id="greenBar" class="bar"></div>
-            </div><div id="greenCount" class="count" style="color: rgb(0,255,0);"></div><div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div><div id="greenReduce" class="button hidden" style="background: rgb(0,255,0);width:unset" onclick="reduceProd('green')">Break Green</div>
+            </div>
+            <div id="greenCount" class="count" style="color: rgb(0,255,0);"></div>
+            <div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div>
+            <div id="greenReduce" class="button hidden" style="background: rgb(0,255,0);width:100px;" onclick="reduceProd('green')">Break Green</div>
         </div>
         <div id="unlockBtn" class="hidden button" onclick="unlockBlue()" style="background:rgb(0,0,255); font-size:40px">Buy Blue bar for 50 green!</div>
         <div id="blueDiv" class="hidden" style="padding-bottom:10px; padding-top:10px">
@@ -29,7 +33,7 @@
                     <div id="blueBar" class="bar"></div>
                 </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
             </div>
-            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);width:unset" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div><div id="blueReduce" class="button hidden" style="background: blue;" onclick="reduceProd('blue')">Break Blue</div>
+            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);width:unset" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div><div id="blueReduce" class="button hidden" style="background: blue;width:100px" onclick="reduceProd('blue')">Break Blue</div>
         </div>
         <div id="spectrumDiv" class="hidden" style="width: 100%; padding-bottom:10px; padding-top:10px; align-self:center; text-align:center;">
             <div class="button" id="redSplice" onclick="spliceColor('red')" style="background: rgb(255,0,0);"><div>Splice 10% red into a spectrum</div><div>Spliced red:</div></div>
@@ -39,49 +43,50 @@
             <br>
             <div id="spectrumReset" onclick="reset(1)" class="button" style=" background:white; text-shadow:none;  color:black;"><div>Reset all progress and gain</div><div></div><div></div></div>
         </div>
-        </div>
-        <div id="tabSpectrum" class="hidden tab">
-            <div style="text-align:center;padding-top:100px;font-size:25px"><p >I wish I had a dual core processor that could actualy simulate a full spectrum.</p></div>
-            <div style="text-align:center" class="hidden">
-                <div id="spectrumCount" class="count" style="text-align:center; width:100%;"></div><br>
-                <div class="button switch active" onclick="switchTab('Upgrades', 0, 'spectrum')">Upgrades</div><div class="button hidden switch" onclick="switchTab('Prism', 1, 'spectrum')">Prism</div>
-                <div id="tabUpgrades" class="tab">
-                    <table align="center">
-                        <tr><td><div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Click Multi Effects Auto</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Double Output of All Bars</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Double Bar Gain (R&G)</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
-                        <tr><td><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Click Multi only Resets on Spectrum</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Auto Buy Max Red Level Every 2s</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Auto Buy Max Green Level Every 2s</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
-                        <tr><td><div id="spectrumButton6" class="button spec" onclick="buyUpgrade('spectrum', 6)"><div>Bar Gain Upgrades Scale per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton7" class="button spec" onclick="buyUpgrade('spectrum', 7)"><div>Increase Bonus per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton8" class="button spec" onclick="buyUpgrade('spectrum', 8)"><div>Start with Blue Unlocked</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
-                        <tr><td><div id="spectrumButton9" class="button spec" onclick="buyUpgrade('spectrum', 9)"><div>Auto Buy Max Blue Upgrades Every 2s</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton10" class="button spec" onclick="buyUpgrade('spectrum', 10)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton11" class="button spec" onclick="buyUpgrade('spectrum', 11)"><div>Auto Bonus Based on Red Lvl</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
-                        <tr><td><div id="spectrumButton12" class="button spec" onclick="buyUpgrade('spectrum', 12)"><div>Auto Bonus Based on Spectrum</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton13" class="button spec" onclick="buyUpgrade('spectrum', 13)"><div>Better Spectrum Gain Formula</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton14" class="button spec" onclick="buyUpgrade('spectrum', 14)"><div>Switch to GPU Rendering</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
-                    </table>
-                </div>
-                <div id="tabPrism" class="tab">
-                    <table align="center">
-                        <tr id="redPrism"><td><div style="background-color:rgb(255,0,0)" class="prismColor"> </div> </td><td><input type="range" min="0" max="255" value="52" class="slider red"/><br /><input type="range" min="0" max="255" value="0" class="slider green"/><br /><input type="range" min="0" max="255" value="14" class="slider blue"/></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('red')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
-                        <tr id="greenPrism"><td><div style="background-color:rgb(0,255,0)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="26" class="slider red" /><br /><input type="range" min="0" max="255" value="52" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('green')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
-                        <tr id="bluePrism"><td><div style="background-color:rgb(0,0,255)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="0" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="0" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('blue')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
-                    </table>
-                    <div id="mixButton" class="button" style="background:white; text-shadow:none; color:black;margin-top:25px;" onclick="mix()">Create a New Spectrum Mix <br></div>
-                    <div id="blackCount" class="count" style="text-align:center; width:100%;"></div>
-                    </div>
-                </div>
-        </div>
-        <div id="tabSettings" class="hidden tab">
-            <div class="count" style="text-align:center; width:100%;"> Settings</div><br>
-            <div style="text-align:center">
+    </div>
+    <div id="tabSpectrum" class="hidden tab">
+        <div style="text-align:center;padding-top:100px;font-size:25px"><p>I wish I had a dual core processor that could actualy simulate a full spectrum.</p></div>
+        <div style="text-align:center" class="hidden">
+            <div id="spectrumCount" class="count" style="text-align:center; width:100%;"></div><br>
+            <div class="button switch active" onclick="switchTab('Upgrades', 0, 'spectrum')">Upgrades</div><div class="button hidden switch" onclick="switchTab('Prism', 1, 'spectrum')">Prism</div>
+            <div id="tabUpgrades" class="tab">
                 <table align="center">
-                    <tr><td><div class="button setting" onclick="save()"><div>Save Game</div></div></td><td><div class="button setting" onclick="save('Export')"><div>Export</div></div></td><td><div class="button setting" onclick="load('Import')"><div>Import</div></div></td><td><div class="button setting" onclick="reset()"><div>Reset Game</div></div></td></tr>
-                    <tr><td><div class="button setting" onclick="flip('fast')"><div>Fast Mode</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('fps')"><div>FPS/UPS</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('notation')"><div>Notation</div><div>Off</div></div></td></tr>
-                </table>    
-                <h1>Hot Keys</h1>
-                <p style="font-size:25px">Space: Holds down red <br>
-                   R: Max buy red upgrades <br>
-                   A: Toggle autobuyers<br>
-                   G: Max buy green upgrades<br>
-                   1-4: Max buy Blue Upgrades<br>
-                   M: Max All
-                </p>
+                    <tr><td><div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Click Multi Effects Auto</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Double Output of All Bars</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Double Bar Gain (R&G)</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Click Multi only Resets on Spectrum</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Auto Buy Max Red Level Every 2s</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Auto Buy Max Green Level Every 2s</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton6" class="button spec" onclick="buyUpgrade('spectrum', 6)"><div>Bar Gain Upgrades Scale per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton7" class="button spec" onclick="buyUpgrade('spectrum', 7)"><div>Increase Bonus per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton8" class="button spec" onclick="buyUpgrade('spectrum', 8)"><div>Start with Blue Unlocked</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton9" class="button spec" onclick="buyUpgrade('spectrum', 9)"><div>Auto Buy Max Blue Upgrades Every 2s</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton10" class="button spec" onclick="buyUpgrade('spectrum', 10)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton11" class="button spec" onclick="buyUpgrade('spectrum', 11)"><div>Auto Bonus Based on Red Lvl</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton12" class="button spec" onclick="buyUpgrade('spectrum', 12)"><div>Auto Bonus Based on Spectrum</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton13" class="button spec" onclick="buyUpgrade('spectrum', 13)"><div>Better Spectrum Gain Formula</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton14" class="button spec" onclick="buyUpgrade('spectrum', 14)"><div>Switch to GPU Rendering</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                </table>
             </div>
+            <div id="tabPrism" class="tab">
+                <table align="center">
+                    <tr id="redPrism"><td><div style="background-color:rgb(255,0,0)" class="prismColor"> </div> </td><td><input type="range" min="0" max="255" value="52" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('red')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
+                    <tr id="greenPrism"><td><div style="background-color:rgb(0,255,0)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="26" class="slider red" /><br /><input type="range" min="0" max="255" value="52" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('green')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
+                    <tr id="bluePrism"><td><div style="background-color:rgb(0,0,255)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="0" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="0" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('blue')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
+                </table>
+                <div id="mixButton" class="button" style="background:white; text-shadow:none; color:black;margin-top:25px;" onclick="mix()">Create a New Spectrum Mix <br></div>
+                <div id="blackCount" class="count" style="text-align:center; width:100%;"></div>
             </div>
+        </div>
+    </div>
+    <div id="tabSettings" class="hidden tab">
+        <div class="count" style="text-align:center; width:100%;"> Settings</div><br>
+        <div style="text-align:center">
+            <table align="center">
+                <tr><td><div class="button setting" onclick="save()"><div>Save Game</div></div></td><td><div class="button setting" onclick="save('Export')"><div>Export</div></div></td><td><div class="button setting" onclick="load('Import')"><div>Import</div></div></td><td><div class="button setting" onclick="reset()"><div>Reset Game</div></div></td></tr>
+                <tr><td><div class="button setting" onclick="flip('fast')"><div>Fast Mode</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('fps')"><div>FPS/UPS</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('notation')"><div>Notation</div><div>Off</div></div></td></tr>
+            </table>
+            <h1>Hot Keys</h1>
+            <p style="font-size:25px">
+                Space: Holds down red <br>
+                R: Max buy red upgrades <br>
+                A: Toggle autobuyers<br>
+                G: Max buy green upgrades<br>
+                1-4: Max buy Blue Upgrades<br>
+                M: Max All
+            </p>
+        </div>
+    </div>
     <div id="tabStats" class="hidden tab" style="text-align:center">
         <h1>Last 5 Spectrums</h1>
         <table align="center" id="last5" style="font-size:25px">
@@ -91,6 +96,6 @@
             <tr><td></td></tr>
             <tr><td></td></tr>
         </table>
-        </div>
+    </div>
 </body>
 </html>
