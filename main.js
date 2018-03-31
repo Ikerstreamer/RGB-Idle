@@ -44,10 +44,10 @@ function bar(n,r,g,b,elemid) {
     this.width = 0;
     this.element = document.getElementById(elemid);
     this.mouse = 0;
-    this.draw = function () {
+    this.draw = function (dif) {
         if (this.mouse == 1) {
             CM += 0.1 * (50 / player.options.fps);
-            increase(click * (50 / player.options.fps));
+            increase(click * (50 * dif / 1000),dif);
         } else if (this.name == "red" && CM > 1 && player.spectrumLevel[3] == 0) CM -= 0.15 * (50 / player.options.fps);
         if (this.name == "red" ? auto * IR : (this.name == "green" ? auto * IR * IG / 256 : auto * IR * IG * 8 / Math.pow(256, 2)) > 64) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
@@ -84,6 +84,7 @@ function gameLoop() {
     player.spectrumTimer += dif;
     updateStats();
     increase(auto * (dif / 1000), dif);
+    for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw(dif);
     if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
     if (SumOf(player.spectrumLevel) >= 12)document.getElementsByClassName("switch")[5].classList.remove("hidden");
     if (player.level.blue[3] >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
@@ -164,7 +165,6 @@ var render = {
         }
     },
     RGB : function () {
-        for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
         for (var i = 0; i < Object.keys(player.money).length; i++) {
             var tempKey = Object.keys(player.money)[i];
             if (player.inf[tempKey] > 0) {
@@ -245,7 +245,7 @@ function increase(amnt, dif) {
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
-        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255 && player.spectrumLevel[15] == 1) player.spectrum += Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * player.prism.potency[temp.name] * (dif / 1000);
+        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255 && player.spectrumLevel[15] == 1) player.spectruym += Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * player.prism.potency[temp.name] * (dif / 1000);
             else{
             if (player.money.red < 2.56e256)player.money["red"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255) / Math.max(2.56e256 * player.reduction.red,1);
             if (player.money.green < 2.56e256)player.money["green"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255) / Math.max(2.56e256 * player.reduction.green,1);
