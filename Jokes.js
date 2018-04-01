@@ -10,8 +10,8 @@ function DisplayText(num, elem) {
     out1.style.fontSize = "0.5em";
     out1.innerHTML = num.m;
     out2.innerHTML = num.e;
-    out2.style.fontSize = (window.getComputedStyle(elem, null).getPropertyValue("font-size").replace("px", "") / Math.log(num.e.length)) + "px";
-    out2.style.lineHeight = (window.getComputedStyle(elem,null).getPropertyValue("font-size").replace("px","") / Math.log(num.e.length)) + "px";
+    out2.style.fontSize = (window.getComputedStyle(elem, null).getPropertyValue("font-size").replace("px", "") / Math.pow(2,Math.log(num.e.length)/1.8)) + "px";
+    out2.style.lineHeight = (window.getComputedStyle(elem, null).getPropertyValue("font-size").replace("px", "") / Math.pow(2, Math.log(num.e.length)/1.8)) + "px";
     elem.appendChild(tab);
 }
 function prank(num) {
