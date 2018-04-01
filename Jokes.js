@@ -17,9 +17,9 @@ function DisplayText(num, elem) {
 function prank(num) {
     var stuff = [" Sup", " nerd,", " you", " have", " been", " pranked!", " Happy", " April", " fools", " 2018!"]
     if (num >= Number.MAX_VALUE) return "Infinity";
-    var digits = Math.floor(Math.log10(num));
+    var digits = Math.floor(Math.max(Math.log10(num),0));
     var temp = {};
-    temp.m = (num / Math.pow(10, digits)).toFixed(1) + "e";
+    temp.m = (num / Math.pow(10, digits)).toFixed(1) + (num>=10?"e":"");
     temp.e = "";
     for (var i = 0; i < digits; i++) {
         temp.e = temp.e + stuff[i % 10];
