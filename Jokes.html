@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <script type="text/javascript">
+        var stuff = [" Sup"," nerd,"," you", " have", " been", " pranked!", " Happy"," April", " fools", " 2018!"]
+        function update(){
+        var num = prank(document.getElementById("in").value);
+        document.getElementById("out1").innerHTML = num.m;
+        document.getElementById("out2").innerHTML = num.e;
+        document.getElementById("out2").style.fontSize = (50/Math.log(num.e.length)) + "px";
+        document.getElementById("out2").style.lineHeight = (50/Math.log(num.e.length)) + "px";
+        }
+        function prank(num){
+            if(num>=Number.MAX_VALUE) return "Infinity";
+            var digits = Math.floor(Math.log10(num));
+            var temp = {}; 
+            temp.m = (num / Math.pow(10,digits)).toFixed(1) + "e";
+            temp.e = "";
+            for(var i = 0;i<digits;i++){
+                temp.e = temp.e + stuff[i%10];
+            }
+            return temp;
+        }
+        </script>
+</head>
+<body onload="init(true)">
+    <input id="in" type="text" oninput="update()"/>
+    <br>
+    <table style="width:400px;">
+        <tr><td><span id="out1" style="font-size:50px;line-height:0"></span></td><td><p id="out2" style="max-width:75%;vertical-align:top"></p></td></tr>
+    </table>
+</body>
+</html>
