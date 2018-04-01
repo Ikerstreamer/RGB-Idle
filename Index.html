@@ -10,8 +10,9 @@
 <body onload="init()">
     <div class="popup">The prism rises as you approach it, so many question you want it to answer yet it hovers there dead silent. You stick your hand out to reach for it and as you do all the light around you seems to fade. The blackness of the prism seems to consume everything, your spectrum fades out of exsistence.<br> The game is about to change, your 3 colored bars will no longer solely produce red, green and blue respectively. Now each bars production can be altered to produce a certain amount of the base 3 colors, your first prism mix is fixed.<br> Click here to proceed or Press 'esc' to cancel</div>
     <div class="popup">You have reached the limit of the amount of colors your computer can process. You can now alter these color to become unstable yet allow you further growth.<br> Each unstable color will halve autobuyer interval.<br>Click here to proceed</div>
-    <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 3)">Stats</div>
+    <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 3)">Stats</div><br>
     <div id="tabRGB" class="tab">
+        <div class="count hidden" id="spectrumCountRGB" style="color: white;width:unset;float:left;text-align:left;"></div><div class="count hidden" id="blackCountRGB" style="color: black; width:unset;text-align:left;"></div>
         <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress" style="cursor:pointer">
                 <div id="redBar" class="bar"></div>
@@ -33,7 +34,7 @@
                     <div id="blueBar" class="bar"></div>
                 </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
             </div>
-            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);width:unset" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div><div id="blueReduce" class="button hidden" style="background: blue;width:100px" onclick="reduceProd('blue')">Break Blue</div>
+            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div><div id="blueReduce" class="button hidden" style="background: blue;width:100px" onclick="reduceProd('blue')">Break Blue</div>
         </div>
         <div id="spectrumDiv" class="hidden" style="width: 100%; padding-bottom:10px; padding-top:10px; align-self:center; text-align:center;">
             <div class="button" id="redSplice" onclick="spliceColor('red')" style="background: rgb(255,0,0);"><div>Splice 10% red into a spectrum</div><div>Spliced red:</div></div>
@@ -48,7 +49,7 @@
         <div style="text-align:center;padding-top:100px;font-size:25px"><p>I wish I had a dual core processor that could actualy simulate a full spectrum.</p></div>
         <div style="text-align:center" class="hidden">
             <div id="spectrumCount" class="count" style="text-align:center; width:100%;"></div><br>
-            <div class="button switch active" onclick="switchTab('Upgrades', 0, 'spectrum')">Upgrades</div><div class="button hidden switch" onclick="switchTab('Prism', 1, 'spectrum')">Prism</div>
+            <div class="button switch active" onclick="switchTab('Upgrades', 0, 'spectrum')">Upgrades</div><div class="button hidden switch" onclick="switchTab('Prism', 1, 'spectrum')">Prism</div><div class="button hidden switch" onclick="switchTab('Progress', 2, 'spectrum')">Progress</div>
             <div id="tabUpgrades" class="tab">
                 <table align="center">
                     <tr><td><div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Click Multi Effects Auto</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Double Output of All Bars</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Double Bar Gain (R&G)</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
@@ -60,13 +61,30 @@
             </div>
             <div id="tabPrism" class="tab">
                 <table align="center">
-                    <tr id="redPrism"><td><div style="background-color:rgb(255,0,0)" class="prismColor"> </div> </td><td><input type="range" min="0" max="255" value="52" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('red')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
-                    <tr id="greenPrism"><td><div style="background-color:rgb(0,255,0)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="26" class="slider red" /><br /><input type="range" min="0" max="255" value="52" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('green')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
-                    <tr id="bluePrism"><td><div style="background-color:rgb(0,0,255)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="0" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="0" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('blue')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Double Bar Potency</div><div>100 Spectrum</div></div></td></tr>
+                    <tr id="redPrism"><td><div style="background-color:rgb(255,0,0)" class="prismColor"> </div> </td><td><input type="range" min="0" max="255" value="52" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('red')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Quadruple Bar Potency</div><div>100 Spectrum</div></div></td></tr>
+                    <tr id="greenPrism"><td><div style="background-color:rgb(0,255,0)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="26" class="slider red" /><br /><input type="range" min="0" max="255" value="52" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('green')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Quadruple Bar Potency</div><div>100 Spectrum</div></div></td></tr>
+                    <tr id="bluePrism"><td><div style="background-color:rgb(0,0,255)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="0" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="0" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td><td><div class="button hidden" onclick="prismUpgrade('blue')" style="background:white; text-shadow:none; color:black;height:100%;"><div>Quadruple Bar Potency</div><div>100 Spectrum</div></div></td></tr>
                 </table>
                 <div id="mixButton" class="button" style="background:white; text-shadow:none; color:black;margin-top:25px;" onclick="mix()">Create a New Spectrum Mix <br></div>
                 <div id="blackCount" class="count" style="text-align:center; width:100%;"></div>
             </div>
+            <div id="tabProgress" class="tab">
+                <table align="center" style="font-size:25px;border-collapse:collapse;border:inset;border-color:black;border-width:3px;" border="1"cellspacing="2">
+                    <thead style="background-color:white">
+                        <tr><td>Name</td><td>Desc.</td><td>Reward</td></tr>
+                    </thead>
+                    <tbody id="achieves">
+                        <tr><td>And we're back!</td><td>Reach spectrum once again!</td><td>Unlock Potency Upgrades</td></tr>
+                        <tr><td>Darkness I embrace you!</td><td>Do a 3 black bar prism when having over 1e50 black</td><td>Black gain is multiplied by core count</td></tr>
+                        <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1e64 or more blackness without autobuyers or hotkeys</td><td>Halves autobuyer interval</td></tr>
+                        <tr><td>Back to my roots!</td><td>Create the same old Red, Green and Blue bars as initially</td><td>Bars made of only 1 color produce a tiny bit of black</td></tr>
+                        <tr><td>I live a very dark life!</td><td>Have black per second exceed any other colors production</td><td>Blackness denominator is logarithmically reduced by 0.1x</td></tr>
+                        <tr><td>The light always wins!</td><td>Have your spectrum per second be higher than your black per second</td><td>Spectrum bars are multiplied by log10(black)</td></tr>
+                        <tr><td>Is there a true infinity?</td><td>Reach 2.56e256 of any color</td><td>Clockspeed is multipled by infinite colors</td></tr>
+                        <tr><td>Black has no limits?</td><td>Exceed 2.56e256 Blackness</td><td>Blackness is not reset on prism creation</td></tr>
+                    </tbody>
+                </table>
+</div>
         </div>
     </div>
     <div id="tabSettings" class="hidden tab">
@@ -90,8 +108,8 @@
     <div id="tabStats" class="hidden tab" style="text-align:center">
         <h1>Last 5 Spectrums</h1>
         <table align="center" id="last5" style="font-size:25px">
-            <tr><td></td></tr>
-            <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
             <tr><td></td></tr>
             <tr><td></td></tr>
             <tr><td></td></tr>
@@ -99,3 +117,4 @@
     </div>
 </body>
 </html>
+ 
