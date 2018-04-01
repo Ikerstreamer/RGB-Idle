@@ -276,7 +276,7 @@ function save(name) {
 }
 
 function setupPlayer() {
-    player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+    player.bars = { red: new bar("red", 0, 255, 255, "redBar"), green: new bar("green", 255, 255, 0, "greenBar"), blue: new bar("blue", 255, 0, 255, "blueBar") };
     player.bars.red.setup();
     if (load() != false) {
         if (load().version >= 1) player = load();
