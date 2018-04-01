@@ -44,7 +44,7 @@ function bar(n,r,g,b,elemid) {
         else CM = 1;
         if (income[this.name] >= 10) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
-        this.element.style.background = RGBstring(this.color);
+        this.element.style.backgroundColor = RGBstring(this.color);
     }
     this.setup = function () {
         var temp = this.name;
@@ -88,7 +88,8 @@ function gameLoop() {
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
-        document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
+        //document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
+        DisplayText(player.money[tempKey], document.getElementById(tempKey + "Count"));
         if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
         else document.getElementById(tempKey + "Bar").innerHTML = "";
         document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
@@ -300,7 +301,7 @@ function load(name) {
     }else if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
         var temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
         var tempSave = JSON.parse(atob(localStorage.getItem("RGBsave")));
-        tempSave.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
+        tempSave.bars = { red: new bar("red", 0, 255, 255, "redBar"), green: new bar("green", 255, 255, 0, "greenBar"), blue: new bar("blue", 255, 0, 255, "blueBar") };
         tempSave.bars.red.width = temp.bars.red.width;
         tempSave.bars.green.width = temp.bars.green.width;
         tempSave.bars.blue.width = temp.bars.blue.width;
