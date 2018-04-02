@@ -12,7 +12,10 @@
     <div class="popup">You have reached the limit of the amount of colors your computer can process. You can now alter these color to become unstable yet allow you further growth.<br> Each unstable color will halve autobuyer interval.<br>Click here to proceed</div>
     <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 3)">Stats</div><br>
     <div id="tabRGB" class="tab">
-        <div class="count hidden" id="spectrumCountRGB" style="color: white;width:unset;float:left;text-align:left;"></div><div class="count hidden" id="blackCountRGB" style="color: black; width:unset;text-align:left;"></div>
+        <div style="width:100%;">
+            <div class="count hidden" id="spectrumCountRGB" style="color: white;width:unset;text-align:left;"></div><div class="count hidden" id="blackCountRGB" style="color: black; width:unset;text-align:left;"></div>
+        </div>
+        <br />
         <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress" style="cursor:pointer">
                 <div id="redBar" class="bar"></div>
@@ -76,9 +79,9 @@
                     <tbody id="achieves">
                         <tr><td>And we're back!</td><td>Reach spectrum once again!</td><td>Unlock Potency Upgrades</td></tr>
                         <tr><td>Darkness I embrace you!</td><td>Do a 3 black bar prism when having over 1e50 black</td><td>Black gain is multiplied by core count</td></tr>
-                        <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1e64 or more blackness without autobuyers or hotkeys</td><td>Halves autobuyer interval</td></tr>
+                        <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1e64 or more blackness without autobuyers or hotkeys</td><td>Divides autobuyer interval by 8</td></tr>
                         <tr><td>Back to my roots!</td><td>Create the same old Red, Green and Blue bars as initially</td><td>Bars made of only 1 color produce a tiny bit of black</td></tr>
-                        <tr><td>I live a very dark life!</td><td>Have black per second exceed any other colors production</td><td>Blackness denominator is logarithmically reduced by 0.1x</td></tr>
+                        <tr><td>I live a very dark life!</td><td>Have black per second exceed any other colors production</td><td>Blackness denominator is logarithmically reduced by 15%</td></tr>
                         <tr><td>The light always wins!</td><td>Have your spectrum per second be higher than your black per second</td><td>Spectrum bars are multiplied by log10(black)</td></tr>
                         <tr><td>Is there a true infinity?</td><td>Reach 2.56e256 of any color</td><td>Clockspeed is multipled by infinite colors</td></tr>
                         <tr><td>Black has no limits?</td><td>Exceed 2.56e256 Blackness</td><td>Blackness is not reset on prism creation</td></tr>
