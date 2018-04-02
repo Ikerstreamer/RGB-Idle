@@ -1,4 +1,4 @@
-var v = 1.01;
+var v = 1.02;
 var player = {
     money: { red: 0, green: 0, blue: 0},
     level: { red: 0, green: 0, blue: [0,0,0,0]},
@@ -7,7 +7,7 @@ var player = {
     spectrum: 0,
     specced: 0,
     spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    options: { fast: false, fps: 50, notation: "Default" },
+    options: { prank: false, fps: 50, notation: "Default" },
     spectrumTimer: 0,
     previousSpectrums: [{ time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}],
     lastUpdate: Date.now(),
@@ -88,8 +88,8 @@ function gameLoop() {
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     for (var i = 0; i < Object.keys(player.money).length; i++) {
         var tempKey = Object.keys(player.money)[i];
-        //document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
-        DisplayText(player.money[tempKey], document.getElementById(tempKey + "Count"));
+        if(player.options.prank == true)DisplayText(player.money[tempKey], document.getElementById(tempKey + "Count"));
+        else document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
         if (income[tempKey] >= 10) document.getElementById(tempKey + "Bar").innerHTML = formatNum(displayIncome(income[tempKey])) + "/s";
         else document.getElementById(tempKey + "Bar").innerHTML = "";
         document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
@@ -277,11 +277,12 @@ function save(name) {
 }
 
 function setupPlayer() {
-    player.bars = { red: new bar("red", 0, 255, 255, "redBar"), green: new bar("green", 255, 255, 0, "greenBar"), blue: new bar("blue", 255, 0, 255, "blueBar") };
+    player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
     player.bars.red.setup();
     if (load() != false) {
         if (load().version >= 1) player = load();
         if(player.version < 1.01) while(player.spectrumLevel.length < 15) player.spectrumLevel.push(0);
+        if(player.version < 1.02) player.options.prank = false;
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         updateStats();
         statPage();
@@ -301,7 +302,7 @@ function load(name) {
     }else if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
         var temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
         var tempSave = JSON.parse(atob(localStorage.getItem("RGBsave")));
-        tempSave.bars = { red: new bar("red", 0, 255, 255, "redBar"), green: new bar("green", 255, 255, 0, "greenBar"), blue: new bar("blue", 255, 0, 255, "blueBar") };
+        tempSave.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
         tempSave.bars.red.width = temp.bars.red.width;
         tempSave.bars.green.width = temp.bars.green.width;
         tempSave.bars.blue.width = temp.bars.blue.width;
