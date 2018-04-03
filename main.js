@@ -242,8 +242,6 @@ var render = {
                 }
             }
         }
-        document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
-        document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
         document.getElementById("spectrumCountRGB").innerHTML = formatNum(player.spectrum, 0) + " Spectrum";
         document.getElementById("blackCountRGB").innerHTML = formatNum(player.black) + " Black";
         for (var i = 0; i < 3; i++) for (var j = 0; j < 5; j += 2) document.getElementById(Object.keys(player.money)[i] + "Prism").cells[1].childNodes[j].value = player.bars[Object.keys(player.money)[i]].color[j / 2];
@@ -463,7 +461,9 @@ function CalcSRgain() {
     SR += Math.log10(player.specced + 1);
     SR = Math.max(SR / ((3 - player.spectrumLevel[13]) * 3), 0)
     SR *= ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
-    SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100)
+    SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
+    document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
+    document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
 }
 
 function formatNum(num, dp, type) {
@@ -625,6 +625,8 @@ function reset(type, force) {
         document.getElementById('blueDiv').classList.add('hidden');
          document.getElementsByClassName("switch")[1].classList.add("hidden");
          document.getElementById("spectrumDiv").classList.add("hidden");
+         document.getElementById("blackCountRGB").classList.add("hidden");
+         document.getElementById("spectrumCountRGB").classList.add("hidden");
          document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red)) + "s";
          document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green)) + "s";
          document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue)) + "s";
