@@ -36,6 +36,13 @@
     width: 360px;
 }
 
+    .count.extra {
+        color: white;
+        width: unset;
+        text-align: left;
+        font-size:50px;
+    }
+
 .button {
     border-radius: 10px;
     padding: 5px;
@@ -180,6 +187,13 @@
         width: 300px;
     }
 
+        .count.extra {
+            color: white;
+            width: unset;
+            text-align: left;
+            font-size: 37.5px;
+        }
+
     .button {
         border-radius: 10px;
         padding: 5px;
@@ -257,6 +271,12 @@
         font-family: Verdana;
         width: 175px;
     }
+        .count.extra {
+            color: white;
+            width: unset;
+            text-align: left;
+            font-size: 22.5px;
+        }
 
     .button {
         border-radius: 10px;

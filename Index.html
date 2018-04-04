@@ -10,12 +10,12 @@
 <body onload="init()">
     <div class="popup">The prism rises as you approach it, so many question you want it to answer yet it hovers there dead silent. You stick your hand out to reach for it and as you do all the light around you seems to fade. The blackness of the prism seems to consume everything, your spectrum fades out of exsistence.<br> The game is about to change, your 3 colored bars will no longer solely produce red, green and blue respectively. Now each bars production can be altered to produce a certain amount of the base 3 colors, your first prism mix is fixed.<br> Click here to proceed or Press 'esc' to cancel</div>
     <div class="popup">You have reached the limit of the amount of colors your computer can process. You can now alter these color to become unstable yet allow you further growth.<br> Each unstable color will halve autobuyer interval.<br>Click here to proceed</div>
+    <div class="popup" style="font-size:1.5em">Your save has been copied to clipboard!</div>
     <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 3)">Stats</div><br>
     <div id="tabRGB" class="tab">
         <div style="width:100%;">
-            <div class="count hidden" id="spectrumCountRGB" style="color: white;width:unset;text-align:left;"></div><div class="count hidden" id="blackCountRGB" style="color: black; width:unset;text-align:left;"></div>
+            <div class="count hidden extra" id="spectrumCountRGB"></div><div class="count hidden extra" id="blackCountRGB"></div>
         </div>
-        <br />
         <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
             <div class="progress" style="cursor:pointer">
                 <div id="redBar" class="bar"></div>

@@ -1,4 +1,4 @@
-var v = 1.092;
+var v = 1.093;
 var player = {
     money: { red: 0, green: 0, blue: 0 },
     inf: { red: 0, green: 0, blue: 0 },
@@ -16,13 +16,13 @@ var player = {
     prism: { active: false, potency: {red:0.5,green:0.5,blue:0.5}, pcost: {red:100,green:100,blue:100}, },
     black: 0,
     pop: false,
-    AB: {red:true,green:true,blue:true},
+    AB: { red: true, green: true, blue: true },
+    CM: 0,
     progress:[],
 }
 
 var p3 = true;
 var ABInt = {red:2000,green:2000,blue:2000};
-var CM = 1;
 var Cores = 1;
 var Clock = 1;
 var RUM = 1;
@@ -49,10 +49,10 @@ function bar(n,r,g,b,elemid) {
     this.mouse = 0;
     this.draw = function (dif) {
         if (this.mouse == 1) {
-            CM += 5 * (dif / 1000);
+            player.CM += 5 * (dif / 1000);
             increase(click * 50 * (dif / 1000),dif);
-        } else if (this.name == "red" && CM > 1 && player.spectrumLevel[3] == 0) CM -= 7.5 * (dif / 1000);
-        if (this.name == "red" ? auto * IR : (this.name == "green" ? auto * IR * IG / 256 : auto * IR * IG * 8 / Math.pow(256, 2)) > 64) this.element.style.width = "100%";
+        } else if (this.name == "red" && player.CM > 1 && player.spectrumLevel[3] == 0) player.CM -= 7.5 * (dif / 1000);
+        if ((this.name == "red" ? (auto + click) * IR : (this.name == "green" ? (auto + click) * IR * IG / 256 : (auto + click) * IR * IG * 8 / Math.pow(256, 2))) > 128) this.element.style.width = "100%";
         else this.element.style.width = this.width/2.56 + "%";
         this.element.style.background = RGBstring(this.color);
     }
@@ -208,7 +208,7 @@ var render = {
                 document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
             }
             
-            if (tempKey == "red" ? auto * IR : (tempKey == "green" ? auto * IR * IG / 256 : auto * IR * IG * 8 / Math.pow(256, 2)) > 64) incomeBarDisplay(tempKey);
+            if ((tempKey == "red" ? (auto+click) * IR : (tempKey == "green" ? (auto+click) * IR * IG / 256 : (auto+click) * IR * IG * 8 / Math.pow(256, 2))) > 128) incomeBarDisplay(tempKey);
             else document.getElementById(tempKey + "Bar").innerHTML = "";
             document.getElementById(tempKey + "Splice").childNodes[0].innerHTML = "Splice " + Math.min(player.level.blue[3] * 10, 100) + "% " + tempKey + " into a spectrum";
             document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
@@ -359,7 +359,6 @@ function prismUpgrade(name) {
     }
 }
 
-
 function buyUpgrade(name, Bindex) {
     if (name == "spectrum") {
         if (player.spectrum >= SpecPrice[Bindex] && player.spectrumLevel[Bindex] < 1) {
@@ -371,11 +370,11 @@ function buyUpgrade(name, Bindex) {
                 if (player.level.red < 100) player.level.red = 100;
                 if (player.level.green < 100) player.level.green = 100;
             }
+            player.spectrum -= SpecPrice[Bindex];
+            player.spectrumLevel[Bindex]++;
             if (Bindex == 5 || Bindex == 4) {
                 document.getElementById("spectrumButton" + Bindex).childNodes[1].innerHTML = SUInfo(Bindex);
             }
-            player.spectrum -= SpecPrice[Bindex];
-            player.spectrumLevel[Bindex]++;
             updateStats();
             return true;
         }
@@ -391,6 +390,7 @@ function buyUpgrade(name, Bindex) {
         player.money[name] -= price[name]
         player.level[name]++;
         updateStats();
+        if (player.level[name] % 100 === 0) CalcSRgain();
         return true;
     }
 }
@@ -398,7 +398,7 @@ function buyUpgrade(name, Bindex) {
 function SUInfo(num){
     switch(num){
         case 0:
-            return "Current CM: " + Math.max(Math.log10(CM), 1).toFixed(1) + "x";
+            return "Current CM: " + Math.max(Math.log10(player.CM), 1).toFixed(1) + "x";
         case 2:
             return "Base Bar Increase: " + (2 + player.spectrumLevel[2] * 2) + "/256";
         case 4:
@@ -408,7 +408,7 @@ function SUInfo(num){
         case 6:
             return "Current Multi per 10: " + (player.spectrumLevel[6] + 1) + "x";
         case 7:
-            return "Current Multi per 10: " + (player.spectrumLevel[7] / 10 + 1.15) + "x";
+            return "Current Multi per 10: " + (1.15 + player.spectrumLevel[7] * 0.15) + "x";
         case 9:
             return player.spectrumLevel[9] == 1 ? "<div onclick='ToggleAB(`blue`)' class='button' style='height:100%;width:50%;background-color:" + (player.AB.blue ? "green" : "red") + "'>" + (player.AB.blue ? "On" : "Off") + "</div>" : "Buy Blue Yourself!";
         case 10:
@@ -441,8 +441,8 @@ function updateStats() {
     else BPD = 0;
     Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[14] == 1 ? 8 : 1);
     Clock = Math.pow(2,Math.floor(Math.log(Math.pow(2, player.level.blue[0]) * (Cores * Math.pow(1.025,Cores)))/Math.log(2))) * (player.progress.includes(7)?SumOf(Object.values(player.reduction)) : 1);
-    click = (1 + player.level.red / 2) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(CM);
-    auto = (((player.level.green * 4) * Math.pow((player.spectrumLevel[7] == 1 ? 1.25 : 1.15), Math.floor(player.level.green / 10))) * Clock * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(CM), 1): 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(Math.floor(Math.pow(player.spectrum, 0.8)), 1) : 1));
+    click = (2 + player.level.red / 2) * Math.pow((player.spectrumLevel[7] == 1 ? 1.3 : 1.15), (Math.floor(player.level.red / 10))) * Math.log10(player.CM);
+    auto = (((player.level.green * 16) * Math.pow((player.spectrumLevel[7] == 1 ? 1.3 : 1.15), Math.floor(player.level.green / 10))) * Clock * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(player.CM), 1): 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(Math.floor(Math.pow(player.spectrum, 0.8)), 1) : 1));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.05, Math.max((player.level.red / 100)-1,0))) * PD), player.level.red);
     price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.05, Math.max((player.level.green / 100)-1,0))) * PD), player.level.green);
     price.blue[0] = 1 * Math.pow(16, Math.max(player.level.blue[0]-BPD,0));
@@ -458,9 +458,8 @@ function updateStats() {
 function CalcSRgain() {
     SR = Math.max(Math.log10(player.spliced.red) + Math.log10(player.spliced.green) + Math.log10(player.spliced.blue), 0);
     SR -= Math.log10(16777216);
-    SR += Math.log10(player.specced + 1);
     SR = Math.max(SR / ((3 - player.spectrumLevel[13]) * 3), 0)
-    SR *= ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
+    SR *= Math.log10(player.specced)/4 + ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
     SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
     document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
     document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
@@ -499,6 +498,7 @@ function unlockBlue() {
 function save(name) {
     if (name == "Export")
     {
+        setTimeout(pop,10,2);
         var temp = document.createElement("textarea");
         temp.value = btoa(JSON.stringify(player));
         document.getElementById("tabSettings").appendChild(temp);
@@ -527,6 +527,7 @@ function setupPlayer() {
         if (player.version < 1.09) for (var i = 0; i < 3; i++) player.spectrumLevel.push(-1);
         if (player.version < 1.091) player.progress = [];
         if (player.version < 1.092) player.AB = { red: true, green: true, blue: true };
+        if (player.version < 1.093) player.CM = 0;
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
         if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
@@ -587,7 +588,7 @@ function reset(type, force) {
                 document.getElementById('blueDiv').classList.add('hidden');
             }
             document.getElementById("spectrumDiv").classList.add("hidden");
-            CM = 1;
+            player.CM = 1;
             updateStats();
             document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red)) + "s";
             document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green)) + "s";
@@ -604,7 +605,7 @@ function reset(type, force) {
             reduction: { red: 0, green: 0, blue: 0 },
             unlock: false,
             spectrum: 0,
-            spectrumLevel: [0,0,0,0,0,0,0,0,0,0,0,0,0],
+            spectrumLevel: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,-1],
             specced: 0,
             spliced: { red: 0, green: 0, blue: 0 },
             options: { fast: false, fps: 50, notation: "Default" },
@@ -615,6 +616,7 @@ function reset(type, force) {
             black: 0,
             pop: false,
             AB: { red: true, green: true, blue: true },
+            CM:0,
             progress:[],
         };
         switchTab("RGB",0);
