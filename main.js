@@ -479,7 +479,7 @@ function CalcSRgain() {
     SR = Math.max(SR / ((3 - player.spectrumLevel[13]) * 3), 0)
     SR *= Math.max(Math.log10(player.specced) / 4, 0) + ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
     if (player.progress.includes(5)) SR *= 1 + player.level.blue / 10;
-    if (player.progress.includes(8)) SR *= 1 + Math.log10(player.spectrumTimer / 60000);
+    if (player.progress.includes(8)) SR *= 1 + Math.log10(Math.max(player.spectrumTimer / 60000,1));
     SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
     document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
     document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
