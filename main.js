@@ -300,7 +300,7 @@ function pCheck(num) {
             if (player.bars.red.color[0] == 255 && player.bars.green.color[1] == 255 && player.bars.blue.color[2] == 255 && !player.progress.includes(7)) player.progress.push(7);
             return
         case 8:
-            if (player.previousSpectrums[0].amount / player.previousSpectrums[0].time >= 10 && !player.progress.includes(8)) player.progress.push(8);
+            if (player.previousSpectrums[0].amount / (player.previousSpectrums[0].time/1000) >= 100 && !player.progress.includes(8)) player.progress.push(8);
             return
         case 9:
             if (!player.progress.includes(9)) {
