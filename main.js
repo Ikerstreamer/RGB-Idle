@@ -72,6 +72,10 @@ function bar(n,r,g,b,elemid) {
 
 function init() {
     setupPlayer();
+    var dif = Date.now() - player.lastUpdate;
+    player.lastUpdate = Date.now();
+    player.spectrumTimer += dif;
+    simulateTime(dif);
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     setInterval(save, 3000);
     window.mainLoop = setInterval(gameLoop, 1000 / player.options.fps);
@@ -335,17 +339,21 @@ function press(name, num) {
 
 function increase(amnt, dif) {
     var next = amnt * IR;
+    var specGain = 0;
+    var tspec = player.spectrum;
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
-        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255 && player.spectrumLevel[15] == 1) player.spectrum += (player.progress.includes(10)? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * player.prism.potency[temp.name] * (dif / 1000);
-            else{
-            if (player.money.red < 2.56e256)player.money["red"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255) / Math.max(2.56e256 * player.reduction.red,1);
-            if (player.money.green < 2.56e256)player.money["green"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255) / Math.max(2.56e256 * player.reduction.green,1);
-            if (player.money.blue < 2.56e256)player.money["blue"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2] / 255) / Math.max(2.56e256 * player.reduction.blue,1);
-            if (temp.color[0] + temp.color[1] + temp.color[2] == 0)player.black += Math.floor(temp.width / 256) * (player.spectrum * player.prism.potency[temp.name] * (player.progress.includes(2) ? Cores : 1) / (player.progress.includes(9) ? Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3))) * 0.85) : Math.max(player.black, Math.pow(256, 3))));
-            if (temp.color.filter(function (item) {return item === 0 }).length == 2 && player.progress.includes(7)) player.black += Math.sqrt(Math.floor(temp.width / 256) * ((player.spectrum * player.prism.potency[temp.name]) / Math.max(player.black, Math.pow(256, 3))));
-            }
+        if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255 && player.spectrumLevel[15] == 1) {
+            player.spectrum += (player.progress.includes(10) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * player.prism.potency[temp.name] * (dif / 1000);
+            specGain += (player.progress.includes(10) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * player.prism.potency[temp.name];
+        } else {
+            if (player.money.red < 2.56e256) player.money["red"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255) / Math.max(2.56e256 * player.reduction.red, 1);
+            if (player.money.green < 2.56e256) player.money["green"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255) / Math.max(2.56e256 * player.reduction.green, 1);
+            if (player.money.blue < 2.56e256) player.money["blue"] += ((player.prism.active ? player.prism.potency[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2] / 255) / Math.max(2.56e256 * player.reduction.blue, 1);
+            if (temp.color[0] + temp.color[1] + temp.color[2] == 0) player.black += player.black += Math.floor(temp.width / 256) * (player.spectrum * player.prism.potency[temp.name] * (player.progress.includes(2) ? Cores : 1) / (player.progress.includes(9) ? Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3))) * 0.85) : Math.max(player.black, Math.pow(256, 3)))); //Math.sqrt(Math.floor(temp.width / (256 * (dif / 1000))) * dif * (specGain * dif + 2 * tspec) + Math.pow(player.black,2))
+            if (temp.color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(7)) player.black += Math.sqrt(Math.floor(temp.width / 256) * ((player.spectrum * player.prism.potency[temp.name]) / Math.max(player.black, Math.pow(256, 3))));
+        }
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : IB);
         temp.width = temp.width % 256;
     }
@@ -494,13 +502,12 @@ function formatNum(num, dp, type) {
             var preHz = ["","k", "M", "G", "T", "P", "E", "Z", "Y", "N"]
             if (num < 3) return smallHz[num] + "Hz";
             num -= 3;
-            console.log(num)
             if (num < 10) return preHz[num] + "Hz";
             if (num < 20) return "X" + preHz[num%10] + "Hz";
             if (num == 20) return "bXHz";
             var pre2 = ["b", "t", "q"];
             return pre2[Math.floor((num - 20) / 10)] + "X" + preHz[(num % 10) - 1] + "Hz";
-        }
+        }   
         return num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024))) + createSuffix(Math.floor(Math.log(num) / Math.log(1024)));
     } else if (num < 10000) return num.toFixed(Math.min(Math.max(dp - Math.floor(Math.log10(num)), 0), dp));
     else if (num < 1e36 && player.options.notation == "Default") return (num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(num / Math.pow(1000, Math.floor(Math.log(num) / Math.log(1000)))))) + suffix[Math.floor(Math.log(num) / Math.log(1000)) - 1];
@@ -850,3 +857,43 @@ window.addEventListener("keyup", function (event) {
         press("red", 0)
     }
 }, false)
+
+function simulateTime(time) {
+    var bprod = [auto * IR / 256, auto * IR / 256 * IG / 256, auto * IR / 256 * IG / 256 * IB / 256];
+    const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
+    const names = ["red", "blue", "green"];
+    const prod = {}
+    prod.spec = 0;
+    for (var i = 0; i < names.length; i++) {
+        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(10) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * player.prism.potency[temp.name];
+            else{
+                prod[names[i]] = color[names[i]].reduce((acc, val, i) => acc + val * bprod[i])
+                prod[names[i]] = prod.red * (player.prism.active ? player.prism.potency[names[i]] : player.spectrumLevel[1] + 1) / Math.max(2.56e256 * player.reduction.red, 1); 
+        }
+    }
+    for (var i = 0; i < names.length; i++) if (SumOf(player.bars[names[i]].color) === 0) player.black = Math.sqrt(bprod[names[i]] * time * (prod.spec * time + 2 * player.spectrum) + Math.pow(player.black, 2));
+    while (time > 0) {
+        var nextUp = Math.min((price.red - player.money.red) / prod.red, (price.green - player.money.green) / prod.green, (price.blue[0] - player.money.blue) / prod.blue, (price.blue[1] - player.money.blue) / prod.blue, (price.blue[2] - player.money.blue) / prod.blue, (price.blue[3] - player.money.blue) / prod.blue)
+        if (5000 > nextUp) {
+            player.money.red += prod.red * Math.min(1000, time)/1000
+            player.money.green += prod.green * Math.min(1000, time)/1000
+            player.money.blue += prod.blue * Math.min(1000, time)/1000
+            time -= Math.min(1000, time)
+            
+        } else {
+            player.money.red += prod.red * Math.min(nextUp, time)/1000
+            player.money.green += prod.green * Math.min(nextUp, time)/1000
+            player.money.blue += prod.blue * Math.min(nextUp, time)/1000
+            time -= Math.min(nextUp, time);
+        }
+        while (buyUpgrade("red"));
+        while (buyUpgrade("green"));
+        for (var i = 0; i < 4; i++) while (buyUpgrade("blue", i));
+        bprod = [auto * IR, auto * IR / 256 * IG, auto * IR / 256 * IG / 256 * IB];
+        for (var i = 0; i < names.length;i++){
+            prod[names[i]] = color[names[i]].reduce((acc, val, i) => acc + val * bprod[i])
+            prod[names[i]] = prod.red * (player.prism.active ? player.prism.potency[names[i]] : player.spectrumLevel[1] + 1) / Math.max(2.56e256 * player.reduction.red, 1);
+        }
+    }
+    
+}
