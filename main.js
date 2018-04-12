@@ -278,6 +278,7 @@ var render = {
 }
 
 function pCheck(num) {
+    if (!player.prism.active) return;
     switch(num){
         case 1:
             if (player.prism.active && !player.progress.includes(1)) player.progress.push(1);
@@ -749,7 +750,7 @@ function reset(type, force) {
             spectrumTimer: 0,
             previousSpectrums: [{ time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }, { time: 0, amount: 0 }],
             lastUpdate: Date.now(),
-            prism: { active: false, potency: { red: 0.5, green: 0.5, blue: 0.5 }, pcost: { red: 100, green: 100, blue: 100 }, },
+            prism: { active: false, potency: { red: -1, green: -1, blue: -1 }, pcost: { red: 100, green: 100, blue: 100 }, },
             black: 0,
             pop: false,
             AB: { red: true, green: true, blue: true },
@@ -945,11 +946,12 @@ function simulateTime(time) {
     for (var i = 0; i < names.length; i++) {
         if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name];
             else{
-            prod[names[i]] = color[names[i]].reduce(function(acc, val, i){return acc + val / 255 * bprod[i] *(player.prism.active ? potencyEff[i] : player.spectrumLevel[1] + 1)/ Math.max(2.56e256 * player.reduction.red, 1)},0)
+            prod[names[i]] = color[names[i]].reduce(function(acc, val, i){return acc + (val / 255 * bprod[i] * (player.prism.active ? potencyEff[names[i]] : player.spectrumLevel[1] + 1) / Math.max(2.56e256 * player.reduction.red, 1))},0)
         }
     }
     for (var i = 0; i < names.length; i++) if (SumOf(player.bars[names[i]].color) === 0) player.black = Math.pow((bprod[i] * potencyEff[names[i]] * (player.progress.includes(3) ? Cores : 1)) * time * (prod.spec * time + 2 * player.spectrum) + Math.pow(Math.max(player.black, Math.pow(256, 3)), (player.progress.includes(10) ? 1.85 : 2)), 1 / (player.progress.includes(10) ? 1.85 : 2));
     while (time > 0) {
+        console.log(prod);
         var nextUp = Math.min((price.red - player.money.red) / prod.red, (price.green - player.money.green) / prod.green, (price.blue[0] - player.money.blue) / prod.blue, (price.blue[1] - player.money.blue) / prod.blue, (price.blue[2] - player.money.blue) / prod.blue, (price.blue[3] - player.money.blue) / prod.blue)
         if (5000 > nextUp) {
             player.money.red += prod.red * Math.min(1000, time)/1000
