@@ -754,7 +754,7 @@ function reset(type, force) {
             black: 0,
             pop: false,
             AB: { red: true, green: true, blue: true },
-            CM:0,
+            CM:1,
             progress: [],
             advSpec: { unlock: false, multi: 1, max: 10, reduce: 0.1, time: 0, gain:0, SR: 0},
         };
