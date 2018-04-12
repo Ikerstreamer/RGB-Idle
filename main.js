@@ -272,6 +272,7 @@ var render = {
     },
     Progress: function () {
         var rows = document.getElementById("achieves").rows;
+        for (var i = 0; i < 13; i++) rows[i].style.backgroundColor = "";
         for (var i = 0; i < player.progress.length; i++) rows[player.progress[i]-1].style.backgroundColor = "green";
     },
 }
@@ -503,7 +504,7 @@ function CalcSRgain() {
         SR -= Math.log10(16777216);
         SR = Math.max(SR / ((3 - player.spectrumLevel[13]) * 3), 0)
         SR *= Math.max(Math.log10(player.specced) / 4, 0) + ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
-        if (player.progress.includes(6)) SR *= 1 + player.level.blue / 10;
+        if (player.progress.includes(6)) SR *= 1 + player.level.blue[3] / 10;
         if (player.progress.includes(9)) SR *= 1 + Math.log10(Math.max(player.spectrumTimer / 60000, 1));
         SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
