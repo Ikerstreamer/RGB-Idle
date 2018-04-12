@@ -45,7 +45,7 @@
             <div class="button" id="blueSplice" onclick="spliceColor('blue')" style="background: rgb(0,0,255);"><div>Splice 10% of your blue into a spectrum</div><div>Spliced blue:</div></div>
             <br>
             <br>
-            <div id="spectrumReset" onclick="reset(1)" class="button" style=" background:white; text-shadow:none;  color:black;"><div>Reset all progress and gain</div><div></div><div></div></div>
+            <div id="spectrumReset" onclick="reset(1)" class="button" style=" background:white; text-shadow:none;  color:black;"><div>Reset all progress and gain</div><div></div><div></div></div><div id="advSpectrumReset" onclick="" class="button hidden" style=" background:white; text-shadow:none;  color:black;"><div>Multi your spectrum</div><div><input type="range" min="1" max="10" value="1" class="slider black" onchange="CalcSRgain()" /></div><div></div></div>
         </div>
     </div>
     <div id="tabSpectrum" class="hidden tab">
@@ -78,6 +78,7 @@
                     </thead>
                     <tbody id="achieves">
                         <tr><td>And we're back!</td><td>Reach spectrum once again!</td><td>Unlock Potency Upgrades</td></tr>
+                        <tr><td>"Grinding ain't fun!" - Hunter</td><td>Buy your first potency upgrade. ^^Unlocked here^^</td><td>Advanced spectrum options(yay, long runs)</td></tr>
                         <tr><td>Darkness I embrace you!</td><td>Do a 3 black bar prism when having over 1e50 black</td><td>Black gain is multiplied by core count</td></tr>
                         <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1e64 or more blackness without autobuyers or hotkeys</td><td>Divides autobuyer interval by 8</td></tr>
                         <tr><td>Ooh, half way there!</td><td>Get all spliced color to have and exponent e128</td><td>Auto splice each color once when u click the spectrum button</td></tr>

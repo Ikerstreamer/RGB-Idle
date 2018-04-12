@@ -131,6 +131,9 @@
     .slider.blue::-webkit-slider-thumb {
         background: rgb(0,0,255);
     }
+    .slider.black::-webkit-slider-thumb {
+        background: rgb(0,0,0);
+    }
 
     .slider.red::-moz-range-thumb {
         background: red;
@@ -142,6 +145,9 @@
 
     .slider.blue::-moz-range-thumb {
         background: rgb(0,0,255);
+    }
+    .slider.black::-moz-range-thumb {
+        background: rgb(0,0,0);
     }
     .slider::-moz-range-thumb {
         width: 25px;

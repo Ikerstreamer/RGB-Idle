@@ -1,4 +1,4 @@
-var v = 1.094;
+var v = 1.095;
 var player = {
     money: { red: 0, green: 0, blue: 0 },
     inf: { red: 0, green: 0, blue: 0 },
@@ -18,7 +18,8 @@ var player = {
     pop: false,
     AB: { red: true, green: true, blue: true },
     CM: 1,
-    progress:[],
+    progress: [],
+    advSpec: {unlock:false,multi:1,max:10,reduce:0.025,time:0, active:false, gain:0, SR:0},
 }
 
 var p3 = true;
@@ -96,7 +97,7 @@ function gameLoop() {
     var dif = Date.now() - player.lastUpdate;
     player.lastUpdate = Date.now();
     player.spectrumTimer += dif;
-    if (Date.now() % 60000 < dif) CalcSRgain();
+    if (Date.now() % (player.advSpec.active ? 1000 : 60000) < dif) CalcSRgain();
     updateStats();
     increase(auto * (dif / 1000), dif);
     pCheck(9);
@@ -130,14 +131,14 @@ function incomeBarDisplay(name) {
         for (var i = 0; i < 3; i++) if (player.bars[name].color[i] === 0) show[i] = 0;
         if (SumOf(show) === 0) elem.innerHTML = formatNum(displayIncome(name, "black")) + " Black/s";
         else if (SumOf(show) == 3 && player.bars[name].color[0] == 255 && player.bars[name].color[1] == 255 && player.bars[name].color[2] == 255 && player.spectrumLevel[15] == 1) elem.innerHTML = formatNum(displayIncome(name, "spectrum")) + " Spec/s";
-        else if (SumOf(show) == 1 && !player.progress.includes(7)) elem.innerHTML = formatNum(displayIncome(name, show.indexOf(1))) + "/s";
+        else if (SumOf(show) == 1 && !player.progress.includes(8)) elem.innerHTML = formatNum(displayIncome(name, show.indexOf(1))) + "/s";
         else {
             elem.innerHTML = "";
             for (var i = 0; i < 3; i++) {
                 var temp = document.createElement("div");
                 temp.style.fontSize = (1 / SumOf(show)) + "em";
                 temp.innerHTML = c[i] + ": " + formatNum(displayIncome(name, i)) + "/s";
-                if (SumOf(show) == 1 && player.progress.includes(7)) {
+                if (SumOf(show) == 1 && player.progress.includes(8)) {
                     temp.style.fontSize = "0.5em";
                     if (i == 2) {
                         var tempb = document.createElement("div");
@@ -168,7 +169,7 @@ var render = {
             row.cells[0].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[1].childNodes[0].value) + "," + Math.floor(row.cells[1].childNodes[2].value) + "," + Math.floor(row.cells[1].childNodes[4].value) + ")";
             var colors = ["Red: ", "Green: ", "Blue: "]
             if (row.cells[1].childNodes[0].value + row.cells[1].childNodes[2].value + row.cells[1].childNodes[4].value == 0) {
-                row.cells[2].innerHTML = "Black: <sup>" + formatNum(player.spectrum * potencyEff[temp] * (player.progress.includes(2)? Cores : 1), 0) + "</sup>&frasl;<sub> " + formatNum(player.progress.includes(9)?Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3)))* 0.85) : Math.max(player.black, Math.pow(256, 3)) ) + "</sub>";
+                row.cells[2].innerHTML = "Black: <sup>" + formatNum(player.spectrum * potencyEff[temp] * (player.progress.includes(3)? Cores : 1), 0) + "</sup>&frasl;<sub> " + formatNum(player.progress.includes(10)?Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3)))* 0.85) : Math.max(player.black, Math.pow(256, 3)) ) + "</sub>";
                 blackBar = true;
             } else if (row.cells[1].childNodes[0].value == 255 && row.cells[1].childNodes[2].value == 255 && row.cells[1].childNodes[4].value == 255 && player.spectrumLevel[15] == 1) row.cells[2].innerHTML = "Spectrum: " + (potencyEff[temp] > 1 ? formatNum(potencyEff[temp],0) + "x " : "") + "log<sub>10</sub>(x)";
             else {
@@ -281,55 +282,62 @@ function pCheck(num) {
             if (player.prism.active && !player.progress.includes(1)) player.progress.push(1);
             return
         case 2:
-            if (!player.progress.includes(2) && player.black >= 1e50) player.progress.push(2);
+            if (!player.progress.includes(2) && !player.advSpec.unlock) {
+                player.progress.push(2);
+                player.advSpec.unlock = true;
+                document.getElementById("advSpectrumReset").classList.remove("hidden");
+            }
             return
         case 3:
-            if (p3 && player.black > 1e64 && !player.progress.includes(3)) {
-                player.progress.push(3);
-                document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red + player.progress.includes(3)*3)) + "s";
-                document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green + player.progress.includes(3)*3)) + "s";
-                document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue + player.progress.includes(3)*3)) + "s";
-                ABInt = { red: 2000 / Math.pow(2, player.reduction.red + player.progress.includes(3)*3), green: 2000 / Math.pow(2, player.reduction.green + player.progress.includes(3)*3), blue: 2000 / Math.pow(2, player.reduction.blue + player.progress.includes(3)*3) };
-            }
+            if (!player.progress.includes(3) && player.black >= 1e50) player.progress.push(3);
             return
         case 4:
-            if (Math.floor(Math.log10(player.spliced.red)) == 128 && Math.floor(Math.log10(player.spliced.green)) == 128 && Math.floor(Math.log10(player.spliced.blue)) == 128 && !player.progress.includes(4)) player.progress.push(4);
+            if (p3 && player.black > 1e64 && !player.progress.includes(4)) {
+                player.progress.push(4);
+                document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red + player.progress.includes(4)*3)) + "s";
+                document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green + player.progress.includes(4)*3)) + "s";
+                document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue + player.progress.includes(4)*3)) + "s";
+                ABInt = { red: 2000 / Math.pow(2, player.reduction.red + player.progress.includes(4)*3), green: 2000 / Math.pow(2, player.reduction.green + player.progress.includes(4)*3), blue: 2000 / Math.pow(2, player.reduction.blue + player.progress.includes(4)*3) };
+            }
             return
         case 5:
-            if (player.money.blue >= 1e64 && player.level.blue[3] === 0 && !player.progress.includes(5)) player.progress.push(5);
+            if (Math.floor(Math.log10(player.spliced.red)) == 128 && Math.floor(Math.log10(player.spliced.green)) == 128 && Math.floor(Math.log10(player.spliced.blue)) == 128 && !player.progress.includes(5)) player.progress.push(5);
             return
         case 6:
-            if(!player.progress.includes(6))player.progress.push(6);
+            if (player.money.blue >= 1e64 && player.level.blue[3] === 0 && !player.progress.includes(6)) player.progress.push(6);
             return
         case 7:
-            if (player.bars.red.color[0] == 255 && player.bars.green.color[1] == 255 && player.bars.blue.color[2] == 255 && !player.progress.includes(7)) player.progress.push(7);
+            if(!player.progress.includes(7))player.progress.push(7);
             return
         case 8:
-            if (player.previousSpectrums[0].amount / (player.previousSpectrums[0].time/1000) >= 100 && !player.progress.includes(8)) player.progress.push(8);
+            if (player.bars.red.color[0] == 255 && player.bars.green.color[1] == 255 && player.bars.blue.color[2] == 255 && !player.progress.includes(8)) player.progress.push(8);
             return
         case 9:
-            if (!player.progress.includes(9)) {
-                var b = 0;
-                var c = 0;
-                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b += income[Object.keys(player.bars)[i]] * potencyEff[Object.keys(player.bars)[i]] * (player.spectrum / Math.max(player.black, Math.pow(256, 3)));
-                else c += income[Object.keys(player.bars)[i]]
-                if (b > c) player.progress.push(9);
-            }
+            if (player.previousSpectrums[0].amount / (player.previousSpectrums[0].time/1000) >= 100 && !player.progress.includes(9)) player.progress.push(9);
             return
         case 10:
             if (!player.progress.includes(10)) {
                 var b = 0;
-                var w = 0;
+                var c = 0;
                 for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b += income[Object.keys(player.bars)[i]] * potencyEff[Object.keys(player.bars)[i]] * (player.spectrum / Math.max(player.black, Math.pow(256, 3)));
-                else if (player.bars[Object.keys(player.bars)[i]].color[0] == 255 && player.bars[Object.keys(player.bars)[i]].color[1] == 255 && player.bars[Object.keys(player.bars)[i]].color[2] == 255) w += Math.pow(Math.max(Math.floor(Math.log10(income[Object.keys(player.bars)[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[Object.keys(player.bars)[i]];
-                if (w > b) player.progress.push(10);
+                else c += income[Object.keys(player.bars)[i]]
+                if (b > c) player.progress.push(10);
             }
             return
         case 11:
-            if (!player.progress.includes(11) && (player.money.red == 2.56e256 || player.money.green == 2.56e256 || player.money.blue == 2.56e256)) player.progress.push(11);
+            if (!player.progress.includes(11)) {
+                var b = 0;
+                var w = 0;
+                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b += income[Object.keys(player.bars)[i]] * potencyEff[Object.keys(player.bars)[i]] * (player.spectrum / Math.max(player.black, Math.pow(256, 3)));
+                else if (player.bars[Object.keys(player.bars)[i]].color[0] == 255 && player.bars[Object.keys(player.bars)[i]].color[1] == 255 && player.bars[Object.keys(player.bars)[i]].color[2] == 255) w += Math.pow(Math.max(Math.floor(Math.log10(income[Object.keys(player.bars)[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[Object.keys(player.bars)[i]];
+                if (w > b) player.progress.push(11);
+            }
             return
         case 12:
-            if (!player.progress.includes(12) && player.black == 2.56e256) player.progress.push(21);
+            if (!player.progress.includes(12) && (player.money.red == 2.56e256 || player.money.green == 2.56e256 || player.money.blue == 2.56e256)) player.progress.push(12);
+            return
+        case 13:
+            if (!player.progress.includes(13) && player.black == 2.56e256) player.progress.push(13);
             return
     }          
 }
@@ -346,14 +354,14 @@ function increase(amnt, dif) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width += next;
         if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255 && player.spectrumLevel[15] == 1) {
-            player.spectrum += (player.progress.includes(10) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name] * (dif / 1000);
-            specGain += (player.progress.includes(10) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name];
+            player.spectrum += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name] * (dif / 1000);
+            specGain += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(Math.floor((temp.width / (256 * (dif / 1000)))))), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name];
         } else {
             if (player.money.red < 2.56e256) player.money["red"] += ((player.prism.active ? potencyEff[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255) / Math.max(2.56e256 * player.reduction.red, 1);
             if (player.money.green < 2.56e256) player.money["green"] += ((player.prism.active ? potencyEff[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255) / Math.max(2.56e256 * player.reduction.green, 1);
             if (player.money.blue < 2.56e256) player.money["blue"] += ((player.prism.active ? potencyEff[temp.name] : player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2] / 255) / Math.max(2.56e256 * player.reduction.blue, 1);
-            if (temp.color[0] + temp.color[1] + temp.color[2] == 0) player.black = Math.pow(Math.floor(temp.width / (256 * (dif / 1000)) * potencyEff[temp.name] * (player.progress.includes(2) ? Cores : 1)) * dif * (specGain * dif + 2 * tspec) + Math.pow(Math.max(player.black, Math.pow(256, 3)), player.progress.includes(9) ? 1.85 : 2), 1 / (player.progress.includes(9) ? 1.85 : 2))//player.black += Math.floor(temp.width / 256) * (player.spectrum * potencyEff[temp.name] * (player.progress.includes(2) ? Cores : 1) / (player.progress.includes(9) ? Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3))) * 0.85) : Math.max(player.black, Math.pow(256, 3))));
-            if (temp.color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(7)) player.black += Math.sqrt(Math.floor(temp.width / 256) * ((player.spectrum * potencyEff[temp.name]) / Math.max(player.black, Math.pow(256, 3))));
+            if (temp.color[0] + temp.color[1] + temp.color[2] == 0) player.black = Math.pow(Math.floor(temp.width / (256 * (dif / 1000)) * potencyEff[temp.name] * (player.progress.includes(3) ? Cores : 1)) * dif * (specGain * dif + 2 * tspec) + Math.pow(Math.max(player.black, Math.pow(256, 3)), player.progress.includes(10) ? 1.85 : 2), 1 / (player.progress.includes(10) ? 1.85 : 2))//player.black += Math.floor(temp.width / 256) * (player.spectrum * potencyEff[temp.name] * (player.progress.includes(3) ? Cores : 1) / (player.progress.includes(10) ? Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3))) * 0.85) : Math.max(player.black, Math.pow(256, 3))));
+            if (temp.color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) player.black += Math.sqrt(Math.floor(temp.width / 256) * ((player.spectrum * potencyEff[temp.name]) / Math.max(player.black, Math.pow(256, 3))));
         }
         next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : IB);
         temp.width = temp.width % 256;
@@ -386,6 +394,7 @@ function prismUpgrade(name,type) {
                 potencyEff.red = Math.pow(256, player.prism.potency.red)
                 potencyEff.green = Math.pow(256, player.prism.potency.green)
                 potencyEff.blue = Math.pow(256, player.prism.potency.blue)
+                pCheck(2);
             }
             return
         case "cost":
@@ -417,7 +426,7 @@ function buyUpgrade(name, Bindex) {
             player.money[name] -= price[name][Bindex]
             player.level[name][Bindex]++;
             updateStats();
-            if (Bindex == 3 && player.progress.includes(5)) CalcSRgain();
+            if (Bindex == 3 && player.progress.includes(6)) CalcSRgain();
             return true;
         }
     }else if (player.money[name] >= price[name]) {
@@ -474,7 +483,7 @@ function updateStats() {
     if (player.spectrumLevel[17] == 1) BPD = Math.floor(Math.sqrt((player.level.red + player.level.green)/100))
     else BPD = 0;
     Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[14] == 1 ? 8 : 1);
-    Clock = Math.pow(2,Math.floor(Math.log(Math.pow(2, player.level.blue[0] + (player.progress.includes(6)? Math.min(Math.floor(player.spectrumTimer/300000),5) : 0)) * (Cores * Math.pow(1.025,Cores)))/Math.log(2))) * (player.progress.includes(11)?SumOf(Object.values(player.reduction)) : 1);
+    Clock = Math.pow(2,Math.floor(Math.log(Math.pow(2, player.level.blue[0] + (player.progress.includes(7)? Math.min(Math.floor(player.spectrumTimer/300000),5) : 0)) * (Cores * Math.pow(1.025,Cores)))/Math.log(2))) * (player.progress.includes(12)?SumOf(Object.values(player.reduction)) : 1);
     click = (2 + player.level.red / 2) * Math.pow((1.15 + player.spectrumLevel[7] * 0.15), (Math.floor(player.level.red / 10))) * Math.log10(player.CM);
     auto = (((player.level.green * 16) * Math.pow((1.15 + player.spectrumLevel[7] * 0.15), Math.floor(player.level.green / 10))) * Clock * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(player.CM), 1) : 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(Math.floor(Math.pow(player.spectrum, 0.8)), 1) : 1));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.05, Math.max((player.level.red / 100)-1,0))) * PD), player.level.red);
@@ -490,15 +499,48 @@ function updateStats() {
 }
 
 function CalcSRgain() {
-    SR = Math.max(Math.log10(player.spliced.red) + Math.log10(player.spliced.green) + Math.log10(player.spliced.blue), 0);
-    SR -= Math.log10(16777216);
-    SR = Math.max(SR / ((3 - player.spectrumLevel[13]) * 3), 0)
-    SR *= Math.max(Math.log10(player.specced) / 4, 0) + ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
-    if (player.progress.includes(5)) SR *= 1 + player.level.blue / 10;
-    if (player.progress.includes(8)) SR *= 1 + Math.log10(Math.max(player.spectrumTimer / 60000,1));
-    SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
-    document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
-    document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
+        SR = Math.max(Math.log10(player.spliced.red) + Math.log10(player.spliced.green) + Math.log10(player.spliced.blue), 0);
+        SR -= Math.log10(16777216);
+        SR = Math.max(SR / ((3 - player.spectrumLevel[13]) * 3), 0)
+        SR *= Math.max(Math.log10(player.specced) / 4, 0) + ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
+        if (player.progress.includes(6)) SR *= 1 + player.level.blue / 10;
+        if (player.progress.includes(9)) SR *= 1 + Math.log10(Math.max(player.spectrumTimer / 60000, 1));
+        SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
+        document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
+        document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
+        document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
+        if (player.advSpec.unlock) {
+                var prevmulti = player.advSpec.multi;
+                player.advSpec.multi = parseInt(document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value);
+                if (player.advSpec.active && player.advSpec.multi != prevmulti) {
+                    if (player.advSpec.multi == 1) player.advSpec.active = false;
+                    player.advSpec.time *= player.advSpec.multi / prevmulti;
+                }
+                var num = (player.advSpec.active ? player.advSpec.SR : SR);
+                player.advSpec.gain = 0;
+                for (var i = 0; i < player.advSpec.multi; i++) {
+                    player.advSpec.gain += num;
+                    num *= 0.9;
+                }
+                player.advSpec.gain = Math.floor(player.advSpec.gain);
+        if (player.advSpec.multi > 1) {
+            document.getElementById("spectrumReset").childNodes[0].innerHTML = "<b>Start Advanced Spectrum</b>";
+            document.getElementById("spectrumReset").childNodes[1].innerHTML = "";
+            document.getElementById("spectrumReset").childNodes[2].innerHTML = formatTime(player.spectrumTimer * player.advSpec.multi)
+            if (player.advSpec.active) {
+                document.getElementById("spectrumReset").childNodes[0].innerHTML = "<b>Advanced Spectrum Finishes in</b>";
+                document.getElementById("spectrumReset").childNodes[2].innerHTML = formatTime(player.advSpec.time - player.spectrumTimer);
+                if (player.advSpec.time <= player.spectrumTimer) {
+                    document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
+                    document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(player.advSpec.gain, 0) + " Spectrum</b>";
+                    document.getElementById("spectrumReset").childNodes[2].innerHTML = "Adv spectrum complete!";
+                    document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi;
+                }
+            }
+        }
+        document.getElementById("advSpectrumReset").childNodes[2].innerHTML = formatNum(player.advSpec.gain, 0) + " Spectrum";
+    }
+   
 }
 
 function formatNum(num, dp, type) {
@@ -566,27 +608,28 @@ function setupPlayer() {
         if (player.version < 1.092) player.AB = { red: true, green: true, blue: true };
         if (player.version < 1.093) player.CM = 1;
         if (player.version < 1.094) {
-            if (player.progress.includes(8)) {
+            if (player.progress.includes(9)) {
                 player.progress.splice(player.progress.indexOf(8), 1)
                 player.progress.push(12);
             }
-            if (player.progress.includes(7)) {
+            if (player.progress.includes(8)) {
                 player.progress.splice(player.progress.indexOf(7), 1)
                 player.progress.push(11);
             }
-            if (player.progress.includes(6)) {
+            if (player.progress.includes(7)) {
                 player.progress.splice(player.progress.indexOf(6), 1)
                 player.progress.push(10);
             }
-            if (player.progress.includes(5)) {
+            if (player.progress.includes(6)) {
                 player.progress.splice(player.progress.indexOf(5), 1)
                 player.progress.push(9);
             }
-            if (player.progress.includes(4)) {
+            if (player.progress.includes(5)) {
                 player.progress.splice(player.progress.indexOf(4), 1)
                 player.progress.push(7);
             } 
         }
+        if (player.version < 1.095) player.advSpec = { unlock: false, multi: 1, max: 10, reduce: 0.1, time: 0, active:false,gain:0, SR: 0 };
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
         if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
@@ -598,15 +641,18 @@ function setupPlayer() {
         else document.getElementById("blackCountRGB").classList.add("hidden");
         if (player.specced > 0) document.getElementById("spectrumCountRGB").classList.remove("hidden");
         else document.getElementById("spectrumCountRGB").classList.add("hidden");
+        if (player.advSpec.unlock) document.getElementById("advSpectrumReset").classList.remove("hidden");
+        else document.getElementById("advSpectrumReset").classList.add("hidden");
+        document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi;
         updateStats();
         CalcSRgain();
         document.getElementById("spectrumButton" + 4).childNodes[1].innerHTML = SUInfo(4);
         document.getElementById("spectrumButton" + 5).childNodes[1].innerHTML = SUInfo(5);
         document.getElementById("spectrumButton" + 9).childNodes[1].innerHTML = SUInfo(9);
-        document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red + player.progress.includes(3)*3)) + "s";
-        document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green + player.progress.includes(3)*3)) + "s";
-        document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue + player.progress.includes(3)*3)) + "s";
-        ABInt = { red: 2000 / Math.pow(2, player.reduction.red + player.progress.includes(3) * 3), green: 2000 / Math.pow(2, player.reduction.green + player.progress.includes(3) * 3), blue: 2000 / Math.pow(2, player.reduction.blue + player.progress.includes(3) * 3) };
+        document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red + player.progress.includes(4)*3)) + "s";
+        document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green + player.progress.includes(4)*3)) + "s";
+        document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue + player.progress.includes(4)*3)) + "s";
+        ABInt = { red: 2000 / Math.pow(2, player.reduction.red + player.progress.includes(4) * 3), green: 2000 / Math.pow(2, player.reduction.green + player.progress.includes(4) * 3), blue: 2000 / Math.pow(2, player.reduction.blue + player.progress.includes(4) * 3) };
         potencyEff.red = Math.pow(256, player.prism.potency.red)
         potencyEff.green = Math.pow(256, player.prism.potency.green)
         potencyEff.blue = Math.pow(256, player.prism.potency.blue)
@@ -637,13 +683,31 @@ function load(name) {
 
 function reset(type, force) {
     if (type >= 1) {
-        if (player.progress.includes(4)) {
+        if (player.progress.includes(5)) {
             spliceColor('red');
             spliceColor('green');
             spliceColor('blue');
         }
         CalcSRgain();
         if (SR >= 1 || force) {
+            if (player.advSpec.multi > 1) {
+                if (player.advSpec.active) {
+                    if(player.advSpec.time <= player.spectrumTimer){
+                    player.advSpec.active = false;
+                    player.advSpec.multi = 1;
+                    player.spectrum += player.advSpec.gain;
+                    player.previousSpectrums = [{ time: player.spectrumTimer, amount: player.advSpec.gain }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
+                }else return
+                } else {
+                    player.advSpec.SR = SR;
+                    player.advSpec.time =player.spectrumTimer * (player.advSpec.multi + 1);
+                    player.advSpec.active = true;
+                    return
+                }
+            } else {
+                player.spectrum += Math.floor(SR);
+                player.previousSpectrums = [{ time: player.spectrumTimer, amount: SR }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
+            }
             if (player.specced == 0) document.getElementById("spectrumCountRGB").classList.remove("hidden");
             for (var i = 0; i < 3; i++) player.bars[Object.keys(player.money)[i]].width = 0;
             player.money = { red: 0, green: 0, blue: 0 };
@@ -651,8 +715,6 @@ function reset(type, force) {
             player.reduction = { red: 0, green: 0, blue: 0 };
             player.inf = { red: 0, green: 0, blue: 0 };
             player.unlock = player.spectrumLevel[8] == 1;
-            player.spectrum += Math.floor(SR);
-            player.previousSpectrums = [{ time: player.spectrumTimer, amount: SR }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
             player.spliced = { red: 0, green: 0, blue: 0 };
             player.specced += 1;
             player.spectrumTimer = 0;
@@ -691,7 +753,8 @@ function reset(type, force) {
             pop: false,
             AB: { red: true, green: true, blue: true },
             CM:0,
-            progress:[],
+            progress: [],
+            advSpec: { unlock: false, multi: 1, max: 10, reduce: 0.1, time: 0, gain:0, SR: 0},
         };
         switchTab("RGB",0);
         player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
@@ -743,7 +806,7 @@ function mix(PC) {
     if (player.black >= mixCost) {
         pCheck(3);
         mixReset();
-        if (player.progress.includes(12)) player.black -= mixCost;
+        if (player.progress.includes(13)) player.black -= mixCost;
         else player.black = 0;
     } else if (player.spectrum >= mixCost / Math.max(player.black,1) && confirm("Do you want to pay the missing blackness using Spectrum? \nThis will cost " + formatNum(mixCost / Math.max(player.black,1), 0) + " Spectrum. This will leave with "+ formatNum(player.spectrum - (mixCost / Math.max(player.black,1)),0) +" Spectrum.")) {
         pCheck(3);
@@ -781,9 +844,9 @@ function switchTab(name, num, sub) {
 function displayIncome(name, index) {
     var num = 0;
     if (player.prism.active) {
-        if (index == "black") num = income[name] * (player.spectrum * potencyEff[name] * (player.progress.includes(2) ? Cores : 1) / (player.progress.includes(9) ? Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3))) * 0.85) : Math.max(player.black, Math.pow(256, 3))));
+        if (index == "black") num = income[name] * (player.spectrum * potencyEff[name] * (player.progress.includes(3) ? Cores : 1) / (player.progress.includes(10) ? Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3))) * 0.85) : Math.max(player.black, Math.pow(256, 3))));
         else if (index == "miniBlack") num = Math.sqrt(income[name] * ((player.spectrum * potencyEff[name]) / Math.max(player.black, Math.pow(256, 3))));
-        else if (index == "spectrum") num = (player.progress.includes(10)? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(income[name])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[name];
+        else if (index == "spectrum") num = (player.progress.includes(11)? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(income[name])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[name];
         else num = (income[name] * potencyEff[name] * player.bars[name].color[index] / 255) / Math.max(player.reduction[name] * 2.56e256,1);
     }else num = income[name] * (player.spectrumLevel[1] + !player.prism.active);
     return(num)
@@ -838,10 +901,10 @@ function reduceProd(name) {
     player.money[name] = 0;
     player.reduction[name]++;
     player.inf[name]++;
-    document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red + player.progress.includes(3)*3)) + "s";
-    document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green + player.progress.includes(3)*3)) + "s";
-    document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue + player.progress.includes(3)*3)) + "s";
-    ABInt = { red: 2000 / Math.pow(2, player.reduction.red + player.progress.includes(3)*3), green: 2000 / Math.pow(2, player.reduction.green + player.progress.includes(3)*3), blue: 2000 / Math.pow(2, player.reduction.blue + player.progress.includes(3)*3) };
+    document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + formatNum(2 / Math.pow(2, player.reduction.red + player.progress.includes(4)*3)) + "s";
+    document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green + player.progress.includes(4)*3)) + "s";
+    document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue + player.progress.includes(4)*3)) + "s";
+    ABInt = { red: 2000 / Math.pow(2, player.reduction.red + player.progress.includes(4)*3), green: 2000 / Math.pow(2, player.reduction.green + player.progress.includes(4)*3), blue: 2000 / Math.pow(2, player.reduction.blue + player.progress.includes(4)*3) };
 }
 
 window.addEventListener("keypress",function(event) {
@@ -871,20 +934,21 @@ window.addEventListener("keyup", function (event) {
 }, false)
 
 function simulateTime(time) {
-    console.log("You were offline for "+time/1000 +" seconds")
+    console.log("You were offline for " + time / 1000 + " seconds");
+    player.spectrumTimer += time;
     var bprod = [auto * IR / 256, auto * IR / 256 * IG / 256, auto * IR / 256 * IG / 256 * IB / 256];
     const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
     const names = ["red", "blue", "green"];
     const prod = {}
     prod.spec = 0;
     for (var i = 0; i < names.length; i++) {
-        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(10) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name];
+        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name];
             else{
                 prod[names[i]] = color[names[i]].reduce((acc, val, i) => acc + val * bprod[i])
                 prod[names[i]] = prod.red * (player.prism.active ? potencyEff[names[i]] : player.spectrumLevel[1] + 1) / Math.max(2.56e256 * player.reduction.red, 1); 
         }
     }
-    for (var i = 0; i < names.length; i++) if (SumOf(player.bars[names[i]].color) === 0) player.black = Math.pow((bprod[i] * potencyEff[names[i]] * (player.progress.includes(2) ? Cores : 1)) * time * (prod.spec * time + 2 * player.spectrum) + Math.pow(Math.max(player.black, Math.pow(256, 3)), (player.progress.includes(9) ? 1.85 : 2)), 1 / (player.progress.includes(9) ? 1.85 : 2));
+    for (var i = 0; i < names.length; i++) if (SumOf(player.bars[names[i]].color) === 0) player.black = Math.pow((bprod[i] * potencyEff[names[i]] * (player.progress.includes(3) ? Cores : 1)) * time * (prod.spec * time + 2 * player.spectrum) + Math.pow(Math.max(player.black, Math.pow(256, 3)), (player.progress.includes(10) ? 1.85 : 2)), 1 / (player.progress.includes(10) ? 1.85 : 2));
     while (time > 0) {
         var nextUp = Math.min((price.red - player.money.red) / prod.red, (price.green - player.money.green) / prod.green, (price.blue[0] - player.money.blue) / prod.blue, (price.blue[1] - player.money.blue) / prod.blue, (price.blue[2] - player.money.blue) / prod.blue, (price.blue[3] - player.money.blue) / prod.blue)
         if (5000 > nextUp) {
@@ -910,4 +974,8 @@ function simulateTime(time) {
         updateStats();
     }
     
+}
+
+function formatTime(num){
+    return (num >= 3600000 ? Math.floor(num / 3600000) + " hours and " + Math.floor((num % 3600000) / 60000) + " minutes" : (num >= 60000 ? Math.floor(num / 60000) + " minutes and " + Math.floor((num % 60000) / 1000) + " seconds" : (num >= 10000 ? Math.floor(num / 1000) + " seconds" : (num > 0 ? num + " millis" : 0))));
 }
