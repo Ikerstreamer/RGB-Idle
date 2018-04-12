@@ -97,7 +97,7 @@ function gameLoop() {
     var dif = Date.now() - player.lastUpdate;
     player.lastUpdate = Date.now();
     player.spectrumTimer += dif;
-    if (Date.now() % (player.advSpec.active ? 1000 : 60000) < dif) CalcSRgain();
+    if (Date.now() % (player.advSpec.unlock ? 1000 : 60000) < dif) CalcSRgain();
     updateStats();
     increase(auto * (dif / 1000), dif);
     pCheck(9);
@@ -934,7 +934,7 @@ window.addEventListener("keyup", function (event) {
 }, false)
 
 function simulateTime(time) {
-    console.log("You were offline for " + time / 1000 + " seconds");
+    console.log("You were offline for " + formatTime(time));
     player.spectrumTimer += time;
     var bprod = [auto * IR / 256, auto * IR / 256 * IG / 256, auto * IR / 256 * IG / 256 * IB / 256];
     const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
@@ -944,8 +944,7 @@ function simulateTime(time) {
     for (var i = 0; i < names.length; i++) {
         if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name];
             else{
-                prod[names[i]] = color[names[i]].reduce((acc, val, i) => acc + val * bprod[i])
-                prod[names[i]] = prod.red * (player.prism.active ? potencyEff[names[i]] : player.spectrumLevel[1] + 1) / Math.max(2.56e256 * player.reduction.red, 1); 
+            prod[names[i]] = color[names[i]].reduce(function(acc, val, i){return acc + val / 255 * bprod[i] *(player.prism.active ? potencyEff[i] : player.spectrumLevel[1] + 1)/ Math.max(2.56e256 * player.reduction.red, 1)},0)
         }
     }
     for (var i = 0; i < names.length; i++) if (SumOf(player.bars[names[i]].color) === 0) player.black = Math.pow((bprod[i] * potencyEff[names[i]] * (player.progress.includes(3) ? Cores : 1)) * time * (prod.spec * time + 2 * player.spectrum) + Math.pow(Math.max(player.black, Math.pow(256, 3)), (player.progress.includes(10) ? 1.85 : 2)), 1 / (player.progress.includes(10) ? 1.85 : 2));
@@ -977,5 +976,5 @@ function simulateTime(time) {
 }
 
 function formatTime(num){
-    return (num >= 3600000 ? Math.floor(num / 3600000) + " hours and " + Math.floor((num % 3600000) / 60000) + " minutes" : (num >= 60000 ? Math.floor(num / 60000) + " minutes and " + Math.floor((num % 60000) / 1000) + " seconds" : (num >= 10000 ? Math.floor(num / 1000) + " seconds" : (num > 0 ? num + " millis" : 0))));
+    return (num >= 3600000 ? Math.floor(num / 3600000) + " hours and " + Math.floor((num % 3600000) / 60000) + " mins" : (num >= 60000 ? Math.floor(num / 60000) + " mins and " + Math.floor((num % 60000) / 1000) + " secs" : (num >= 10000 ? Math.floor(num / 1000) + " secs" : (num > 0 ? num + " millis" : 0))));
 }
