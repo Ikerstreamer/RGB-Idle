@@ -944,7 +944,7 @@ function simulateTime(time) {
     const prod = {}
     prod.spec = 0;
     for (var i = 0; i < names.length; i++) {
-        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[temp.name];
+        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[names[i]];
             else{
             prod[names[i]] = color[names[i]].reduce(function(acc, val, i){return acc + (val / 255 * bprod[i] * (player.prism.active ? potencyEff[names[i]] : player.spectrumLevel[1] + 1) / Math.max(2.56e256 * player.reduction.red, 1))},0)
         }
@@ -954,15 +954,17 @@ function simulateTime(time) {
         console.log(prod);
         var nextUp = Math.min((price.red - player.money.red) / prod.red, (price.green - player.money.green) / prod.green, (price.blue[0] - player.money.blue) / prod.blue, (price.blue[1] - player.money.blue) / prod.blue, (price.blue[2] - player.money.blue) / prod.blue, (price.blue[3] - player.money.blue) / prod.blue)
         if (5000 > nextUp) {
-            player.money.red += prod.red * Math.min(1000, time)/1000
-            player.money.green += prod.green * Math.min(1000, time)/1000
-            player.money.blue += prod.blue * Math.min(1000, time)/1000
-            time -= Math.min(1000, time)
+            player.money.red += prod.red * Math.min(5000, time) / 1000;
+            player.money.green += prod.green * Math.min(5000, time) / 1000;
+            player.money.blue += prod.blue * Math.min(5000, time) / 1000;
+            player.spectrum += prod.spec * Math.min(5000, time) / 1000;
+            time -= Math.min(5000, time)
             
         } else {
-            player.money.red += prod.red * Math.min(nextUp, time)/1000
-            player.money.green += prod.green * Math.min(nextUp, time)/1000
-            player.money.blue += prod.blue * Math.min(nextUp, time)/1000
+            player.money.red += prod.red * Math.min(nextUp, time) / 1000;
+            player.money.green += prod.green * Math.min(nextUp, time) / 1000;
+            player.money.blue += prod.blue * Math.min(nextUp, time) / 1000;
+            player.spectrum += prod.spec * Math.min(nextUp, time) / 1000;
             time -= Math.min(nextUp, time);
         }
         while (buyUpgrade("red"));
