@@ -19,7 +19,7 @@ var player = {
     AB: { red: true, green: true, blue: true },
     CM: 1,
     progress: [],
-    advSpec: {unlock:false,multi:1,max:10,reduce:0.05,time:0, active:false, gain:0, SR:0},
+    advSpec: {unlock:false,multi:1,max:50,reduce:0.1,time:0, active:false, gain:0, SR:0},
 }
 
 var p3 = true;
@@ -522,7 +522,7 @@ function CalcSRgain() {
                 player.advSpec.gain = 0;
                 for (var i = 0; i < player.advSpec.multi; i++) {
                     player.advSpec.gain += num;
-                    num *= 1-player.advSpec.reduce;
+                    if(i%10 === 0)num *= 1-player.advSpec.reduce;
                 }
                 player.advSpec.gain = Math.floor(player.advSpec.gain);
         if (player.advSpec.multi > 1) {
@@ -634,7 +634,8 @@ function setupPlayer() {
         if (player.version < 1.095) player.advSpec = { unlock: false, multi: 1, max: 10, reduce: 0.1, time: 0, active: false, gain: 0, SR: 0 };
         if (player.version < 1.096) {
             player.prism.potency = { red: -1, green: -1, blue: -1 }
-            player.advSpec.reduce = 0.05;
+            player.advSpec.reduce = 0.1;
+            player.advSpec.max = 50;
         }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
