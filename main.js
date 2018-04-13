@@ -19,7 +19,7 @@ var player = {
     AB: { red: true, green: true, blue: true },
     CM: 1,
     progress: [],
-    advSpec: {unlock:false,multi:1,max:10,reduce:0.025,time:0, active:false, gain:0, SR:0},
+    advSpec: {unlock:false,multi:1,max:10,reduce:0.05,time:0, active:false, gain:0, SR:0},
 }
 
 var p3 = true;
@@ -522,7 +522,7 @@ function CalcSRgain() {
                 player.advSpec.gain = 0;
                 for (var i = 0; i < player.advSpec.multi; i++) {
                     player.advSpec.gain += num;
-                    num *= 0.9;
+                    num *= 1-player.advSpec.reduce;
                 }
                 player.advSpec.gain = Math.floor(player.advSpec.gain);
         if (player.advSpec.multi > 1) {
@@ -632,7 +632,10 @@ function setupPlayer() {
             } 
         }
         if (player.version < 1.095) player.advSpec = { unlock: false, multi: 1, max: 10, reduce: 0.1, time: 0, active: false, gain: 0, SR: 0 };
-        if (player.version < 1.096) player.prism.potency = {red:-1,green:-1,blue:-1}
+        if (player.version < 1.096) {
+            player.prism.potency = { red: -1, green: -1, blue: -1 }
+            player.advSpec.reduce = 0.05;
+        }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
         if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
@@ -996,8 +999,9 @@ function getBlack(name, time, prod, specprod,spectrum) {
         if (specprod === 0) thresholdTime = Math.pow(blackThreshold, A) / (2 * mults * player.spectrum)
         else thresholdTime = Math.sqrt(Math.pow(blackThreshold, A)/ (mults * prod.spec) + Math.pow(spectRatio, 2)) - spectRatio;
         console.log(thresholdTime);
-        if (thresholdTime > 0 && thresholdTime != Infinity) return Math.min(Math.pow(mults * (thresholdTime) * (specprod * thresholdTime + 2 * spectrum) + Math.pow(blackThreshold, A), 1 / A), blackThreshold) + Math.pow(mults * (time - thresholdTime) * (specprod * (time - thresholdTime) + 2 * spectrum) + Math.pow(player.black, A), 1 / A);
-        else return 0;
+        if (thresholdTime > 0 && thresholdTime != Infinity) {
+           Math.pow(mults * (thresholdTime) * (specprod * thresholdTime + 2 * spectrum) + Math.pow(blackThreshold, A), 1 / A);
+        } else return 0;
     }
     return Math.pow(mults * time * (specprod * time + 2 * spectrum) + Math.pow(player.black, A), 1 / A);
     
