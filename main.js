@@ -41,7 +41,7 @@ var PD = 0;
 var BPD = 0;
 var SR = 0;
 var potencyEff = {red:1/256, green:1/256,blue:1/256};
-var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 15, 25, 50, 100, 250, 500, 2500, 5000, 1e5, 1e7, 1e10];
+var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 15, 25, 50, 100, 250, 500, 2500, 5000, 1e7, 1e9, 1e12];
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
@@ -115,8 +115,8 @@ function gameLoop() {
         document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
     }
     if (SumOf(player.spectrumLevel) < 15 && player.black >= 1e128) {
-        var row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(5);
-        row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue is Equal to the Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on Red and Green Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
+        var row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows[5];
+        row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue is Equal to the Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
         for (var i = 15; i < 18; i++) player.spectrumLevel[i] = 0;
     } 
     render[tab]();
@@ -640,10 +640,13 @@ function setupPlayer() {
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
         if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
+        var row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows[5];
         if (SumOf(player.spectrumLevel) >= 15 && document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length == 5) {
-            var row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(5);
-            row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue is Equal to the Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on Red and Green Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
-        } else if (document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length == 6) document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.deleteRow(5);
+            row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue is Equal to the Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
+        } else {
+            row.innerHTML = '<td><div class="count">New upgrades at e128 Black</div></td>'
+            
+        }
         if (player.prism.active) document.getElementById("blackCountRGB").classList.remove("hidden");
         else document.getElementById("blackCountRGB").classList.add("hidden");
         if (player.specced > 0) document.getElementById("spectrumCountRGB").classList.remove("hidden");
@@ -671,7 +674,7 @@ function load(name) {
     if (name == "Import") {
         var temp = prompt("Enter you save:", "");
         if (temp != null && temp != undefined && temp != "" && temp != false) {
-            if (temp == player.clock / 1024^3) pCheck(6);
+            if (parseInt(temp) === player.clock / 1024^3) pCheck(6);
             if (typeof (JSON.parse(atob(temp))) == 'object') {
                 localStorage.setItem("RGBsave", temp);
                 setupPlayer();
@@ -949,7 +952,7 @@ function simulateTime(time) {
     const prod = {}
     prod.spec = 0;
     for (var i = 0; i < names.length; i++) {
-        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255)prod.spec += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[names[i]];
+        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255  && player.spectrumLevel[15] === 1)prod.spec += (player.progress.includes(11) ? Math.log10(player.black) : 1) * Math.pow(Math.max(Math.floor(Math.log10(bprod[names[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[names[i]];
             else{
             prod[names[i]] = color[names[i]].reduce(function(acc, val, i){return acc + (val / 255 * bprod[i] * (player.prism.active ? potencyEff[names[i]] : player.spectrumLevel[1] + 1) / Math.max(2.56e256 * player.reduction.red, 1))},0)
         }
