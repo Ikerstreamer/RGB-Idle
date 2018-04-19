@@ -1007,6 +1007,8 @@ function getSpec(name, prod) {
 }
 
 function getBlack(name, time, prod, specprod,spectrum) {
+    if (prod === 0) prod = 1
+    if (specprod === 0) prod = 1
     let A = player.progress.includes(10) ? 1.85 : 2
     let mults = Math.log10(prod * potencyEff[name] * (player.spectrumLevel[1]+1) * (player.progress.includes(3) ? Cores : 1))
     let blackThreshold = Math.log10(Math.pow(256, 3))
