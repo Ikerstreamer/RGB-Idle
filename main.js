@@ -375,7 +375,7 @@ function increase(amnt, dif) {
     if (player.money.green > 2.56e256) player.money.green = 2.56e256;
     if (player.money.blue > 2.56e256) player.money.blue = 2.56e256;
     if (!player.pop) pCheck(12);
-    if (player.money.blue == 2.56e256 && player.money.green == 2.56e256 && player.money.red == 2.56e256 && tab == "RGB" && player.pop == false)pop(1);
+    if (player.money.blue == 2.56e256 && player.money.green == 2.56e256 && player.money.red == 2.56e256 && player.pop == false)pop(1);
     else {
         for (var i = 0; i < 3 ; i++) if (player.money[Object.keys(player.bars)[i]] == 2.56e256) {
             if (player.reduction[Object.keys(player.bars)[i]] > 0) reduceProd(Object.keys(player.bars)[i]);
