@@ -1019,7 +1019,7 @@ function getBlack(name, time, prod, specprod,spectrum) {
             return Math.pow(10, logAdd((mults + Math.log10(thresholdTime) + Math.log10(specprod * thresholdTime + 2 * spectrum)), blackThreshold * A) * (1 / A));
         } else return 0;
     }
-    var ret = Math.pow(10, logAdd((mults + Math.log10(time) + Math.log10(specprod * time + 2 * spectrum)), Math.log10(player.black) * A) * (1 / A));
+    let ret = Math.pow(10, logAdd((mults + Math.log10(time) + Math.log10(specprod * time + 2 * spectrum)), Math.log10(player.black) * A) * (1 / A));
     if (isFinite(ret)) return ret
     else return player.black
 }
