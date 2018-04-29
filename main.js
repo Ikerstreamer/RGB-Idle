@@ -980,6 +980,9 @@ function simulateTime(time) {
             player.spectrum += prod.spec * Math.min(nextUp, time) / 1000;
             time -= Math.min(nextUp, time);
         }
+        if (player.money.red > 2.56e256) player.money.red = 2.56e256;
+        if (player.money.green > 2.56e256) player.money.green = 2.56e256;
+        if (player.money.blue > 2.56e256) player.money.blue = 2.56e256;
         while (buyUpgrade("red"));
         while (buyUpgrade("green"));
         for (var i = 0; i < 4; i++) while (buyUpgrade("blue", i));
@@ -1003,7 +1006,11 @@ function getSpec(name, prod) {
     let logprod = Math.max(Math.floor(Math.log10(prod)), 0);
     let rpow = 1 + ((player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
     let logpot = Math.log10(potencyEff[name]);
-    return Math.pow(blackmulti * logprod * logpot, rpow);
+    let coreMulti = 1;
+    if (player.progress.includes(6)) coreMulti = 1 + player.level.blue[3] / 10;
+    let timeMulti = 1;
+    if (player.progress.includes(9)) timeMulti = 1 + Math.log10(Math.max(player.spectrumTimer / 60000, 1))
+    return Math.pow(blackmulti * logprod * logpot * coreMulti * timeMulti, rpow);
 }
 
 function getBlack(name, time, prod, specprod,spectrum) {
