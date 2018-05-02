@@ -1003,7 +1003,7 @@ function formatTime(num){
 function getSpec(name, prod) {
     let blackmulti = 1;
     if (player.progress.includes(11)) blackmulti = Math.log10(player.black);
-    let logprod = Math.max(Math.floor(Math.pow(Math.log10(prod),2)), 0);
+    let logprod = Math.max(Math.floor(Math.pow(Math.max(Math.log10(prod),0),2)), 0);
     let rpow = 1 + ((player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
     let logpot = Math.pow(Math.log10(potencyEff[name]),2);
     let coreMulti = 1;
@@ -1015,7 +1015,7 @@ function getSpec(name, prod) {
 
 function getBlack(name, time, prod, specprod,spectrum) {
     let A = player.progress.includes(10) ? 1.85 : 2
-    let mults = Math.log10(prod * potencyEff[name] * (player.spectrumLevel[1]+1) * (player.progress.includes(3) ? Cores : 1))
+    let mults = Math.max(Math.log10(prod * potencyEff[name] * (player.spectrumLevel[1]+1) * (player.progress.includes(3) ? Cores : 1)),0)
     let blackThreshold = Math.log10(Math.pow(256, 3))
     let spectRatio = spectrum / specprod
     let thresholdTime = 0;
@@ -1027,8 +1027,8 @@ function getBlack(name, time, prod, specprod,spectrum) {
         } else return 0;
     }
     let ret = Math.pow(10, logAdd((mults + Math.log10(time) + Math.log10(specprod * time + 2 * spectrum)), Math.log10(player.black) * A) * (1 / A));
-    if (isFinite(ret)) return ret
-    else return player.black
+    if (isFinite(ret)) return ret;
+    else return player.black;
 }
 
 /*
