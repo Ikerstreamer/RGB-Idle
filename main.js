@@ -1005,7 +1005,7 @@ function getSpec(name, prod) {
     if (player.progress.includes(11)) blackmulti = Math.log10(player.black);
     let logprod = Math.max(Math.floor(Math.pow(Math.log10(prod),2)), 0);
     let rpow = 1 + ((player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
-    let logpot = Math.log10(potencyEff[name]);
+    let logpot = Math.pow(Math.log10(potencyEff[name]),2);
     let coreMulti = 1;
     if (player.progress.includes(6)) coreMulti = 1 + player.level.blue[3] / 10;
     let timeMulti = 1;
