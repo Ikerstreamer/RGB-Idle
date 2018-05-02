@@ -320,7 +320,7 @@ function pCheck(num) {
             if (!player.progress.includes(10)) {
                 var b = 0;
                 var c = 0;
-                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b += income[Object.keys(player.bars)[i]] * potencyEff[Object.keys(player.bars)[i]] * (player.spectrum / Math.max(player.black, Math.pow(256, 3)));
+                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b += getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], 0, player.spectrum) - player.black;
                 else c += income[Object.keys(player.bars)[i]]
                 if (b > c) player.progress.push(10);
             }
@@ -329,8 +329,17 @@ function pCheck(num) {
             if (!player.progress.includes(11)) {
                 var b = 0;
                 var w = 0;
-                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b += income[Object.keys(player.bars)[i]] * potencyEff[Object.keys(player.bars)[i]] * (player.spectrum / Math.max(player.black, Math.pow(256, 3)));
-                else if (player.bars[Object.keys(player.bars)[i]].color[0] == 255 && player.bars[Object.keys(player.bars)[i]].color[1] == 255 && player.bars[Object.keys(player.bars)[i]].color[2] == 255) w += Math.pow(Math.max(Math.floor(Math.log10(income[Object.keys(player.bars)[i]])), 0), 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100) * potencyEff[Object.keys(player.bars)[i]];
+                for (var i = 0; i < Object.keys(player.bars).length; i++) {
+                    if (SumOf(player.bars[Object.keys(player.bars)[i]].color) == 255 * 3) {
+                        w += getSpec(Object.keys(player.bars)[i], income[Object.keys(player.bars)[i]]);
+                    }
+                }
+                for (var i = 0; i < Object.keys(player.bars).length; i++) {
+                    if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) {
+                        b += getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], w, player.spectrum) - player.black;
+                    }
+                }
+                console.log("W:" + w + " B:" + b);
                 if (w > b) player.progress.push(11);
             }
             return
@@ -486,7 +495,7 @@ function updateStats() {
     if (player.spectrumLevel[17] == 1) BPD = Math.floor(Math.sqrt((player.level.red + player.level.green)/100))
     else BPD = 0;
     Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[14] == 1 ? 8 : 1);
-    Clock = Math.pow(2, Math.floor(Math.log(Math.pow(2, player.level.blue[0] + (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0)) * (Cores * Math.pow(1.025, Cores)) * (player.progress.includes(12) ? SumOf(Object.values(player.reduction)) : 1)) / Math.log(2)));
+    Clock = Math.pow(2, Math.floor(Math.log(Math.pow(2, player.level.blue[0] + (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0)) * (Cores * Math.pow(1.025, Cores)) * (player.progress.includes(12) ? 1 + SumOf(Object.values(player.reduction)) : 1)) / Math.log(2)));
     click = (2 + player.level.red / 2) * Math.pow((1.15 + player.spectrumLevel[7] * 0.15), (Math.floor(player.level.red / 10))) * Math.log10(player.CM);
     auto = (((player.level.green * 16) * Math.pow((1.15 + player.spectrumLevel[7] * 0.15), Math.floor(player.level.green / 10))) * Clock * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(player.CM), 1) : 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(Math.floor(Math.pow(player.spectrum, 0.8)), 1) : 1));
     price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.05, Math.max((player.level.red / 100)-1,0))) * PD), player.level.red);
@@ -560,7 +569,7 @@ function formatNum(num, dp, type) {
             if (num < 20) return "X" + preHz[num%10] + "Hz";
             if (num == 20) return "bXHz";
             var pre2 = ["b", "t", "q","Q","s","S"];
-            return pre2[Math.floor((num - 20) / 10)] + "X" + preHz[(num % 10) - 1] + "Hz";
+            return pre2[Math.floor((num - 20) / 10)] + "X" + preHz[(num % 10)] + "Hz";
         }   
         return num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024))) + createSuffix(Math.floor(Math.log(num) / Math.log(1024)));
     } else if (num < 10000) return num.toFixed(Math.min(Math.max(dp - Math.floor(Math.log10(num)), 0), dp));
@@ -1002,7 +1011,7 @@ function formatTime(num){
 
 function getSpec(name, prod) {
     let blackmulti = 1;
-    if (player.progress.includes(11)) blackmulti = Math.log10(player.black);
+    if (player.progress.includes(11)) blackmulti = Math.max(Math.log10(player.black),1);
     let logprod = Math.max(Math.floor(Math.pow(Math.max(Math.log10(prod),0),2)), 0);
     let rpow = 1 + ((player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
     let logpot = Math.pow(Math.log10(potencyEff[name]),2);
