@@ -58,7 +58,7 @@ function bar(n,r,g,b,elemid) {
             player.CM -= 7.5 * (dif / 1000);
             player.CM = Math.max(player.CM, 1);
         }
-        if ((this.name == "red" ? (auto + click) * IR : (this.name == "green" ? (auto + click) * IR * IG / 256 : (auto + click) * IR * IG * 8 / Math.pow(256, 2))) > 128) this.element.style.width = "100%";
+        if ((this.name == "red" ? Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR) : (this.name == "green" ? Log.div(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG), 256) : Log.div(Log.multi(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG),IB), 65536))).get("log") > Math.log10(128)) this.element.style.width = "100%";
         else this.element.style.width = Log.div(this.width,2.56).get("num") + "%";
         this.element.style.background = RGBstring(this.color);
     }
@@ -219,7 +219,7 @@ var render = {
                 document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
             }
             
-            if ((tempKey == "red" ? (auto+click) * IR : (tempKey == "green" ? (auto+click) * IR * IG / 256 : (auto+click) * IR * IG * 8 / Math.pow(256, 2))) > 128) incomeBarDisplay(tempKey);
+            if ((tempKey == "red" ? Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR) : (tempKey == "green" ? Log.div(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG), 256) : Log.div(Log.multi(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG), IB), 65536))).get("log") > Math.log10(128)) incomeBarDisplay(tempKey);
             else document.getElementById(tempKey + "Bar").innerHTML = "";
             document.getElementById(tempKey + "Splice").childNodes[0].innerHTML = "Splice " + player.level.blue[3] * 10 + "% " + tempKey + " into a spectrum";
             document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
@@ -323,7 +323,7 @@ function pCheck(num) {
             if (!player.progress.includes(10)) {
                 var b = 0;
                 var c = 0;
-                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b += getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], 0, player.spectrum) - player.black;
+                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b = Log.add(b,Log.sub(getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], 0, player.spectrum), player.black));
                 else c += income[Object.keys(player.bars)[i]]
                 if (b > c) player.progress.push(10);
             }
@@ -334,15 +334,14 @@ function pCheck(num) {
                 var w = 0;
                 for (var i = 0; i < Object.keys(player.bars).length; i++) {
                     if (SumOf(player.bars[Object.keys(player.bars)[i]].color) == 255 * 3) {
-                        w += getSpec(Object.keys(player.bars)[i], income[Object.keys(player.bars)[i]]);
+                        w = Log.add(w,getSpec(Object.keys(player.bars)[i], income[Object.keys(player.bars)[i]]));
                     }
                 }
                 for (var i = 0; i < Object.keys(player.bars).length; i++) {
                     if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) {
-                        b += getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], w, player.spectrum) - player.black;
+                        b = Log.add(b,Log.sub(getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], w, player.spectrum), player.black));
                     }
                 }
-                console.log("W:" + w + " B:" + b);
                 if (w > b) player.progress.push(11);
             }
             return
@@ -901,10 +900,10 @@ function switchTab(name, num, sub) {
 function displayIncome(name, index) {
     var num = 0;
     if (player.prism.active) {
-        if (index == "black") num = income[name] * (player.spectrum * potencyEff[name] * (player.spectrumLevel[1] + 1) * (player.progress.includes(3) ? Cores : 1) / (player.progress.includes(10) ? Math.pow(10, Math.log10(Math.max(player.black, Math.pow(256, 3))) * 0.85) : Math.max(player.black, Math.pow(256, 3))));
-        else if (index == "miniBlack") num = Math.sqrt(income[name] * ((player.spectrum * (player.spectrumLevel[1] + 1) * potencyEff[name]) / Math.max(player.black, Math.pow(256, 3))));
+        if (index == "black") num = Log.sub(getBlack(name, 1000, income[name], 0, player.spectrum), player.black);
+        else if (index == "miniBlack") num = Log.sub(Log.sqrt(getBlack(name, 1000, income[name], 0, player.spectrum)), player.black);
         else if (index == "spectrum") num = getSpec(name,income[name]);
-        else num = (income[name] * potencyEff[name] * (player.spectrumLevel[1]+1) * player.bars[name].color[index] / 255) / Math.max(player.reduction[name] * 2.56e256,1);
+        else num = Log.div(Log.multi(Log.multi(Log.multi(income[name], potencyEff[name]), (player.spectrumLevel[1]+1)),Log.div(player.bars[name].color[index],255)), Log.max(Log.multi(player.reduction[name], 2.56e256),1));
     }else num = income[name] * (player.spectrumLevel[1]+1);
     return(num)
 }
@@ -1055,8 +1054,8 @@ function getSpec(name, prod) {
 }
 
 function getBlack(name, time, prod, specprod,spectrum) {
-    let A = player.progress.includes(10) ? 1.85 : 2
-    let mults = Log.max(Log.multi(Log.multi(Log.multi(prod, potencyEff[name]), (player.spectrumLevel[1]+1)), (player.progress.includes(3) ? Cores : 1)),0)
+    let A = player.progress.includes(10) ? 1.85 : 2;
+    let mults = Log.max(Log.multi(Log.multi(Log.multi(prod, potencyEff[name]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0);
     let blackThreshold = Log.pow(256, 3);
     let spectRatio = Log.div(spectrum, specprod);
     let thresholdTime = 0;
@@ -1064,11 +1063,10 @@ function getBlack(name, time, prod, specprod,spectrum) {
         if (specprod === 0) thresholdTime = Log.multi(Log.multi(Log.div(Log.pow(blackThreshold, A), 2, mults), player.spectrum));
         else thresholdTime =  Log.pow(Log.add(Log.div(Log.pow(blackThreshold, A), Log.multi(mults, specprod)), Math.pow(spectRatio,2)), (1 / A)) - spectRatio;
         if (thresholdTime > 0 && isFinite(thresholdTime)) {
-            return  Log.pow(Log.add(Log.multi(Log.multi(mults, thresholdTime),Log.add(Log.multi(specprod, time), Log.multi(2, spectrum))), blackThreshold * A), (1 / A));
+            return  Log.pow(Log.add(Log.multi(Log.multi(mults, thresholdTime),Log.add(Log.multi(specprod, time), Log.multi(2, spectrum))), Log.pow(blackThreshold, A)), (1 / A));
         } else return 0;
     }
-    
-    let ret = Log.pow(Log.add(Log.multi(Log.multi(mults, time), Log.add(Log.multi(specprod, time), Log.multi(2, spectrum))), player.black * A), (1 / A));
+    let ret = Log.pow(Log.add(Log.multi(Log.multi(mults, time), Log.add(Log.multi(specprod, time), Log.multi(2, spectrum))), Log.pow(player.black, A)), (1 / A));
         return ret;
 }
 
