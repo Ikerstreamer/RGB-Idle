@@ -8,7 +8,7 @@ var player = {
     spliced: { red: 0, green: 0, blue: 0 },
     spectrum: 0,
     specced: 0,
-    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1],
+    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1],
     options: { fast: false, fps: 50, notation: "Default" },
     spectrumTimer: 0,
     previousSpectrums: [{ time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}],
@@ -19,7 +19,8 @@ var player = {
     AB: { red: true, green: true, blue: true },
     CM: 1,
     progress: [],
-    advSpec: {unlock:false,multi:1,max:50,reduce:0.1,time:0, active:false, gain:0, SR:0},
+    advSpec: { unlock: false, multi: 1, max: 50, reduce: 0.1, time: 0, active: false, gain: 0, SR: 0 },
+    logmath:false,
 }
 
 var p3 = true;
@@ -41,7 +42,7 @@ var PD = 0;
 var BPD = 0;
 var SR = 0;
 var potencyEff = {red:1/256, green:1/256,blue:1/256};
-var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 15, 25, 50, 100, 250, 500, 2500, 5000, 1e7, 1e9, 1e12];
+var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 15, 25, 50, 100, 250, 500, 2500, 5000, 1e6, 1e8, 1e10,1e12];
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
@@ -52,13 +53,13 @@ function bar(n,r,g,b,elemid) {
     this.draw = function (dif) {
         if (this.mouse == 1) {
             player.CM += 5 * (dif / 1000);
-            increase(click * 50 * (dif / 1000),dif);
+            increase(Log.multi(Log.multi(click, 50), (dif / 1000)),dif);
         } else if (this.name == "red" && player.CM > 1 && player.spectrumLevel[3] == 0) {
             player.CM -= 7.5 * (dif / 1000);
             player.CM = Math.max(player.CM, 1);
         }
         if ((this.name == "red" ? (auto + click) * IR : (this.name == "green" ? (auto + click) * IR * IG / 256 : (auto + click) * IR * IG * 8 / Math.pow(256, 2))) > 128) this.element.style.width = "100%";
-        else this.element.style.width = this.width/2.56 + "%";
+        else this.element.style.width = Log.div(this.width,2.56).get("num") + "%";
         this.element.style.background = RGBstring(this.color);
     }
     this.setup = function () {
@@ -77,7 +78,7 @@ function init() {
     var dif = Date.now() - player.lastUpdate;
     player.lastUpdate = Date.now();
     player.spectrumTimer += dif;
-    simulateTime(dif);
+    //simulateTime(dif);
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw();
     setInterval(save, 3000);
     window.mainLoop = setInterval(gameLoop, 1000 / player.options.fps);
@@ -98,8 +99,8 @@ function gameLoop() {
     player.lastUpdate = Date.now();
     player.spectrumTimer += dif;
     if (Date.now() % (player.advSpec.unlock ? 1000 : 60000) < dif) CalcSRgain();
-    updateStats();
-    increase(auto * (dif / 1000), dif);
+    updateStats()
+    increase(Log.multi(auto, (dif / 1000)), dif);
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw(dif);
     if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
     if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
@@ -115,7 +116,9 @@ function gameLoop() {
     if (SumOf(player.spectrumLevel) < 15) {
         var row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(5);
         row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
-        for (var i = 15; i < 18; i++) player.spectrumLevel[i] = 0;
+        var row2 = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(6);
+        row.innerHTML = `<td></td><td><div id="spectrumButton18" class="button spec" onclick="buyUpgrade('spectrum', 18)"><div>Infinity and Beyond</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td></td>`;
+        for (var i = 15; i < 19; i++) player.spectrumLevel[i] = 0;
     } 
     render[tab]();
     if (tab == "Spectrum") render[subtab.spectrum]();
@@ -218,7 +221,7 @@ var render = {
             
             if ((tempKey == "red" ? (auto+click) * IR : (tempKey == "green" ? (auto+click) * IR * IG / 256 : (auto+click) * IR * IG * 8 / Math.pow(256, 2))) > 128) incomeBarDisplay(tempKey);
             else document.getElementById(tempKey + "Bar").innerHTML = "";
-            document.getElementById(tempKey + "Splice").childNodes[0].innerHTML = "Splice " + Math.min(player.level.blue[3] * 10, 100) + "% " + tempKey + " into a spectrum";
+            document.getElementById(tempKey + "Splice").childNodes[0].innerHTML = "Splice " + player.level.blue[3] * 10 + "% " + tempKey + " into a spectrum";
             document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
             if (tempKey == "blue") {
                 for (var j = 0; j < 4; j++) {
@@ -229,9 +232,9 @@ var render = {
                     switch (j) {
                         case 0: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current speed: " + formatNum(Clock, 0, "Hz");
                             break
-                        case 1: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (IR / 256 >= 100 ? "~" + formatNum(Math.floor(IR / 256), 0) : (IR / 256 >= 1 ? formatNum(Math.floor(IR / 256), 0) + " & " : "") + formatNum(IR % 256, 0) + "/256");
+                        case 1: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (Log.div(IR, 256).get("l") >= 2 ? "~" + formatNum(Log.floor(Log.div(IR, 256)), 0) : (Log.div(IR, 256).get("n") >= 1 ? formatNum(Log.floor(Log.div(IR, 256)), 0) + " & " : "") + formatNum(Log.mod(IR, 256), 0) + "/256");
                             break
-                        case 2: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (IG / 256 >= 100 ? "~" + formatNum(Math.floor(IG / 256), 0) : (IG / 256 >= 1 ? formatNum(Math.floor(IG / 256), 0) + " & " : "") + formatNum(IG % 256, 0) + "/256");
+                        case 2: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (Log.div(IG, 256).get("l") >= 2 ? "~" + formatNum(Log.floor(Log.div(IG, 256)), 0) : (Log.div(IG, 256).get("n") >= 1 ? formatNum(Log.floor(Log.div(IG, 256)), 0) + " & " : "") + formatNum(Log.mod(IG , 256), 0) + "/256");
                             break
                         case 3: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Core Count: " + formatNum(Cores, 0);
                             break
@@ -357,40 +360,40 @@ function press(name, num) {
 }
 
 function increase(amnt, dif) {
-    var next = amnt * IR;
+    var next = Log.multi(amnt, IR);
     var specGain = 0;
     var tspec = player.spectrum;
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
-        temp.width += next;
+        temp.width = Log.add(temp.width, next);
         if (temp.color[0] == 255 && temp.color[1] == 255 && temp.color[2] == 255 && player.spectrumLevel[15] == 1) {
-            player.spectrum += getSpec(temp.name, temp.width / 256 * (dif / 1000)) * (dif / 1000);
-            specGain += getSpec(temp.name, temp.width / 256 * (dif / 1000));
+            player.spectrum = Log.add(player.spectrum, Log.multi(getSpec(temp.name, Log.multi(Log.div(temp.width, 256), (dif / 1000))), (dif / 1000)));
+            specGain = Log.add(specGain,getSpec(temp.name, Log.multi(Log.div(temp.width, 256), (dif / 1000))));
         } else {
-            if (player.money.red < 2.56e256) player.money["red"] += ((player.prism.active ? potencyEff[temp.name] : 1) * (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[0] / 255) / Math.max(2.56e256 * player.reduction.red, 1);
-            if (player.money.green < 2.56e256) player.money["green"] += ((player.prism.active ? potencyEff[temp.name] : 1) * (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[1] / 255) / Math.max(2.56e256 * player.reduction.green, 1);
-            if (player.money.blue < 2.56e256) player.money["blue"] += ((player.prism.active ? potencyEff[temp.name] : 1) * (player.spectrumLevel[1] + 1) * Math.floor(temp.width / 256) * temp.color[2] / 255) / Math.max(2.56e256 * player.reduction.blue, 1);
-            if (temp.color[0] + temp.color[1] + temp.color[2] == 0) player.black = getBlack(temp.name, dif, temp.width/256, specGain,tspec)
-            if (temp.color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) player.black += Math.sqrt(getBlack(temp.name, dif, temp.width / 256, specGain, tspec));
+            player.money.red = Log.add(player.money.red, Log.div(Log.multi(Log.multi(Log.multi((player.prism.active ? potencyEff[temp.name] : 1), (player.spectrumLevel[1] + 1)), Log.floor(Log.div(temp.width, 256))), temp.color[0] / 255), Log.max(Log.multi(2.56e256, player.reduction.red), 1)));
+            player.money.green = Log.add(player.money.green, Log.div(Log.multi(Log.multi(Log.multi((player.prism.active ? potencyEff[temp.name] : 1), (player.spectrumLevel[1] + 1)), Log.floor(Log.div(temp.width, 256))), temp.color[1] / 255), Log.max(Log.multi(2.56e256, player.reduction.green), 1)));
+            player.money.blue = Log.add(player.money.blue, Log.div(Log.multi(Log.multi(Log.multi((player.prism.active ? potencyEff[temp.name] : 1), (player.spectrumLevel[1] + 1)), Log.floor(Log.div(temp.width, 256))), temp.color[2] / 255), Log.max(Log.multi(2.56e256, player.reduction.blue), 1)));
+            if (temp.color[0] + temp.color[1] + temp.color[2] == 0) player.black = getBlack(temp.name, dif, Log.div(temp.width,256), specGain,tspec)
+            if (temp.color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) player.black = Log.root(getBlack(temp.name, dif, Log.div(temp.width, 256), specGain, tspec),2);
         }
-        next = Math.floor(temp.width / 256) * (temp.name == "red" ? IG : IB);
-        temp.width = temp.width % 256;
+        next = Log.multi(Log.floor(Log.div(temp.width, 256)), (temp.name == "red" ? IG : IB));
+        temp.width = Log.mod(temp.width, 256);
     }
     pCheck(13);
     pCheck(10);
     pCheck(11);
     pCheck(6);
-    if (player.money.red > 2.56e256) player.money.red = 2.56e256;
+   /* if (player.money.red > 2.56e256) player.money.red = 2.56e256;
     if (player.money.green > 2.56e256) player.money.green = 2.56e256;
     if (player.money.blue > 2.56e256) player.money.blue = 2.56e256;
     if (!player.pop) pCheck(12);
-    if (player.money.blue == 2.56e256 && player.money.green == 2.56e256 && player.money.red == 2.56e256 && player.pop == false)pop(1);
+    if (player.money.blue.get("num") == 2.56e256 && player.money.green == 2.56e256 && player.money.red == 2.56e256 && player.pop == false)pop(1);
     else {
         for (var i = 0; i < 3 ; i++) if (player.money[Object.keys(player.bars)[i]] == 2.56e256) {
             if (player.reduction[Object.keys(player.bars)[i]] > 0) reduceProd(Object.keys(player.bars)[i]);
             else document.getElementById(Object.keys(player.bars)[i] + "Reduce").classList.remove("hidden");
         } else document.getElementById(Object.keys(player.bars)[i] + "Reduce").classList.add("hidden");
-    }
+    }*/
 }
 
 function RGBstring(color) {
@@ -416,12 +419,22 @@ function prismUpgrade(name,type) {
 function buyUpgrade(name, Bindex) {
     if (name == "spectrum") {
         if (player.spectrum >= SpecPrice[Bindex] && player.spectrumLevel[Bindex] < 1) {
+            if (Bindex == 18) {
+                player.money.red = Math.log10(player.money.red);
+                player.money.green = Math.log10(player.money.green);
+                player.money.blue = Math.log10(player.money.blue);
+                player.spectrum = Math.log10(player.spectrum);
+                player.black = Math.log10(player.black);
+                player.logmath = true;
+            }
             if(Bindex == 8) {
                 player.unlock = true;
                 document.getElementById('blueDiv').classList.remove('hidden');
             }
             if(Bindex == 9) {
-                if (player.level.red < 100) player.level.red = 100;
+                if (player.level.red < 100) player.level.red = 100; jg
+                jg
+                
                 if (player.level.green < 100) player.level.green = 100;
             }
             player.spectrum -= SpecPrice[Bindex];
@@ -433,16 +446,16 @@ function buyUpgrade(name, Bindex) {
             return true;
         }
     }else if (name == "blue") {
-        if (player.money[name] >= price[name][Bindex]) {
+        if (player.money[name].get("log") >= price[name][Bindex].get("log")) {
             if (Bindex == 3 && player.level.blue[3] >= 10) return false;
-            player.money[name] -= price[name][Bindex]
+            player.money[name] = Log.sub(player.money[name], price[name][Bindex])
             player.level[name][Bindex]++;
             updateStats();
             if (Bindex == 3 && player.progress.includes(6)) CalcSRgain();
             return true;
         }
-    }else if (player.money[name] >= price[name]) {
-        player.money[name] -= price[name]
+    }else if (player.money[name].get("log") >= price[name].get("log")) {
+        player.money[name] = Log.sub(player.money[name],price[name])
         player.level[name]++;
         updateStats();
         if (player.level[name] % 100 === 0) CalcSRgain();
@@ -484,43 +497,44 @@ function SUInfo(num){
 function updateStats() {
     PD = player.spectrumLevel[10] == 1 ? 0.5 : 1;
     if (player.spectrumLevel[2] == 1) {
-        IR = (4 + (4 * player.level.blue[1])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[1] / 10), 1) : 1);
-        IG = (4 + (4 * player.level.blue[2])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[2] / 10), 1) : 1);
+        IR =  Log.multi(Log.add(4, Log.multi(4, player.level.blue[1])),(player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2,Log.ceil(Log.div(player.level.blue[1],10))),1) : 1));
+        IG = Log.multi(Log.add(4, Log.multi(4, player.level.blue[1])),(player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2,Log.ceil(Log.div(player.level.blue[2],10))),1) : 1));
     } else {
-        IR = (2 + (2 * player.level.blue[1])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[1] / 10), 1) : 1);
-        IG = (2 + (2 * player.level.blue[2])) * (player.spectrumLevel[6] == 1 ? Math.max(2 * Math.ceil(player.level.blue[2] / 10), 1) : 1);
+        IR = Log.multi(Log.add(2, Log.multi(2, player.level.blue[1])), (player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2, Log.ceil(Log.div(player.level.blue[1], 10))), 1) : 1));
+        IG = Log.multi(Log.add(2, Log.multi(2, player.level.blue[1])), (player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2, Log.ceil(Log.div(player.level.blue[2], 10))), 1) : 1));
     }
-    if (player.spectrumLevel[16] == 1) IB = IR * IG;
+    if (player.spectrumLevel[16] == 1) IB = Log.multi(IR, IG);
     else IB = 8;
-    if (player.spectrumLevel[17] == 1) BPD = Math.floor(Math.sqrt((player.level.red + player.level.green)/100))
+    if (player.spectrumLevel[17] == 1) BPD = Log.floor(Log.root(Log.div(Log.add(player.level.red, player.level.green), 100), 2))
     else BPD = 0;
-    Cores = Math.pow(2, player.level.blue[3]) * (player.spectrumLevel[14] == 1 ? 8 : 1);
-    Clock = Math.pow(2, Math.floor(Math.log(Math.pow(2, player.level.blue[0] + (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0)) * (Cores * Math.pow(1.025, Cores)) * (player.progress.includes(12) ? 1 + SumOf(Object.values(player.reduction)) : 1)) / Math.log(2)));
-    click = (2 + player.level.red / 2) * Math.pow((1.15 + player.spectrumLevel[7] * 0.15), (Math.floor(player.level.red / 10))) * Math.log10(player.CM);
-    auto = (((player.level.green * 16) * Math.pow((1.15 + player.spectrumLevel[7] * 0.15), Math.floor(player.level.green / 10))) * Clock * (player.spectrumLevel[0] == 1 ? Math.max(Math.log10(player.CM), 1) : 1) * (player.spectrumLevel[11] == 1 ? player.level.red : 1) * (player.spectrumLevel[12] == 1 ? Math.max(Math.floor(Math.pow(player.spectrum, 0.8)), 1) : 1));
-    price.red = 5 * Math.pow(1+((0.1 * Math.pow(1.05, Math.max((player.level.red / 100)-1,0))) * PD), player.level.red);
-    price.green = 5 * Math.pow(1+((0.05 * Math.pow(1.05, Math.max((player.level.green / 100)-1,0))) * PD), player.level.green);
-    price.blue[0] = 1 * Math.pow(16, Math.max(player.level.blue[0]-BPD,0));
-    price.blue[1] = 4 * Math.pow(2, Math.max(player.level.blue[1]-BPD,0));
-    price.blue[2] = 8 * Math.pow(2, Math.max(player.level.blue[2]-BPD,0));
-    price.blue[3] = 1048576 * Math.pow(Math.pow(512, Math.max(Math.floor(Math.max(player.level.blue[3] - 4, 0) * 1.2), 1)), player.level.blue[3]);
-    if (player.bars.red.mouse == 1) income.red = ((auto + (click * 50)) * IR) / 256;
-    else income.red = (auto * IR / 256);
-    income.green = (income.red * IG / 256);
-    income.blue = income.green * IB / 256;
+    Cores = Log.multi(Log.pow(2, player.level.blue[3]), (player.spectrumLevel[14] == 1 ? 8 : 1));
+    Clock = Log.pow(2, Log.floor(Log.log(Log.multi(Log.multi(Log.pow(2, Log.add(player.level.blue[0], (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0))), Log.multi(Cores, Log.pow(1.025, Cores))), (player.progress.includes(12) ? 1 + SumOf(Object.values(player.reduction)) : 1)),2)));
+    click = Log.multi(Log.multi(Log.add(2,Log.div(player.level.red, 2)), Log.pow((1.15 + player.spectrumLevel[7] * 0.15), Log.floor(Log.div(player.level.red, 10)))), Math.log10(Math.max(player.CM,1)));
+    auto = Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(player.level.green, 16), Log.pow(Log.add(1.15 ,Log.multi( player.spectrumLevel[7], 0.15)), Log.floor(Log.div(player.level.green, 10)))), Clock),(player.spectrumLevel[0] == 1 ? Log.max(Log.log10(player.CM), 1) : 1)), (player.spectrumLevel[11] == 1 ? player.level.red : 1)), (player.spectrumLevel[12] == 1 ? Log.max(Log.floor(Log.pow(player.spectrum, 0.8)), 1) : 1));
+    price.red = Log.multi(5 , Log.pow(Log.add(1,Log.multi(Log.multi(0.1, Log.pow(1.05, Math.max((player.level.red / 100)-1,0))), PD)), player.level.red));
+    price.green = Log.multi(5, Log.pow(Log.add(1,Log.multi(Log.multi(0.05, Log.pow(1.05, Math.max((player.level.green / 100)-1,0))), PD)), player.level.green));
+    price.blue[0] = Log.pow(16, Log.max(Log.sub(player.level.blue[0],BPD),0));
+    price.blue[1] = Log.multi(4, Log.pow(2, Log.max(Log.sub(player.level.blue[1],BPD),0)));
+    price.blue[2] = Log.multi(8, Log.pow(2, Log.max(Log.sub(player.level.blue[2],BPD),0)));
+    price.blue[3] = Log.multi(1048576, Log.pow(Log.pow(512, Log.max(Log.floor(Log.multi(Log.max(Log.sub(player.level.blue[3], 4), 0), 1.2)), 1)), player.level.blue[3]));
+    if (player.bars.red.mouse == 1) income.red = Log.div(Log.multi(Log.add(auto, Log.multi(click, 50)), IR), 256);
+    else income.red = Log.div(Log.multi(auto, IR), 256);
+    income.green = Log.div(Log.multi(income.red, IG), 256);
+    income.blue = Log.div(Log.multi(income.green, IB), 256);
 }
 
 function CalcSRgain() {
-        SR = Math.max(Math.log10(player.spliced.red) + Math.log10(player.spliced.green) + Math.log10(player.spliced.blue), 0);
-        SR -= Math.log10(16777216);
-        SR = Math.max(SR / ((3 - player.spectrumLevel[13]) * 3), 0)
-        SR *= Math.max(Math.log10(player.specced) / 4, 0) + ((Math.floor(player.level.green / 100) + Math.floor(player.level.red / 100)) / 10) + 1;
-        if (player.progress.includes(6)) SR *= 1 + player.level.blue[3] / 10;
-        if (player.progress.includes(9)) SR *= 1 + Math.log10(Math.max(player.spectrumTimer / 60000, 1));
-        SR = Math.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
+        SR = Log.max(Log.multi(Log.multi(player.spliced.red, player.spliced.green), player.spliced.blue), 0);
+        SR = Log.div(SR, 16777216);
+        SR = Log.max(Log.log(SR, Log.pow(1000, (3 - player.spectrumLevel[13]))), 0);
+        SR = Log.multi(SR,Log.max(Log.div(player.specced, 1000), 1));
+        SR = Log.multi(SR , Log.floor(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10)));
+        if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
+        if (player.progress.includes(9)) SR = Log.multi(SR,Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
+        SR = Log.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
-        document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Math.floor(SR), 0) + " Spectrum</b>";
-        document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(((SR % 1) * 100)) + "% towards next";
+        document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + " Spectrum</b>";
+        document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.multi(Log.mod(SR, 1), 100)) + "% towards next";
         if (player.advSpec.unlock) {
                 var prevmulti = player.advSpec.multi;
                 player.advSpec.multi = parseInt(document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value);
@@ -556,7 +570,19 @@ function CalcSRgain() {
 }
 
 function formatNum(num, dp, type) {
-    if(num > Number.MAX_VALUE || isNaN(num) || !isFinite(num) || num == null) return "&#x221e;";
+    if (typeof num !== "number") {
+        if (num.typ === "num") {
+            num = num.get("num");
+        } else {
+            var suffix = ["K", "M", "B", "T", "Qu", "Qi", "Sx", "Sp", "Oc", "No", "Dc"]
+            num = num.get("log");
+            let m = Math.pow(10, num % 1)
+            let e = Math.floor(num);
+            if (num < 1000) return m.toFixed(1)+"e"+e;
+            else if (num < 1e36 && player.options.notation == "Default") return m.toFixed(0) + "e" + (e / Math.pow(1000, Math.floor(Math.log(e) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(e / Math.pow(1000, Math.floor(Math.log(e) / Math.log(1000)))))) + suffix[Math.floor(Math.log(e) / Math.log(1000)) - 1];
+            else return "e" + (e / Math.pow(10, Math.floor(Math.log10(e)))).toFixed(1) + "e" + Math.floor(Math.log10(e));
+        }
+    }
     if (dp == undefined) dp = 2;
     var suffix = ["K", "M", "B", "T", "Qu", "Qi", "Sx", "Sp", "Oc", "No", "Dc"]
     if (type == "Hz") {
@@ -578,8 +604,8 @@ function formatNum(num, dp, type) {
 }
 
 function unlockBlue() {
-    if (player.money.green >= 50) {
-        player.money.green -= 50;
+    if (player.money.green.get("n") >= 50) {
+        player.money.green = Log.sub(player.money.green,50);
         player.unlock = true;
         document.getElementById('unlockBtn').classList.add('hidden');
         document.getElementById('blueDiv').classList.remove('hidden');
@@ -657,8 +683,14 @@ function setupPlayer() {
             if(document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length == 6)row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows[5];
             else row =  document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(5);
             row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
+            if (document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length == 7) var row2 = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows[6];
+            else var row2 = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(6);
+            row2.innerHTML = `<td></td><td><div id="spectrumButton18" class="button spec" onclick="buyUpgrade('spectrum', 18)"><div>Infinity and Beyond</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td></td>`;
             document.getElementById("newupgrades").classList.add("hidden");
-        } else if (document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length == 6) document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.deleteRow(5)
+        } else if (document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length >= 6) {
+            document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.deleteRow(6);
+            document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.deleteRow(5);
+        }
         if (player.prism.active) document.getElementById("blackCountRGB").classList.remove("hidden");
         else document.getElementById("blackCountRGB").classList.add("hidden");
         if (player.specced > 0) document.getElementById("spectrumCountRGB").classList.remove("hidden");
@@ -879,8 +911,8 @@ function displayIncome(name, index) {
 
 function spliceColor(name) {
     if (player.level.blue[3] === 0) return;
-    player.spliced[name] += (player.money[name] * Math.min(player.level.blue[3] / 10, 1));  
-    player.money[name] -= player.money[name] * Math.min(player.level.blue[3] / 10, 1);
+    player.spliced[name] = Log.add(player.spliced[name], Log.multi(player.money[name], player.level.blue[3] / 10));
+    player.money[name] =Log.sub(player.money[name],Log.multi(player.money[name], Math.min(player.level.blue[3] / 10, 1)));
     if (player.spliced[name] < 0) player.spliced[name] = 0;
     CalcSRgain();
     pCheck(5);
@@ -1011,33 +1043,33 @@ function formatTime(num){
 
 function getSpec(name, prod) {
     let blackmulti = 1;
-    if (player.progress.includes(11)) blackmulti = Math.max(Math.log10(player.black),1);
-    let logprod = Math.max(Math.floor(Math.pow(Math.max(Math.log10(prod),0),2)), 0);
-    let rpow = 1 + ((player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
-    let logpot = Math.pow(Math.log10(potencyEff[name]),2);
+    if (player.progress.includes(11)) blackmulti = Log.max(Log.log10(player.black),1);
+    let logprod = Log.max(Log.floor(Log.pow(Log.max(Log.log10(prod),0),2)), 0);
+    let rpow = Log.add(1, Log.div(Log.add(Log.add(player.reduction.red, player.reduction.green), player.reduction.blue), 100));
+    let logpot = Log.pow(Log.log10(potencyEff[name]),2);
     let coreMulti = 1;
-    if (player.progress.includes(6)) coreMulti = 1 + player.level.blue[3] / 10;
+    if (player.progress.includes(6)) coreMulti = Log.add(1, Log.div(player.level.blue[3], 10));
     let timeMulti = 1;
-    if (player.progress.includes(9)) timeMulti = 1 + Math.log10(Math.max(player.spectrumTimer / 60000, 1))
-    return Math.pow(blackmulti * logprod * logpot * coreMulti * timeMulti, rpow);
+    if (player.progress.includes(9)) timeMulti = Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1)));
+    return Log.pow(Log.multi(Log.multi(Log.multi(Log.multi(blackmulti, logprod), logpot), coreMulti), timeMulti), rpow);
 }
 
 function getBlack(name, time, prod, specprod,spectrum) {
     let A = player.progress.includes(10) ? 1.85 : 2
-    let mults = Math.max(Math.log10(prod * potencyEff[name] * (player.spectrumLevel[1]+1) * (player.progress.includes(3) ? Cores : 1)),0)
-    let blackThreshold = Math.log10(Math.pow(256, 3))
-    let spectRatio = spectrum / specprod
+    let mults = Log.max(Log.multi(Log.multi(Log.multi(prod, potencyEff[name]), (player.spectrumLevel[1]+1)), (player.progress.includes(3) ? Cores : 1)),0)
+    let blackThreshold = Log.pow(256, 3);
+    let spectRatio = Log.div(spectrum, specprod);
     let thresholdTime = 0;
     if (player.black < blackThreshold) {
-        if (specprod === 0) thresholdTime = Math.pow(10, (blackThreshold * A) - (Math.log10(2) + mults + Math.log10(player.spectrum)))
-        else thresholdTime = Math.pow(10, logAdd((blackThreshold * A) - (mults + Math.log10(specprod)), Math.log10(spectRatio) * 2) * (1 / A)) - spectRatio;
+        if (specprod === 0) thresholdTime = Log.multi(Log.multi(Log.div(Log.pow(blackThreshold, A), 2, mults), player.spectrum));
+        else thresholdTime =  Log.pow(Log.add(Log.div(Log.pow(blackThreshold, A), Log.multi(mults, specprod)), Math.pow(spectRatio,2)), (1 / A)) - spectRatio;
         if (thresholdTime > 0 && isFinite(thresholdTime)) {
-            return Math.pow(10, logAdd((mults + Math.log10(thresholdTime) + Math.log10(specprod * thresholdTime + 2 * spectrum)), blackThreshold * A) * (1 / A));
+            return  Log.pow(Log.add(Log.multi(Log.multi(mults, thresholdTime),Log.add(Log.multi(specprod, time), Log.multi(2, spectrum))), blackThreshold * A), (1 / A));
         } else return 0;
     }
-    let ret = Math.pow(10, logAdd((mults + Math.log10(time) + Math.log10(specprod * time + 2 * spectrum)), Math.log10(player.black) * A) * (1 / A));
-    if (isFinite(ret)) return ret;
-    else return player.black;
+    
+    let ret = Log.pow(Log.add(Log.multi(Log.multi(mults, time), Log.add(Log.multi(specprod, time), Log.multi(2, spectrum))), player.black * A), (1 / A));
+        return ret;
 }
 
 /*
@@ -1060,18 +1092,5 @@ function getBlack(name, time, prod, specprod, spectrum) {
 }
 */
 
-function logAdd(n1, n2) {
-    let num;
-    let m1 = Math.pow(10, n1 % 1);
-    let e1 = Math.floor(n1);
-    let m2 = Math.pow(10, n2 % 1);
-    let e2 = Math.floor(n2)
-    if (e1 >= e2) {
-        let y = m1 + m2 / Math.pow(10, e1 - e2);
-        return num = Math.log10(y) + e1;
-    } else if (e1 < e2) {
-        let y = m2 + m1 / Math.pow(10, e2 - e1);
-        return num = Math.log10(y) + e2;
-    }
-}
+
 
