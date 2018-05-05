@@ -430,12 +430,6 @@ function buyUpgrade(name, Bindex) {
                 player.unlock = true;
                 document.getElementById('blueDiv').classList.remove('hidden');
             }
-            if(Bindex == 9) {
-                if (player.level.red < 100) player.level.red = 100; jg
-                jg
-                
-                if (player.level.green < 100) player.level.green = 100;
-            }
             player.spectrum -= SpecPrice[Bindex];
             player.spectrumLevel[Bindex]++;
             if (Bindex == 5 || Bindex == 4) {
@@ -446,7 +440,7 @@ function buyUpgrade(name, Bindex) {
         }
     }else if (name == "blue") {
         if (player.money[name].get("log") >= price[name][Bindex].get("log")) {
-            if (Bindex == 3 && player.level.blue[3] >= 10) return false;
+            //if (Bindex == 3 && player.level.blue[3] >= 10) return false;
             player.money[name] = Log.sub(player.money[name], price[name][Bindex])
             player.level[name][Bindex]++;
             updateStats();
@@ -758,7 +752,7 @@ function reset(type, force) {
                     return
                 }
             } else {
-                player.spectrum += Math.floor(SR);
+                player.spectrum = Log.add(player.spectrum,Log.floor(SR));
                 player.previousSpectrums = [{ time: player.spectrumTimer, amount: SR }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
             }
             if (player.specced == 0) document.getElementById("spectrumCountRGB").classList.remove("hidden");
