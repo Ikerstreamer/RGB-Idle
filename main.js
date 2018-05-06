@@ -521,7 +521,7 @@ function CalcSRgain() {
         SR = Log.div(SR, 16777216);
         SR = Log.max(Log.log(SR, Log.pow(1000, (3 - player.spectrumLevel[13]))), 0);
         SR = Log.multi(SR,Log.max(Log.div(player.specced, 1000), 1));
-        SR = Log.multi(SR , Log.floor(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10)));
+        SR = Log.multi(SR , Log.add(Log.floor(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10)),1));
         if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
         if (player.progress.includes(9)) SR = Log.multi(SR,Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
         SR = Log.pow(SR, 1 + (player.reduction.red + player.reduction.green + player.reduction.blue) / 100);
