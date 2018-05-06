@@ -491,10 +491,10 @@ function updateStats() {
     PD = player.spectrumLevel[10] == 1 ? 0.5 : 1;
     if (player.spectrumLevel[2] == 1) {
         IR =  Log.multi(Log.add(4, Log.multi(4, player.level.blue[1])),(player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2,Log.ceil(Log.div(player.level.blue[1],10))),1) : 1));
-        IG = Log.multi(Log.add(4, Log.multi(4, player.level.blue[1])),(player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2,Log.ceil(Log.div(player.level.blue[2],10))),1) : 1));
+        IG = Log.multi(Log.add(4, Log.multi(4, player.level.blue[2])),(player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2,Log.ceil(Log.div(player.level.blue[2],10))),1) : 1));
     } else {
         IR = Log.multi(Log.add(2, Log.multi(2, player.level.blue[1])), (player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2, Log.ceil(Log.div(player.level.blue[1], 10))), 1) : 1));
-        IG = Log.multi(Log.add(2, Log.multi(2, player.level.blue[1])), (player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2, Log.ceil(Log.div(player.level.blue[2], 10))), 1) : 1));
+        IG = Log.multi(Log.add(2, Log.multi(2, player.level.blue[2])), (player.spectrumLevel[6] == 1 ? Log.max(Log.multi(2, Log.ceil(Log.div(player.level.blue[2], 10))), 1) : 1));
     }
     if (player.spectrumLevel[16] == 1) IB = Log.multi(IR, IG);
     else IB = 8;
