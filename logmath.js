@@ -90,7 +90,7 @@ const Log = {
     ceil: function (in1) {
         let n;
         let typ = "num";
-        if(typeof in1 === "num") num = in1;
+        if(typeof in1 === "num") n = in1;
         else{
             typ = in1.typ;
             n = in1.val;
@@ -126,7 +126,7 @@ const Log = {
     round: function (in1) {
         let n;
         let typ = "num";
-        if (typeof in1 === "num") num = in1;
+        if (typeof in1 === "num") n = in1;
         else {
             typ = in1.typ;
             n = in1.val;

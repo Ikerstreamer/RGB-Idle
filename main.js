@@ -898,7 +898,7 @@ function displayIncome(name, index) {
         else if (index == "miniBlack") num = Log.sub(Log.sqrt(getBlack(name, 1000, income[name], 0, player.spectrum)), player.black);
         else if (index == "spectrum") num = getSpec(name,income[name]);
         else num = Log.div(Log.multi(Log.multi(Log.multi(income[name], potencyEff[name]), (player.spectrumLevel[1]+1)),Log.div(player.bars[name].color[index],255)), Log.max(Log.multi(player.reduction[name], 2.56e256),1));
-    }else num = income[name] * (player.spectrumLevel[1]+1);
+    }else num = Log.multi(income[name], (player.spectrumLevel[1]+1));
     return(num)
 }
 
