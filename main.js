@@ -417,7 +417,7 @@ function prismUpgrade(name,type) {
 
 function buyUpgrade(name, Bindex) {
     if (name == "spectrum") {
-        if (player.spectrum >= SpecPrice[Bindex] && player.spectrumLevel[Bindex] < 1) {
+        if (player.spectrum.get("log") >= Math.log10(SpecPrice[Bindex]) && player.spectrumLevel[Bindex] < 1) {
             if (Bindex == 18) {
                 player.money.red = Math.log10(player.money.red);
                 player.money.green = Math.log10(player.money.green);
@@ -430,7 +430,7 @@ function buyUpgrade(name, Bindex) {
                 player.unlock = true;
                 document.getElementById('blueDiv').classList.remove('hidden');
             }
-            player.spectrum -= SpecPrice[Bindex];
+            player.spectrum =Log.sub(player.spectrum, SpecPrice[Bindex]);
             player.spectrumLevel[Bindex]++;
             if (Bindex == 5 || Bindex == 4) {
                 document.getElementById("spectrumButton" + Bindex).childNodes[1].innerHTML = SUInfo(Bindex);
@@ -736,18 +736,18 @@ function reset(type, force) {
             spliceColor('blue');
         }
         CalcSRgain();
-        if (SR >= 1 || force) {
+        if (SR.get("log") >= 0 || force) {
             if (player.advSpec.multi > 1) {
                 if (player.advSpec.active) {
                     if(player.advSpec.time <= player.spectrumTimer){
                     player.advSpec.active = false;
                     player.advSpec.multi = 1;
-                    player.spectrum += player.advSpec.gain;
+                    player.spectrum = Log.add(player.spectrum, player.advSpec.gain);
                     player.previousSpectrums = [{ time: player.spectrumTimer, amount: player.advSpec.gain }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
                 }else return
                 } else {
                     player.advSpec.SR = SR;
-                    player.advSpec.time =player.spectrumTimer * (player.advSpec.multi + 1);
+                    player.advSpec.time = player.spectrumTimer * (player.advSpec.multi + 1);
                     player.advSpec.active = true;
                     return
                 }
