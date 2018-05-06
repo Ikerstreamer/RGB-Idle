@@ -8,9 +8,9 @@ function num(input, force) {
     }else if(isFinite(input)){
         this.typ = "num";
         this.val = input;
-    }else if(typeof num.typ === "string"){
+    }else if(input.typ === "log" || input.typ === "num"){
         this.typ = input.typ;
-        if(this.typ === "num" || this.typ === "log") this.val = input.val;
+        this.val = input.val;
     }else if(input.charAt(0).toLowerCase() === "e" && isFinite(parseFloat(input.replace(/e/i,"")))){
         this.typ = "log";
         this.val = parseFloat(input.replace(/e/i, ""));
