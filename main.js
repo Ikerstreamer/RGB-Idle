@@ -700,12 +700,12 @@ function setupPlayer() {
         document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + formatNum(2 / Math.pow(2, player.reduction.green + player.progress.includes(4)*3)) + "s";
         document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / Math.pow(2, player.reduction.blue + player.progress.includes(4)*3)) + "s";
         ABInt = { red: 2000 / Math.pow(2, player.reduction.red + player.progress.includes(4) * 3), green: 2000 / Math.pow(2, player.reduction.green + player.progress.includes(4) * 3), blue: 2000 / Math.pow(2, player.reduction.blue + player.progress.includes(4) * 3) };
-        potencyEff.red = Math.pow(256, player.prism.potency.red)
-        potencyEff.green = Math.pow(256, player.prism.potency.green)
-        potencyEff.blue = Math.pow(256, player.prism.potency.blue)
-        player.spliced.red = new num(player.spliced.red.val,player.spliced.red.typ);
-        player.spliced.green = new num(player.spliced.green.val,player.spliced.green.typ);
-        player.spliced.blue = new num(player.spliced.blue.val,player.spliced.blue.typ);
+        potencyEff.red = Math.pow(256, player.prism.potency.red);
+        potencyEff.green = Math.pow(256, player.prism.potency.green);
+        potencyEff.blue = Math.pow(256, player.prism.potency.blue);
+        player.spliced.red = new num(player.spliced.red);
+        player.spliced.green = new num(player.spliced.green.val);
+        player.spliced.blue = new num(player.spliced.blue);
     }
     player.version = v;
 }
