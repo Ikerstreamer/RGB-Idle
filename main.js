@@ -703,6 +703,9 @@ function setupPlayer() {
         potencyEff.red = Math.pow(256, player.prism.potency.red)
         potencyEff.green = Math.pow(256, player.prism.potency.green)
         potencyEff.blue = Math.pow(256, player.prism.potency.blue)
+        player.spliced.red = new num(player.spliced.red.get("num"));
+        player.spliced.green = new num(player.spliced.green.get("num"));
+        player.spliced.blue = new num(player.spliced.blue.get("num"));
     }
     player.version = v;
 }
