@@ -2,7 +2,11 @@
 function num(input, force) {
     this.val;
     this.typ;
-    if(force === "log"){
+    if (force === "log") {
+        if (input <= 308) {
+            this.typ = "num";
+            this.val = Math.pow(10,input);
+        }
         this.typ = "log";
         this.val = input;
     }else if(isFinite(input)){
@@ -17,7 +21,7 @@ function num(input, force) {
     }else if(isFinite(parseFloat(input))){
         this.typ = "num";
         this.val = parseFloat(input);
-    }else console.error("Invalid input, can not create a number!");
+    }else console.error("Invalid input, can not create a number!",input);
 
     this.get = function(type){
         if(this.typ === type || type === undefined) return this.val;
@@ -72,6 +76,10 @@ const Log = {
             n1 = Math.log10(n1);
             n2 = Math.log10(n2);
         }
+        if (typ === "null") {
+            if (n1 === 0) n2 = parseFloat(n2.replace(/e/i, ""));
+            else n1 = parseFloat(n1.replace(/e/i, ""));
+        }
         return new num(Math.max(n1, n2), "log");
     },
 
@@ -83,6 +91,10 @@ const Log = {
             if (isFinite(Math.max(n1, n2))) return new num(Math.min(n1, n2));
             n1 = Math.log10(n1);
             n2 = Math.log10(n2);
+        }
+        if (typ === "null") {
+            if (n1 === 0) n2 = parseFloat(n2.replace(/e/i, ""));
+            else n1 = parseFloat(n1.replace(/e/i, ""));
         }
         return new num(Math.min(n1, n2), "log");
     },
