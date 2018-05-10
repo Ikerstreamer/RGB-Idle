@@ -120,7 +120,7 @@ const Log = {
     floor: function (in1) {
         let n;
         let typ = "num";
-        if (typeof in1 === "num") num = in1;
+        if (typeof in1 === "num") n = in1;
         else {
             typ = in1.typ;
             n = in1.val;
@@ -267,7 +267,7 @@ const Log = {
             return new num (Math.log10(y) + e1,"log");
         } else if (e1 < e2) {
             let y = m2 + m1 / Math.pow(10, e2 - e1);
-            return num = new num(Math.log10(y) + e2,"log");
+            return new num(Math.log10(y) + e2,"log");
         }
     },
 
