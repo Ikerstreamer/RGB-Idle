@@ -179,7 +179,7 @@ const Log = {
             n = Math.log10(n);
             base = Math.log10(base);
         }
-        return new num(n/base,"log")
+        return new num(n/base,"num")
     },
 
     log10: function (in1) {

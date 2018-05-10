@@ -7,7 +7,7 @@ var player = {
     spliced: { red: 0, green: 0, blue: 0 },
     spectrum: 0,
     specced: 0,
-    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1,-1],
+    spectrumLevel: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,-1,-1,-1],
     options: { fast: false, fps: 50, notation: "Default" },
     spectrumTimer: 0,
     previousSpectrums: [{ time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}],
@@ -108,7 +108,7 @@ function gameLoop() {
         document.getElementById("tabSpectrum").childNodes[1].classList.add("hidden");
         document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
     }
-    if (SumOf(player.spectrumLevel) < 15) {
+    if (SumOf(player.spectrumLevel) < 15 && player.black > 1e128) {
         var row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(5);
         row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
         var row2 = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(6);
@@ -512,9 +512,13 @@ function updateStats() {
 function CalcSRgain() {
         SR = Log.max(Log.multi(Log.multi(player.spliced.red, player.spliced.green), player.spliced.blue), 0);
         SR = Log.div(SR, 16777216);
-        SR = Log.max(Log.log(SR, Log.pow(1000, (3 - player.spectrumLevel[13]))), 0);
-        SR = Log.multi(SR,Log.max(Log.div(player.specced, 1000), 1));
-        SR = Log.multi(SR , Log.add(Log.floor(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10)),1));
+        SR = Log.root(SR,3-player.spectrumLevel[13])
+        SR = Log.max(Log.log(SR,1000), 0);
+        console.log(SR);
+        SR = Log.multi(SR, Log.max(Log.div(player.specced, 1000), 1));
+        console.log(SR);
+        SR = Log.multi(SR, Log.add(Log.floor(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10)), 1));
+        console.log(SR);
         if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
         if (player.progress.includes(9)) SR = Log.multi(SR,Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
@@ -653,7 +657,10 @@ function setupPlayer() {
             player.advSpec.reduce = 0.1;
             player.advSpec.max = 50;
         }
-        if (player.version < 1.097) player.pixels = { red: { max: 0, cur: 0 }, green: { max: 0, cur: 0 }, blue: { max: 0, cur: 0 } };
+        if (player.version < 1.097) {
+            player.pixels = { red: { max: 0, cur: 0 }, green: { max: 0, cur: 0 }, blue: { max: 0, cur: 0 } };
+            player.spectrumLevel.splice(length - 1, 1);
+        }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
         if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
@@ -665,11 +672,8 @@ function setupPlayer() {
             else row =  document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(5);
             row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
             if (document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length == 7) var row2 = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows[6];
-            else var row2 = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(6);
-            row2.innerHTML = `<td></td><td><div id="spectrumButton18" class="button spec" onclick="buyUpgrade('spectrum', 18)"><div>Infinity and Beyond</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td></td>`;
             document.getElementById("newupgrades").classList.add("hidden");
         } else if (document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows.length >= 6) {
-            document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.deleteRow(6);
             document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.deleteRow(5);
         }
         if (player.prism.active) document.getElementById("blackCountRGB").classList.remove("hidden");
@@ -691,9 +695,13 @@ function setupPlayer() {
         potencyEff.red = Math.pow(256, player.prism.potency.red);
         potencyEff.green = Math.pow(256, player.prism.potency.green);
         potencyEff.blue = Math.pow(256, player.prism.potency.blue);
+        console.log(player);
         player.spliced.red = new num(player.spliced.red);
         player.spliced.green = new num(player.spliced.green);
         player.spliced.blue = new num(player.spliced.blue);
+        player.money.red = new num(player.money.red);
+        player.money.green = new num(player.money.green);
+        player.money.blue = new num(player.money.blue);
         player.black = new num(player.black);
         player.spectrum = new num(player.spectrum);
 
@@ -887,7 +895,7 @@ function displayIncome(name, index) {
     if (player.prism.active) {
         if (index == "black") num = Log.sub(getBlack(name, 1000, Log.div(income[name],1000), 0, player.spectrum), player.black);
         else if (index == "miniBlack") num = Log.sub(Log.sqrt(getBlack(name, 1000, Log.div(income[name], 1000), 0, player.spectrum)), player.black);
-        else if (index == "spectrum") num = Log.multi(getSpec(name,Log.div(income[name])),1000);
+        else if (index == "spectrum") num = Log.multi(getSpec(name,Log.div(income[name],1000)),1000);
         else num = Log.multi(Log.multi(Log.multi(income[name], potencyEff[name]), (player.spectrumLevel[1]+1)),Log.div(player.bars[name].color[index],255));
     }else num = Log.multi(income[name], (player.spectrumLevel[1]+1));
     return(num)
@@ -965,6 +973,7 @@ window.addEventListener("keyup", function (event) {
 }, false)
 
 function simulateTime(time) {
+    console.log(player)
     console.log("You were offline for " + formatTime(time));
     player.spectrumTimer += time;
     let bprod = [Log.div(Log.multi(auto, IR), 256), Log.div(Log.multi(Log.multi(auto, IR), IG), 65536),Log.div(Log.multi(Log.multi(Log.multi(auto, IR), IG), IB), 16777216)];
@@ -1037,8 +1046,8 @@ function getBlack(name, time, prod, specprod, spectrum) {
     let spectRatio = Log.div(spectrum, specprod);
     let thresholdTime = 0;
     if (player.black.get("log") < blackThreshold.get("log")) {
-        if (specprod === 0) thresholdTime = Log.div(Log.pow(blackThreshold, A), Log.multi(Log.multi(2, mults), player.spectrum));
-        else thresholdTime = Log.root(Log.add(Log.div(Log.pow(blackThreshold, A), Log.multi(mults, specprod)), Math.pow(spectRatio, 2)), A) - spectRatio;
+        if (specprod.get("num") === 0) thresholdTime = Log.div(Log.pow(blackThreshold, A), Log.multi(Log.multi(2, mults), player.spectrum));
+        else thresholdTime = Log.sub(Log.root(Log.add(Log.div(Log.pow(blackThreshold, A), Log.multi(mults, specprod)), Math.pow(spectRatio, 2)), A), spectRatio);
         console.log(thresholdTime)
         return  Log.root(Log.add(Log.multi(Log.multi(mults, thresholdTime),Log.add(Log.multi(specprod, time), Log.multi(2, spectrum))), Log.pow(blackThreshold, A)), A);
     }
