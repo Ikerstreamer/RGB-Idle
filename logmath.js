@@ -224,6 +224,14 @@ const Log = {
         return new num(n1 / Math.pow(10,n2), "log");
     },
 
+    sqrt: function (in1) {
+        return this.root(in1, 2);
+    },
+
+    cbrt: function (in1) {
+        return this.root(in1, 3);
+    },
+
     multi: function(in1, in2){
         let typ = this.check(in1,in2).typ;
         let n1 = this.check(in1,in2).n1;

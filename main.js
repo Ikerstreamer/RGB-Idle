@@ -108,7 +108,7 @@ function gameLoop() {
         document.getElementById("tabSpectrum").childNodes[1].classList.add("hidden");
         document.getElementById("tabSpectrum").childNodes[3].classList.remove("hidden");
     }
-    if (SumOf(player.spectrumLevel) < 15 && player.black > 1e128) {
+    if (SumOf(player.spectrumLevel) < 15 && Log.get(player.black,"l") > 128) {
         var row = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(5);
         row.innerHTML = `<td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td>`;
         var row2 = document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.insertRow(6);
@@ -285,7 +285,7 @@ function pCheck(num) {
             }
             return
         case 3:
-            if (!player.progress.includes(3) && player.black >= 1e50) player.progress.push(3);
+            if (!player.progress.includes(3) && Log.get(player.black,"log") >= 50) player.progress.push(3);
             return
         case 4:
             if (p3 && player.black > 1e64 && !player.progress.includes(4)) {
@@ -300,7 +300,7 @@ function pCheck(num) {
             if (Math.floor(Math.log10(player.spliced.red)) == 128 && Math.floor(Math.log10(player.spliced.green)) == 128 && Math.floor(Math.log10(player.spliced.blue)) == 128 && !player.progress.includes(5)) player.progress.push(5);
             return
         case 6:
-            if (player.money.blue >= 1e64 && player.level.blue[3] === 0 && !player.progress.includes(6)) player.progress.push(6);
+            if (Log.get(player.money.blue,"l") >= 64 && player.level.blue[3] === 0 && !player.progress.includes(6)) player.progress.push(6);
             return
         case 7:
             if(!player.progress.includes(7))player.progress.push(7);
@@ -514,7 +514,7 @@ function CalcSRgain() {
         SR = Log.root(SR,3-player.spectrumLevel[13])
         SR = Log.max(Log.log(SR,1000), 0);
         SR = Log.multi(SR, Log.max(Log.div(player.specced, 1000), 1));
-        SR = Log.multi(SR, Log.add(Log.floor(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10)), 1));
+        SR = Log.multi(SR, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
         if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
         if (player.progress.includes(9)) SR = Log.multi(SR,Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
@@ -880,8 +880,8 @@ function switchTab(name, num, sub) {
 function displayIncome(name, index) {
     let num = 0;
     if (player.prism.active) {
-        if (index == "black") num = Log.sub(getBlack(name, 1000, Log.div(income[name],1000), 0, player.spectrum), player.black);
-        else if (index == "miniBlack") num = Log.sub(Log.sqrt(getBlack(name, 1000, Log.div(income[name], 1000), 0, player.spectrum)), player.black);
+        if (index == "black") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name],1000), 0, player.spectrum), player.black),0);
+        else if (index == "miniBlack") num = Log.max(Log.sub(Log.sqrt(getBlack(name, 1000, Log.div(income[name], 1000), 0, player.spectrum)), player.black));
         else if (index == "spectrum") num = Log.multi(getSpec(name,Log.div(income[name],1000)),1000);
         else num = Log.multi(Log.multi(Log.multi(income[name], potencyEff[name]), (player.spectrumLevel[1]+1)),Log.div(player.bars[name].color[index],255));
     }else num = Log.multi(income[name], (player.spectrumLevel[1]+1));
