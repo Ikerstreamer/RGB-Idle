@@ -220,14 +220,13 @@ var render = {
                 for (var j = 0; j < 4; j++) {
                     if (j == 0 && player.progress.includes(7)) document.getElementById(tempKey + "Button" + j).childNodes[1].innerHTML = "Level: " + formatNum(player.level[tempKey][j], 0) + "+" + Math.min(Math.floor(player.spectrumTimer / 300000), 5)
                     else document.getElementById(tempKey + "Button" + j).childNodes[1].innerHTML = "Level: " + formatNum(player.level[tempKey][j], 0);
-                    if (j == 3 && player.level.blue[3] >= 10) document.getElementById(tempKey + "Button" + j).childNodes[2].innerHTML = "Price: MAXED";
-                    else document.getElementById(tempKey + "Button" + j).childNodes[2].innerHTML = "Price: " + formatNum(price[tempKey][j]) + " " + tempKey;
+                    document.getElementById(tempKey + "Button" + j).childNodes[2].innerHTML = "Price: " + formatNum(price[tempKey][j]) + " " + tempKey;
                     switch (j) {
                         case 0: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current speed: " + formatNum(Clock, 0, "Hz");
                             break
-                        case 1: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (Log.get(Log.div(IR, 256),"l") >= 2 ? "~" + formatNum(Log.floor(Log.div(IR, 256)), 0) : Log.get(Log.div(IR, 256),"n") >= 1 ? formatNum(Log.floor(Log.div(IR, 256)), 0) + " & " : "") + formatNum(Log.mod(IR, 256), 0) + "/256";
+                        case 1: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (Log.get(Log.div(IR, 256),"l") >= 2 ? "~" + formatNum(Log.floor(Log.div(IR, 256)), 0) : (Log.get(Log.div(IR, 256),"n") >= 1 ? formatNum(Log.floor(Log.div(IR, 256)), 0) + " & " : "") + formatNum(Log.mod(IR, 256), 0) + "/256");
                             break
-                        case 2: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (Log.get(Log.div(IG, 256),"l") >= 2 ? "~" + formatNum(Log.floor(Log.div(IG, 256)), 0) : Log.get(Log.div(IG, 256),"n") >= 1 ? formatNum(Log.floor(Log.div(IG, 256)), 0) + " & " : "") + formatNum(Log.mod(IG , 256), 0) + "/256";
+                        case 2: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Current fill: " + (Log.get(Log.div(IG, 256),"l") >= 2 ? "~" + formatNum(Log.floor(Log.div(IG, 256)), 0) : (Log.get(Log.div(IG, 256),"n") >= 1 ? formatNum(Log.floor(Log.div(IG, 256)), 0) + " & " : "") + formatNum(Log.mod(IG , 256), 0) + "/256");
                             break
                         case 3: document.getElementById(tempKey + "Button" + j).childNodes[3].innerHTML = "Core Count: " + formatNum(Cores, 0);
                             break
@@ -494,7 +493,7 @@ function updateStats() {
     if (player.spectrumLevel[17] == 1) BPD = Log.floor(Log.root(Log.div(Log.add(player.level.red, player.level.green), 100), 2))
     else BPD = 0;
     Cores = Log.multi(Log.pow(2, player.level.blue[3]), (player.spectrumLevel[14] == 1 ? 8 : 1));
-    Clock = Log.pow(2, Log.floor(Log.log(Log.multi(Log.pow(2, Log.add(player.level.blue[0], (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0))), Log.multi(Cores, Log.pow(1.025, Cores))),2)));
+    Clock = Log.pow(2, Log.floor(Log.log(Log.pow(Log.add(2 , Log.log(Cores,8)), Log.add(player.level.blue[0], (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0))), 2)));
     click = Log.multi(Log.multi(Log.add(2,Log.div(player.level.red, 2)), Log.pow((1.15 + player.spectrumLevel[7] * 0.15), Log.floor(Log.div(player.level.red, 10)))), Math.log10(Math.max(player.CM,1)));
     auto = Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(player.level.green, 16), Log.pow(Log.add(1.15 ,Log.multi( player.spectrumLevel[7], 0.15)), Log.floor(Log.div(player.level.green, 10)))), Clock),(player.spectrumLevel[0] == 1 ? Log.max(Log.log10(player.CM), 1) : 1)), (player.spectrumLevel[11] == 1 ? player.level.red : 1)), (player.spectrumLevel[12] == 1 ? Log.max(Log.floor(Log.pow(player.spectrum, 0.8)), 1) : 1));
     price.red = Log.multi(5 , Log.pow(Log.add(1,Log.multi(Log.multi(0.1, Log.pow(1.05, Math.max((player.level.red / 100)-1,0))), PD)), player.level.red));
@@ -789,7 +788,7 @@ function reset(type, force) {
             prism: { active: false, potency: { red: -1, green: -1, blue: -1 }, pcost: { red: 100, green: 100, blue: 100 }, },
             black: 0,
             pop: false,
-            AB: { red: true, green: true, blue: true },
+            AB: { red: false, green: false, blue: false },
             CM:1,
             progress: [],
             advSpec: { unlock: false, multi: 1, max: 10, reduce: 0.1, time: 0, gain:0, SR: 0},

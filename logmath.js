@@ -196,18 +196,19 @@ const Log = {
 
     pow: function (in1, in2) {
         let typ = this.check(in1, in2).typ;
-        let n1 = this.check(in1, in2).n1;
-        let n2 = this.check(in1, in2).n2;
+        let base = this.check(in1, in2).n1;
+        let exp = this.check(in1, in2).n2;
         if (typ === "null") {
-            if (n2 === 0) return new num(1);
-            if (n1 === 0) return new num(0);
+            if (exp === 0) return new num(1);
+            if (base === 0) return new num(0);
         }
         if (typ === "num") {
-            if (isFinite(Math.pow(n1, n2))) return new num(Math.pow(n1,n2));
-            n1 = Math.log10(n1);
-            n2 = Math.log10(n2);
+            if (isFinite(Math.pow(base, exp))) return new num(Math.pow(base,exp));
+            base = Math.log10(base);
+            exp = Math.log10(exp);
         }
-        return new num(n1 * n2, "log");
+        console.log(base, exp);
+        return new num(base * Math.pow(10,exp), "log");
     },
 
     root: function (in1, in2) {
@@ -220,7 +221,7 @@ const Log = {
             n2 = Math.log10(n2);
         }
         if (typ === "null") return new num(0);
-        return new num(n1 / n2, "log");
+        return new num(n1 / Math.pow(10,n2), "log");
     },
 
     multi: function(in1, in2){
