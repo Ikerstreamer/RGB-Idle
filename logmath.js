@@ -22,18 +22,22 @@ function num(input, force) {
         this.typ = "num";
         this.val = parseFloat(input);
     }else console.error("Invalid input, can not create a number!",input);
-
-    this.get = function(type){
-        if(this.typ === type || type === undefined) return this.val;
-        if (type === "num" || type === "n") {
-            if(isFinite(Math.pow(10,this.val)))return this.val;
-            return Math.pow(10,this.val % 1) + "e" + Math.floor(this.val);
-        }
-        if(type === "log" || type === "l") return Math.log10(this.val);
-    }
 }
 
 const Log = {
+    get: function (input, type) {
+        if (typeof input === 'number') {
+            if (type === 'num' || type === undefined) return input;
+            if (type === 'log') return Math.log10(input);
+        }
+        if(input.typ === type || type === undefined) return input.val;
+        if (type === "num" || type === "n") {
+            if(isFinite(Math.pow(10,input.val)))return input.val;
+            return Math.pow(10,input.val % 1) + "e" + Math.floor(input.val);
+        }
+        if(type === "log" || type === "l") return Math.log10(input.val);
+    },
+
     check: function(in1,in2){
         let ret = {};
         if (in1.typ === "log" || in2.typ === "log") {
