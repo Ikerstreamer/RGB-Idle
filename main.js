@@ -513,7 +513,7 @@ function CalcSRgain() {
         SR = Log.div(SR, 16777216);
         SR = Log.root(SR,3-player.spectrumLevel[13])
         SR = Log.max(Log.log(SR,1000), 0);
-        SR = Log.multi(SR, Log.max(Log.div(player.specced, 1000), 1));
+        SR = Log.multi(SR, Log.add(Log.div(player.specced, 100), 1));
         SR = Log.multi(SR, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
         if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
         if (player.progress.includes(9)) SR = Log.multi(SR,Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
@@ -691,7 +691,7 @@ function setupPlayer() {
         potencyEff.red = Math.pow(256, player.prism.potency.red);
         potencyEff.green = Math.pow(256, player.prism.potency.green);
         potencyEff.blue = Math.pow(256, player.prism.potency.blue);
-        player.CM = Log.max(player.CM, 1);
+        player.CM = Math.max(player.CM, 1);
         //Should always be the last thing to happen
         let dif = Date.now() - player.lastUpdate;
         player.lastUpdate = Date.now();
