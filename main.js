@@ -57,7 +57,7 @@ function bar(n,r,g,b,elemid) {
             player.CM -= 7.5 * (dif / 1000);
             player.CM = Math.max(player.CM, 1);
         }
-        if (Log.get((this.name == "red" ? Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR) : (this.name == "green" ? Log.div(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG), 256) : Log.div(Log.multi(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG), IB), 65536))), "log") > Math.log10(128)) this.element.style.width = "100%";
+        if (Log.get((this.name == "red" ? Log.multi(Log.add(Log.div(auto, 1000 / player.options.fps), (player.bars.red.mouse === 1 ? click : 0)), IR) : (this.name == "green" ? Log.div(Log.multi(Log.multi(Log.add(Log.div(auto, 1000 / player.options.fps), (player.bars.red.mouse === 1 ? click : 0)), IR), IG), 256) : Log.div(Log.multi(Log.multi(Log.multi(Log.add(Log.div(auto, 1000 / player.options.fps), (player.bars.red.mouse === 1 ? click : 0)), IR), IG), IB), 65536))), "log") > Math.log10(32)) this.element.style.width = "100%";
         else this.element.style.width = Log.get(Log.div(this.width,2.56),"num") + "%";
         this.element.style.background = RGBstring(this.color);
     }
@@ -212,7 +212,7 @@ var render = {
                 document.getElementById(tempKey + "Count").appendChild(elem2);
             }*/
             document.getElementById(tempKey + "Count").innerHTML = formatNum(player.money[tempKey]);
-            if (Log.get((tempKey == "red" ? Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR) : (tempKey == "green" ? Log.div(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG), 256) : Log.div(Log.multi(Log.multi(Log.multi(Log.add(auto, player.bars.red.mouse === 1 ? click : 0), IR), IG), IB), 65536))),"log") > Math.log10(128)) incomeBarDisplay(tempKey);
+            if (Log.get((tempKey == "red" ? Log.multi(Log.add(Log.div(auto, 1000 / player.options.fps), player.bars.red.mouse === 1 ? click : 0), IR) : (tempKey == "green" ? Log.div(Log.multi(Log.multi(Log.add(Log.div(auto, 1000 / player.options.fps), player.bars.red.mouse === 1 ? click : 0), IR), IG), 256) : Log.div(Log.multi(Log.multi(Log.multi(Log.add(Log.div(auto, 1000 / player.options.fps), player.bars.red.mouse === 1 ? click : 0), IR), IG), IB), 65536))), "log") > Math.log10(32)) incomeBarDisplay(tempKey);
             else document.getElementById(tempKey + "Bar").innerHTML = "";
             document.getElementById(tempKey + "Splice").childNodes[0].innerHTML = "Splice " + player.level.blue[3] * 10 + "% " + tempKey + " into a spectrum";
             document.getElementById(tempKey + "Splice").childNodes[1].innerHTML = "Spliced " + tempKey + ": " + formatNum(player.spliced[tempKey]);
@@ -691,7 +691,7 @@ function setupPlayer() {
         potencyEff.red = Math.pow(256, player.prism.potency.red);
         potencyEff.green = Math.pow(256, player.prism.potency.green);
         potencyEff.blue = Math.pow(256, player.prism.potency.blue);
-
+        player.CM = Log.max(player.CM, 1);
         //Should always be the last thing to happen
         let dif = Date.now() - player.lastUpdate;
         player.lastUpdate = Date.now();
@@ -962,7 +962,8 @@ window.addEventListener("keyup", function (event) {
 function simulateTime(time) {
     console.log("You were offline for " + formatTime(time));
     player.spectrumTimer += time;
-    let bprod = [Log.div(Log.multi(auto, IR), 256), Log.div(Log.multi(Log.multi(auto, IR), IG), 65536),Log.div(Log.multi(Log.multi(Log.multi(auto, IR), IG), IB), 16777216)];
+    let bprod = [Log.div(Log.multi(auto, IR), 256), Log.div(Log.multi(Log.multi(auto, IR), IG), 65536), Log.div(Log.multi(Log.multi(Log.multi(auto, IR), IG), IB), 16777216)];
+    if (!player.unlock) bprod.blue = 0;
     const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
     const names = ["red", "blue", "green"];
     const prod = {red:0,green:0,blue:0,spec:0}
@@ -975,13 +976,20 @@ function simulateTime(time) {
     for (var i = 0; i < names.length; i++) if (SumOf(player.bars[names[i]].color) === 0) player.black = getBlack(names[i], time, bprod[i], prod.spec, player.spectrum);
     while (time > 0) {
         console.log(formatTime(time) + " left to simulate");
-        let nextUp = Log.min(Log.min(Log.min(Log.min(Log.min(Log.div(Log.sub(price.red, player.money.red), prod.red), Log.div(Log.sub(price.green, player.money.green), prod.green)), Log.div(Log.sub(price.blue[0], player.money.blue), prod.blue)), Log.div(Log.sub(price.blue[1], player.money.blue), prod.blue)), Log.div(Log.sub(price.blue[2], player.money.blue), prod.blue)), Log.div(Log.sub(price.blue[3], player.money.blue), prod.blue));
-        if (5000 > Log.get(nextUp,"num")) {
-            player.money.red = Log.add(player.money.red,Log.div(Log.multi(prod.red, Math.min(5000, time)), 1000));
-            player.money.green = Log.add(player.money.green, Log.div(Log.multi(prod.green, Math.min(5000, time)), 1000));
-            player.money.blue = Log.add(player.money.blue, Log.div(Log.multi(prod.blue, Math.min(5000, time)), 1000));
-            player.spectrum = Log.add(player.spectrum, Log.div(Log.multi(prod.spec, Math.min(5000, time)), 1000));
-            time -= Math.min(5000, time)
+        let nextRed = Log.div(Log.sub(price.red, player.money.red), prod.red);
+        let nextGreen = Log.div(Log.sub(price.green, player.money.green), prod.green);
+        let nextBlue = Log.min(Log.min(Log.div(Log.sub(price.blue[0], player.money.blue), prod.blue),Log.div(Log.sub(price.blue[1], player.money.blue), prod.blue),Log.div(Log.sub(price.blue[2], player.money.blue), prod.blue)),Log.div(Log.sub(price.blue[3], player.money.blue), prod.blue));
+        let nextUp = time;
+        if (player.AB.red) nextUp = Log.min(nextUp, nextRed);
+        if (player.AB.green) nextUp = Log.min(nextUp, nextGreen);
+        if (player.AB.blue) nextUp = Log.min(nextUp, nextBlue);
+        let nextTime = Math.floor(Math.max(time/100,5000));
+        if (nextTime > Log.get(nextUp, "num")) {
+            player.money.red = Log.add(player.money.red, Log.div(Log.multi(prod.red, Math.min(nextTime, time)), 1000));
+            player.money.green = Log.add(player.money.green, Log.div(Log.multi(prod.green, Math.min(nextTime, time)), 1000));
+            player.money.blue = Log.add(player.money.blue, Log.div(Log.multi(prod.blue, Math.min(nextTime, time)), 1000));
+            player.spectrum = Log.add(player.spectrum, Log.div(Log.multi(prod.spec, Math.min(nextTime, time)), 1000));
+            time -= Math.min(nextTime, time)
             
         } else {
             player.money.red = Log.add(player.money.red, Log.div(Log.multi(prod.red, Log.min(nextUp, time)), 1000));
@@ -1005,7 +1013,7 @@ function simulateTime(time) {
             }
         }
     }
-    
+    console.log("Finished simulating offline time!");
 }
 
 function formatTime(num){
