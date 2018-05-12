@@ -889,7 +889,8 @@ function displayIncome(name, index) {
 function spliceColor(name) {
     if (player.level.blue[3] === 0) return;
     player.spliced[name] = Log.add(player.spliced[name], Log.multi(player.money[name], player.level.blue[3] / 10));
-    player.money[name] =Log.sub(player.money[name],Log.multi(player.money[name], Math.min(player.level.blue[3] / 10, 1)));
+    if (player.level.blue[3] >= 10) player.money[name] = 0;
+    else player.money[name] =Log.sub(player.money[name],Log.multi(player.money[name], Math.min(player.level.blue[3] / 10, 1)));
     if (player.spliced[name] < 0) player.spliced[name] = 0;
     CalcSRgain();
     pCheck(5);

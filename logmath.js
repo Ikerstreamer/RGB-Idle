@@ -205,7 +205,6 @@ const Log = {
             base = Math.log10(base);
             exp = Math.log10(exp);
         }
-        console.log(base, exp);
         return new num(base * Math.pow(10,exp), "log");
     },
 
