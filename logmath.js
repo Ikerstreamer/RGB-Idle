@@ -82,8 +82,15 @@ const Log = {
         }
         if (typ === "null") {
             if (n1 === 0 && n2 === 0) return new num(0);
-            if (n1 === 0) n2 = parseFloat(n2.replace(/e/i, ""));
-            else n1 = parseFloat(n1.replace(/e/i, ""));
+            let tn1 = 0;
+            let tn2 = 0;
+            if (n1 === 0) {
+                tn2 = parseFloat(n2.replace(/e/i, ""));
+            } else {
+                tn1 = parseFloat(n1.replace(/e/i, ""));
+            }
+            if (tn1 >= tn2) return new num(n1);
+            else return new num(n2);
         }
         return new num(Math.max(n1, n2), "log");
     },

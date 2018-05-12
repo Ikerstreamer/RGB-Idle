@@ -286,7 +286,7 @@ function pCheck(num) {
             if (!player.progress.includes(3) && Log.get(player.black,"log") >= 50) player.progress.push(3);
             return
         case 4:
-            if (p3 && player.black > 1e64 && !player.progress.includes(4)) {
+            if (p3 && Log.get(player.black,"l") > 64 && !player.progress.includes(4)) {
                 player.progress.push(4);
                 document.getElementById("spectrumButton" + 4).childNodes[0].innerHTML = "Auto Buy Max Red Level Every " + 0.25 + "s";
                 document.getElementById("spectrumButton" + 5).childNodes[0].innerHTML = "Auto Buy Max Green Level Every " + 0.25 + "s";
@@ -295,7 +295,7 @@ function pCheck(num) {
             }
             return
         case 5:
-            if (Math.floor(Math.log10(player.spliced.red)) == 128 && Math.floor(Math.log10(player.spliced.green)) == 128 && Math.floor(Math.log10(player.spliced.blue)) == 128 && !player.progress.includes(5)) player.progress.push(5);
+            if (Math.floor(Log.get(player.spliced.red,"l")) === 128 && Math.floor(Log.get(player.spliced.green,"l")) == 128 && Math.floor(Log.get(player.spliced.blue,"l")) == 128 && !player.progress.includes(5)) player.progress.push(5);
             return
         case 6:
             if (Log.get(player.money.blue,"l") >= 64 && player.level.blue[3] === 0 && !player.progress.includes(6)) player.progress.push(6);
@@ -885,7 +885,7 @@ function displayIncome(name, index) {
     let num = 0;
     if (player.prism.active) {
         if (index == "black") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name],1000), 0, player.spectrum), player.black),0);
-        else if (index == "miniBlack") num = Log.max(Log.sub(Log.sqrt(getBlack(name, 1000, Log.div(income[name], 1000), 0, player.spectrum)), player.black));
+        else if (index == "miniBlack") num = Log.max(Log.sub(Log.sqrt(getBlack(name, 1000, Log.div(income[name], 1000), 0, player.spectrum)), player.black),0);
         else if (index == "spectrum") num = getSpec(name, income[name]);
         else num = Log.multi(Log.multi(Log.multi(income[name], potencyEff[name]), (player.spectrumLevel[1]+1)),Log.div(player.bars[name].color[index],255));
     }else num = Log.multi(income[name], (player.spectrumLevel[1]+1));
@@ -970,7 +970,7 @@ function simulateTime(time) {
     let bprod = [Log.div(Log.multi(auto, IR), 256), Log.div(Log.multi(Log.multi(auto, IR), IG), 65536), Log.div(Log.multi(Log.multi(Log.multi(auto, IR), IG), IB), 16777216)];
     if (!player.unlock) bprod[2] = 0;
     const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
-    const names = ["red", "blue", "green"];
+    const names = ["red", "blue", "green"]; 
     const prod = {red:0,green:0,blue:0,spec:0}
     for (let i = 0; i < names.length; i++) if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255 && player.spectrumLevel[15] === 1) {
         prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i]));
@@ -993,7 +993,6 @@ function simulateTime(time) {
         if (player.AB.blue) nextUp = Log.min(nextUp, nextBlue);
         let nextTime = Log.floor(Log.max(time / 100, 5000));
 
-        console.log("up,time", nextUp, nextTime);
         if (Log.get(nextTime,"l") > Log.get(nextUp, "l")) {
             player.money.red = Log.add(player.money.red, Log.div(Log.multi(prod.red, Log.min(nextTime, time)), 1000));
             player.money.green = Log.add(player.money.green, Log.div(Log.multi(prod.green, Log.min(nextTime, time)), 1000));
