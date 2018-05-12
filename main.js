@@ -801,6 +801,8 @@ function reset(type, force) {
          document.getElementById("spectrumDiv").classList.add("hidden");
          document.getElementById("blackCountRGB").classList.add("hidden");
          document.getElementById("spectrumCountRGB").classList.add("hidden");
+         save();
+         document.location.reload(true);
     }
 }
 
