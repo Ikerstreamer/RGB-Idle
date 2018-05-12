@@ -703,11 +703,10 @@ function load(name) {
     if (name == "Import") {
         var temp = prompt("Enter you save:", "");
         if (temp != null && temp != undefined && temp != "" && temp != false) {
-             if (parseInt(temp) === Log.div(Clock, Math.pow(1024,3))) pCheck(7);
             if (typeof (JSON.parse(atob(temp))) == 'object') {
                 localStorage.setItem("RGBsave", temp);
                 setupPlayer();
-            }
+            }else if (parseFloat(temp) === Log.get(Log.div(Clock, Math.pow(1024, 3)), "num")) pCheck(7);
         }
     } else if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
         let temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
