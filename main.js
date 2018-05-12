@@ -467,7 +467,7 @@ function SUInfo(num){
         case 11:
             return "Current Multi: " + formatNum(player.level.red,0) + "x";
         case 12:
-            return "Current Multi: " + formatNum(Math.max(Math.floor(Math.pow(player.spectrum, 0.8)), 1), 0) + "x";
+            return "Current Multi: " + formatNum(Log.max(Log.floor(Log.pow(player.spectrum, 0.8)), 1), 0) + "x";
         case 14:
             return "Base Core Count: " + (player.spectrumLevel[13] == 1 ? 8 : 1);
         case 16:
@@ -613,8 +613,9 @@ function save(name) {
 function setupPlayer() {
     player.bars = { red: new bar("red", 255, 0, 0, "redBar"), green: new bar("green", 0, 255, 0, "greenBar"), blue: new bar("blue", 0, 0, 255, "blueBar") };
     player.bars.red.setup();
-    if (load() != false) {
-        if (load().version >= 1) player = load();
+    let loadedSave = load();
+    if (loadedSave != false) {
+        if (loadedSave.version >= 1) player = Object.assign(player, loadedSave);
         if (player.version < 1.07) {
             player.prism = { active: false, potency: { red: 0.5, green: 0.5, blue: 0.5 }, pcost: {red:100,green:100,blue:100} };
             player.black = 0;
@@ -702,15 +703,15 @@ function load(name) {
     if (name == "Import") {
         var temp = prompt("Enter you save:", "");
         if (temp != null && temp != undefined && temp != "" && temp != false) {
-             if (parseInt(temp) === Log.div(player.clock, Math.pow(1024,3))) pCheck(7);
+             if (parseInt(temp) === Log.div(Clock, Math.pow(1024,3))) pCheck(7);
             if (typeof (JSON.parse(atob(temp))) == 'object') {
                 localStorage.setItem("RGBsave", temp);
                 setupPlayer();
             }
         }
-    }else if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
-        var temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
-        var tempSave = JSON.parse(atob(localStorage.getItem("RGBsave")));
+    } else if (localStorage.getItem("RGBsave") != undefined || localStorage.getItem("RGBsave") != null) {
+        let temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
+        let tempSave = temp;
         tempSave.bars = { red: new bar("red", temp.bars.red.color[0], temp.bars.red.color[1], temp.bars.red.color[2], "redBar"), green: new bar("green", temp.bars.green.color[0], temp.bars.green.color[1], temp.bars.green.color[2], "greenBar"), blue: new bar("blue", temp.bars.blue.color[0], temp.bars.blue.color[1], temp.bars.blue.color[2], "blueBar") };
         tempSave.bars.red.width = temp.bars.red.width;
         tempSave.bars.green.width = temp.bars.green.width;
@@ -960,40 +961,45 @@ function simulateTime(time) {
     console.log("You were offline for " + formatTime(time));
     player.spectrumTimer += time;
     let bprod = [Log.div(Log.multi(auto, IR), 256), Log.div(Log.multi(Log.multi(auto, IR), IG), 65536), Log.div(Log.multi(Log.multi(Log.multi(auto, IR), IG), IB), 16777216)];
-    if (!player.unlock) bprod.blue = 0;
+    if (!player.unlock) bprod[2] = 0;
     const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
     const names = ["red", "blue", "green"];
     const prod = {red:0,green:0,blue:0,spec:0}
-    for (var i = 0; i < names.length; i++) {
-        if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255 && player.spectrumLevel[15] === 1) prod.spec =Log.add(prod.spec, getSpec(names[i],bprod[i]))
-            else{
-            prod[names[i]] = color[names[i]].reduce(function(acc, val, i){return Log.add(acc, Log.multi(Log.multi(Log.div(val, 255), bprod[i]), Log.multi((player.prism.active ? potencyEff[names[i]] : 1), (player.spectrumLevel[1] + 1))))},0)
-        }
+    for (let i = 0; i < names.length; i++) if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255 && player.spectrumLevel[15] === 1) {
+        prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i]));
+        for (let j = 0; j < names.length; j++) color[names[j]][i] = 0;
     }
-    for (var i = 0; i < names.length; i++) if (SumOf(player.bars[names[i]].color) === 0) player.black = getBlack(names[i], time, bprod[i], prod.spec, player.spectrum);
+    for (let i = 0; i < names.length; i++){
+        prod[names[i]] = color[names[i]].reduce(function (acc, val, i) { return Log.add(acc, Log.multi(Log.multi(Log.div(val, 255), bprod[i]), Log.multi((player.prism.active ? potencyEff[names[i]] : 1), (player.spectrumLevel[1] + 1)))) }, 0);
+    }
+    for (let i = 0; i < names.length; i++) {
+        if (SumOf(player.bars[names[i]].color) === 0) player.black = getBlack(names[i], time, bprod[i], prod.spec, player.spectrum);
+    }
     while (time > 0) {
-        console.log(formatTime(time) + " left to simulate");
+        console.log(formatTime(Log.get(time, "n")) + " left to simulate");
         let nextRed = Log.div(Log.sub(price.red, player.money.red), prod.red);
         let nextGreen = Log.div(Log.sub(price.green, player.money.green), prod.green);
-        let nextBlue = Log.min(Log.min(Log.div(Log.sub(price.blue[0], player.money.blue), prod.blue),Log.div(Log.sub(price.blue[1], player.money.blue), prod.blue),Log.div(Log.sub(price.blue[2], player.money.blue), prod.blue)),Log.div(Log.sub(price.blue[3], player.money.blue), prod.blue));
+        let nextBlue = Log.min(Log.min(Log.div(Log.sub(price.blue[0], player.money.blue), prod.blue), Log.div(Log.sub(price.blue[1], player.money.blue), prod.blue), Log.div(Log.sub(price.blue[2], player.money.blue), prod.blue)), Log.div(Log.sub(price.blue[3], player.money.blue), prod.blue));
         let nextUp = time;
         if (player.AB.red) nextUp = Log.min(nextUp, nextRed);
         if (player.AB.green) nextUp = Log.min(nextUp, nextGreen);
         if (player.AB.blue) nextUp = Log.min(nextUp, nextBlue);
-        let nextTime = Math.floor(Math.max(time/100,5000));
-        if (nextTime > Log.get(nextUp, "num")) {
-            player.money.red = Log.add(player.money.red, Log.div(Log.multi(prod.red, Math.min(nextTime, time)), 1000));
-            player.money.green = Log.add(player.money.green, Log.div(Log.multi(prod.green, Math.min(nextTime, time)), 1000));
-            player.money.blue = Log.add(player.money.blue, Log.div(Log.multi(prod.blue, Math.min(nextTime, time)), 1000));
-            player.spectrum = Log.add(player.spectrum, Log.div(Log.multi(prod.spec, Math.min(nextTime, time)), 1000));
-            time -= Math.min(nextTime, time)
+        let nextTime = Log.floor(Log.max(time / 100, 5000));
+
+        console.log("up,time", nextUp, nextTime);
+        if (Log.get(nextTime,"l") > Log.get(nextUp, "l")) {
+            player.money.red = Log.add(player.money.red, Log.div(Log.multi(prod.red, Log.min(nextTime, time)), 1000));
+            player.money.green = Log.add(player.money.green, Log.div(Log.multi(prod.green, Log.min(nextTime, time)), 1000));
+            player.money.blue = Log.add(player.money.blue, Log.div(Log.multi(prod.blue, Log.min(nextTime, time)), 1000));
+            player.spectrum = Log.add(player.spectrum, Log.div(Log.multi(prod.spec, Log.min(nextTime, time)), 1000));
+            time = Log.sub(time, Log.min(nextTime, time));
             
         } else {
             player.money.red = Log.add(player.money.red, Log.div(Log.multi(prod.red, Log.min(nextUp, time)), 1000));
             player.money.green = Log.add(player.money.green, Log.div(Log.multi(prod.green, Log.min(nextUp, time)), 1000));
             player.money.blue = Log.add(player.money.blue, Log.div(Log.multi(prod.blue, Log.min(nextUp, time)), 1000));
             player.spectrum = Log.add(player.spectrum, Log.div(Log.multi(prod.spec, Log.min(nextUp, time)), 1000));
-            time -= Math.min(Log.get(nextUp,"num"), time);
+            time = Log.sub(time,Log.min(nextUp, time));
         }
         //if (player.money.red > 2.56e256) player.money.red = 2.56e256;
         //if (player.money.green > 2.56e256) player.money.green = 2.56e256;

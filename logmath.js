@@ -81,6 +81,7 @@ const Log = {
             n2 = Math.log10(n2);
         }
         if (typ === "null") {
+            if (n1 === 0 && n2 === 0) return new num(0);
             if (n1 === 0) n2 = parseFloat(n2.replace(/e/i, ""));
             else n1 = parseFloat(n1.replace(/e/i, ""));
         }
@@ -96,10 +97,7 @@ const Log = {
             n1 = Math.log10(n1);
             n2 = Math.log10(n2);
         }
-        if (typ === "null") {
-            if (n1 === 0) n2 = parseFloat(n2.replace(/e/i, ""));
-            else n1 = parseFloat(n1.replace(/e/i, ""));
-        }
+        if (typ === "null") return new num(0);
         return new num(Math.min(n1, n2), "log");
     },
 
@@ -300,8 +298,9 @@ const Log = {
         let m1 = Math.pow(10, n1 % 1);
         let e1 = Math.floor(n1);
         let m2 = Math.pow(10, n2 % 1);
-        let e2 = Math.floor(n2)
+        let e2 = Math.floor(n2);
         let y = m1 - m2 / Math.pow(10, e1 - e2);
+        if (y < 0) return new num(0);
         return new num (Math.log10(y) + e1,"log");
     },
 
