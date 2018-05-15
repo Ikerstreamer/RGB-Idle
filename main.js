@@ -122,7 +122,7 @@ function gameLoop() {
         if (player.spectrumLevel[i] == 1) document.getElementById("spectrumButton" + i).classList.add("bought");
         else document.getElementById("spectrumButton" + i).classList.remove("bought");
     }
-    document.getElementsByClassName("setting")[4].childNodes[1].innerHTML = player.options.fast ? "On" : "Off";
+    document.getElementsByClassName("setting")[4].childNodes[1].innerHTML = player.options.prank ? "On" : "Off";
     document.getElementsByClassName("setting")[5].childNodes[1].innerHTML = player.options.fps;
     document.getElementsByClassName("setting")[6].childNodes[1].innerHTML = "<b>" + player.options.notation + "</b>";
 }
