@@ -5,10 +5,11 @@ function num(input, force) {
     if (force === "log") {
         if (input <= 308) {
             this.typ = "num";
-            this.val = Math.pow(10,input);
+            this.val = Math.pow(10, input);
+        } else {
+            this.typ = "log";
+            this.val = input;
         }
-        this.typ = "log";
-        this.val = input;
     }else if(isFinite(input)){
         this.typ = "num";
         this.val = input;
@@ -27,12 +28,12 @@ function num(input, force) {
 const Log = {
     get: function (input, type) {
         if (typeof input === 'number') {
-            if (type === 'num' || type === undefined) return input;
-            if (type === 'log') return Math.log10(input);
+            if (type === 'num' || type === 'n' || type === undefined) return input;
+            if (type === 'log' || type === 'l') return Math.log10(input);
         }
-        if(input.typ === type || type === undefined) return input.val;
+        if (input.typ === type || type === input.typ.charAt(0) || type === undefined) return input.val;
         if (type === "num" || type === "n") {
-            if(isFinite(Math.pow(10,input.val)))return input.val;
+            if(isFinite(Math.pow(10,input.val)))return math.pow(10,input.val);
             return Math.pow(10,input.val % 1) + "e" + Math.floor(input.val);
         }
         if(type === "log" || type === "l") return Math.log10(input.val);

@@ -424,6 +424,7 @@ function prismUpgrade(type, name) {
             return
         case "potency":
             if (player.prism.potency.red === -1 && player.prism.potency.green === -1 && player.prism.potency.blue === -1 && Log.get(player.spectrum, "num") >= 100) {
+                console.log('yes')
                 player.spectrum = Log.sub(player.spectrum, 100);
                 let names = ['red','green','blue']
                 for (let i = 0; i < 3; i++) {
@@ -434,14 +435,12 @@ function prismUpgrade(type, name) {
                 }
                 pCheck(2);
                 updatePotency();
-                return
-            }
-            if (Log.get(player.spectrum, "num") >= Math.pow(10, player.prism.potency.total + 3)) {
+            }else if (Log.get(player.spectrum, "num") >= Math.pow(10, player.prism.potency.total + 3)) {
                 player.spectrum = Log.sub(player.spectrum, Math.pow(10, player.prism.potency.total + 3));
                 player.prism.potency.points += 2;
                 player.prism.potency.total += 2;
+                updatePotency();
             }
-            updatePotency();
                 return
         case "add":
             if (player.prism.potency.points > 0) {
@@ -754,14 +753,17 @@ function setupPlayer() {
         document.getElementById("spectrumButton" + 9).childNodes[0].innerHTML = "Auto Buy Max Blue Upgrades Every " + formatNum(2 / (player.progress.includes(4) ? 8 : 1)) + "s";
         ABInt = { red: 2000 / (player.progress.includes(4) ? 8 : 1), green: 2000 / (player.progress.includes(4) ? 8 : 1), blue: 2000 / (player.progress.includes(4) ? 8 : 1)};
         player.CM = Math.max(player.CM, 1);
+        let btn = document.getElementById('potencyBtn');
         if (player.prism.potency.total > 0) {
-            let btn = document.getElementById('potencyBtn');
             btn.childNodes[0].innerHTML = 'You have ' + player.prism.potency.points + ' potency, out of a total of ' + player.prism.potency.total;
             btn.childNodes[2].innerHTML = 'Increase potency for ' + formatNum(Math.pow(10, player.prism.potency.total + 2), 0) + ' Spectrum';
-            document.getElementById('redpot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['red'];
-            document.getElementById('greenpot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['green'];
-            document.getElementById('bluepot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['blue'];
+        } else {
+            btn.childNodes[0].innerHTML = 'Escape the loss of power. Remove your negative potency.';
+            btn.childNodes[2].innerHTML = 'This requires you to channel 100 spectrum.';
         }
+        document.getElementById('redpot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['red'];
+        document.getElementById('greenpot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['green'];
+        document.getElementById('bluepot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['blue'];
 
 
         //Should always be the last thing to happen
@@ -912,12 +914,11 @@ function mix(PC) {
                 var temp = Object.keys(player.money)[i];
                 var row = document.getElementById(temp + "Prism");
                 player.potencyEff[temp] = Math.pow(256, player.prism.potency[temp]);
-                player.bars[temp].color = [Math.floor(row.cells[1].childNodes[0].value), Math.floor(row.cells[1].childNodes[2].value), Math.floor(row.cells[1].childNodes[4].value)];
+                player.bars[temp].color = [Math.floor(row.cells[2].childNodes[0].value), Math.floor(row.cells[2].childNodes[2].value), Math.floor(row.cells[2].childNodes[4].value)];
                 csum += SumOf(player.bars[temp].color);
                 switchTab("RGB", 0);
                 reset(1, true);
             }
-            if (csum === 0) pCheck(2);
             pCheck(8);
         }
 }
