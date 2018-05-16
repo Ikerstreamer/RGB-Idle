@@ -166,7 +166,7 @@ var render = {
             row.cells[1].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[2].childNodes[0].value) + "," + Math.floor(row.cells[2].childNodes[2].value) + "," + Math.floor(row.cells[2].childNodes[4].value) + ")";
             var colors = ["Red: ", "Green: ", "Blue: "]
             if (row.cells[2].childNodes[0].value + row.cells[2].childNodes[2].value + row.cells[2].childNodes[4].value == 0) {
-                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.potencyEff[temp]/Math.pow(2,player.prism[temp])), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(player.progress.includes(10) ? Log.pow(Log.max(player.black, Log.pow(256, 3)), 0.85) : Log.max(player.black, Log.pow(256, 3))) + "</sub>";
+                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.potencyEff[temp]/Math.pow(2,player.prism.potency[temp])), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(player.progress.includes(10) ? Log.pow(Log.max(player.black, Log.pow(256, 3)), 0.85) : Log.max(player.black, Log.pow(256, 3))) + "</sub>";
                 blackBar = true;
             } else if (player.prism.specbar[temp]) row.cells[3].innerHTML = "Spectrum: log<sub>10</sub>(x)";
             else {
@@ -1092,7 +1092,7 @@ function getSpec(name, prod) {
 function getBlack(name, time, prod, specprod, spectrum, mini) {
     let A = player.progress.includes(10) ? 1.85 : 2;
     if (mini) A = 3;
-    let mults = Log.max(Log.multi(Log.multi(Log.multi(prod, player.potencyEff[temp] / Math.pow(2, player.prism[name])), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0);
+    let mults = Log.max(Log.multi(Log.multi(Log.multi(prod, player.potencyEff[name] / Math.pow(2, player.prism.potency[name])), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0);
     let blackThreshold = Log.pow(256, 3);
     let spectRatio = Log.div(spectrum, specprod);
     let thresholdTime = 0;
