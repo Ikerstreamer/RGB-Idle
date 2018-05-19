@@ -41,7 +41,7 @@ var RSS = 0;
 var PD = 0;
 var BPD = 0;
 var SR = 0;
-var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 30, 50, 75, 150, 250, 500, 2500, 5000, 1e5, 1e8, 1e10];
+var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 30, 50, 75, 300, 500, 1500, 2500, 5000, 1e5, 1e8, 1e10];
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
@@ -984,6 +984,16 @@ function pop(num) {
         document.body.onclick = "";
         document.body.onmousemove = "";
     }
+    function handleEsc(event) {
+        let key = event.keyCode || event.which;
+        if (key === 27 && num === 0) {
+            document.body.onclick = "";
+            document.body.onmousemove = "";
+            document.getElementsByClassName("popup")[num].style.visibility = "hidden";
+            window.removeEventListener("keypress", handleEsc);
+        }
+    }
+    window.addEventListener("keypress",handleEsc)
 }
 
 window.addEventListener("keypress",function(event) {
@@ -1075,7 +1085,7 @@ function simulateTime(time) {
 }
 
 function formatTime(num){
-    return (num >= 3600000 ? Math.floor(num / 3600000) + " hours and " + Math.floor((num % 3600000) / 60000) + " mins" : (num >= 60000 ? Math.floor(num / 60000) + " mins and " + Math.floor((num % 60000) / 1000) + " secs" : (num >= 10000 ? Math.floor(num / 1000) + " secs" : (num > 0 ? num + " millis" : 0))));
+    return (num >= 3600000 ? Math.floor(num / 3600000) + " hours and " + Math.floor((num % 3600000) / 60000) + " mins" : (num >= 60000 ? Math.floor(num / 60000) + " mins and " + Math.floor((num % 60000) / 1000) + " secs" : (num >= 10000 ? Math.floor(num / 1000) + " secs" : (num > 0 ? Math.round(num) + " millis" : 0))));
 }
 
 function getSpec(name, prod) {
