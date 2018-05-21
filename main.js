@@ -1,4 +1,4 @@
-var v = 1.098;
+var v = 1.099;
 var player = {
     money: { red: 0, green: 0, blue: 0 },
     pixels: { red: { max: 0, cur: 0 }, green: { max: 0, cur: 0 }, blue: { max: 0, cur: 0 }},
@@ -12,7 +12,8 @@ var player = {
     spectrumTimer: 0,
     previousSpectrums: [{ time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}, { time: 0, amount: 0}],
     lastUpdate: Date.now(),
-    prism: { active: false, potency: { points: 0, total: 0, red: -1, green: -1, blue: -1 }, specbar: {red:false,green:false,blue:false}, cost: {}},
+    prism: { active: false, potency: { points: 0, total: 0, red: -1, green: -1, blue: -1 }, specbar: { red: false, green: false, blue: false }, potencyEff: { red: 1 / 256, green: 1 / 256, blue: 1 / 256 }, },
+    specbar: { red: false, green: false, blue: false},
     black: 0,
     pop: false,
     AB: { red: true, green: true, blue: true },
@@ -125,7 +126,7 @@ function incomeBarDisplay(name) {
         var show = [1, 1, 1];
         for (var i = 0; i < 3; i++) if (player.bars[name].color[i] === 0) show[i] = 0;
         if (SumOf(show) === 0) elem.innerHTML = "~" + formatNum(displayIncome(name, "black")) + " Black/s";
-        else if (SumOf(show) == 3 && player.prism.specbar[name]) elem.innerHTML = formatNum(displayIncome(name, "spectrum")) + " Spec/s";
+        else if (SumOf(show) == 3 && player.specbar[name]) elem.innerHTML = formatNum(displayIncome(name, "spectrum")) + " Spec/s";
         else if (SumOf(show) == 1 && !player.progress.includes(8)) elem.innerHTML = formatNum(displayIncome(name, show.indexOf(1))) + "/s";
         else {
             elem.innerHTML = "";
@@ -166,14 +167,14 @@ var render = {
             row.cells[1].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[2].childNodes[0].value) + "," + Math.floor(row.cells[2].childNodes[2].value) + "," + Math.floor(row.cells[2].childNodes[4].value) + ")";
             var colors = ["Red: ", "Green: ", "Blue: "]
             if (row.cells[2].childNodes[0].value + row.cells[2].childNodes[2].value + row.cells[2].childNodes[4].value == 0) {
-                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.potencyEff[temp]/Math.pow(2,player.prism.potency[temp])), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(player.progress.includes(10) ? Log.pow(Log.max(player.black, Log.pow(256, 3)), 0.85) : Log.max(player.black, Log.pow(256, 3))) + "</sub>";
+                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.prism.potencyEff[temp]/Math.pow(2,player.prism.potency[temp])), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(player.progress.includes(10) ? Log.pow(Log.max(player.black, Log.pow(256, 3)), 0.85) : Log.max(player.black, Log.pow(256, 3))) + "</sub>";
                 blackBar = true;
             } else if (player.prism.specbar[temp]) row.cells[3].innerHTML = "Spectrum: log<sub>10</sub>(x)";
             else {
                 row.cells[3].innerHTML = "<span></span><br><span></span><br><span></span>";
                 var tempcount = 0;
                 for (var j = 0; j < 5; j += 2) {
-                    row.cells[3].childNodes[j].innerHTML = colors[j / 2] + formatNum(getColorPotency(Object.keys(player.money)[i], Math.floor(row.cells[2].childNodes[j].value)), player.prism.potency[temp] === -1 ? 6 : 2);
+                    row.cells[3].childNodes[j].innerHTML = colors[j / 2] + formatNum(getColorPotency(Object.keys(player.money)[i], Math.floor(row.cells[2].childNodes[j].value),true), player.prism.potency[temp] === -1 ? 6 : 2);
                     if (row.cells[2].childNodes[j].value === 0) tempcount++;
                 }
                 if (tempcount == 2) blackBar = true;
@@ -366,7 +367,7 @@ function increase(amnt, dif) {
     for (var i = 0; i < (player.unlock ? 3 : 2) ; i++) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width = Log.add(temp.width, next);
-        if (player.prism.specbar[temp.name]) {
+        if (player.specbar[temp.name]) {
             player.spectrum = Log.add(player.spectrum, Log.multi(getSpec(temp.name, Log.multi(Log.div(temp.width, 256), (dif / 1000))), (dif / 1000)));
             specGain = Log.add(specGain,getSpec(temp.name, Log.multi(Log.div(temp.width, 256), (dif / 1000))));
         } else {
@@ -411,7 +412,7 @@ function prismUpgrade(type, name) {
         if (name) {
             let pot = document.getElementById(name + 'pot');
             pot.getElementsByClassName('amnt')[0].innerHTML = player.prism.potency[name];
-            player.potencyEff[name] = Math.pow(256, player.prism.potency[name]);
+            player.prism.potencyEff[name] = Math.pow(256, player.prism.potency[name]);
         }
     }
 
@@ -431,7 +432,7 @@ function prismUpgrade(type, name) {
                     player.prism.potency[names[i]] = 0;
                     let pot = document.getElementById(names[i] + 'pot');
                     pot.getElementsByClassName('amnt')[0].innerHTML = player.prism.potency[names[i]];
-                    player.potencyEff[names[i]] = Math.pow(256, player.prism.potency[names[i]]);
+                    player.prism.potencyEff[names[i]] = Math.pow(256, player.prism.potency[names[i]]);
                 }
                 pCheck(2);
                 updatePotency();
@@ -727,6 +728,9 @@ function setupPlayer() {
             player.prism.specbar = { red: false, green: false, blue: false };
             while (player.spectrumLevel.length > 18)player.spectrumLevel.splice(length - 1, 1);
         }
+        if (player.version < 1.099) {
+            player.prism.potencyEff = { red: 1 / 256, green: 1 / 256, blue: 1 / 256 };
+        }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
         if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
@@ -908,6 +912,8 @@ function mix(PC) {
             for (var i = 0; i < 3; i++) {
                 var temp = Object.keys(player.money)[i];
                 var row = document.getElementById(temp + "Prism");
+                player.specbar = player.prism.specbar;
+                player.potencyEff = player.prism.potencyEff;
                 player.potencyEff[temp] = Math.pow(256, player.prism.potency[temp]);
                 player.bars[temp].color = [Math.floor(row.cells[2].childNodes[0].value), Math.floor(row.cells[2].childNodes[2].value), Math.floor(row.cells[2].childNodes[4].value)];
                 csum += SumOf(player.bars[temp].color);
@@ -1030,7 +1036,7 @@ function simulateTime(time) {
     const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
     const names = ["red", "blue", "green"]; 
     const prod = {red:0,green:0,blue:0,spec:0}
-    for (let i = 0; i < names.length; i++) if (player.prism.specbar[names[i]]) {
+    for (let i = 0; i < names.length; i++) if (player.specbar[names[i]]) {
         prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i]));
         for (let j = 0; j < names.length; j++) color[names[j]][i] = 0;
     }
@@ -1091,7 +1097,7 @@ function formatTime(num){
 function getSpec(name, prod) {
     let blackmulti = 1;
     if (player.progress.includes(11)) blackmulti = Log.max(Log.log10(player.black),1);
-    let logprod = Log.floor(Log.max(Log.root(prod, 32), 0));
+    let logprod = Log.floor(Log.max(Log.log(prod, 10), 0));
     let coreMulti = 1;
     if (player.progress.includes(6)) coreMulti = Log.add(1, Log.div(player.level.blue[3], 10));
     let timeMulti = 1;
@@ -1135,8 +1141,9 @@ function getBlack(name, time, prod, specprod, spectrum) {
 }
 */
 
-function getColorPotency(name,color) {
+function getColorPotency(name,color,prism) {
     let potency = player.potencyEff[name];
+    if (prism) potency = player.prism.potencyEff[name];
     let multi = (player.spectrumLevel[1] + 1);
     color = color / 255;
     if(potency < 1){
