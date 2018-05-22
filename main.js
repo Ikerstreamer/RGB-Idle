@@ -571,7 +571,8 @@ function CalcSRgain() {
         SR = Log.multi(SR, Log.add(Log.div(player.specced, 100), 1));
         SR = Log.multi(SR, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
         if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
-        if (player.progress.includes(9)) SR = Log.multi(SR,Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
+        if (player.progress.includes(9)) SR = Log.multi(SR, Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
+        SR = Log.pow(SR, Log.add(1,Log.div(Log.log(Cores,128),2)));
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
         document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + " Spectrum</b>";
         document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.multi(Log.mod(SR, 1), 100)) + "% towards next";
@@ -819,8 +820,11 @@ function reset(type, force) {
         CalcSRgain();
         if (Log.get(SR, "log") >= 0 || force) {
             if (player.advSpec.multi > 1) {
+                console.log(1);
                 if (player.advSpec.active) {
-                    if(player.advSpec.time <= player.spectrumTimer){
+                    console.log(2);
+                    if (player.advSpec.time <= player.spectrumTimer) {
+                        console.log(3);
                     player.advSpec.active = false;
                     player.advSpec.multi = 1;
                     player.spectrum = Log.add(player.spectrum, player.advSpec.gain);
@@ -1096,8 +1100,8 @@ function formatTime(num){
 
 function getSpec(name, prod) {
     let blackmulti = 1;
-    if (player.progress.includes(11)) blackmulti = Log.max(Log.log10(player.black),1);
-    let logprod = Log.floor(Log.max(Log.log(prod, 10), 0));
+    if (player.progress.includes(11)) blackmulti = Log.max(Log.sqrt(Log.log10(player.black)), 1);
+    let logprod = Log.floor(Log.max(Log.pow(Log.log(prod, 10),Log.log(Cores, 128)), 0));
     let coreMulti = 1;
     if (player.progress.includes(6)) coreMulti = Log.add(1, Log.div(player.level.blue[3], 10));
     let timeMulti = 1;
