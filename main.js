@@ -317,9 +317,12 @@ function pCheck(num) {
             if (!player.progress.includes(10)) {
                 var b = 0;
                 var c = 0;
-                for (var i = 0; i < player.bars.length; i++) if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b = Log.add(b,Log.sub(getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], 0, player.spectrum), player.black));
-                else c += income[Object.keys(player.bars)[i]]
-                if (b > c) player.progress.push(10);
+                for (var i = 0; i < player.bars.length; i++){
+                    if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b = Log.add(b, displayIncome(Object.keys(player.bars)[i],'black'));
+                    if (player.bars[Object.keys(player.bars)[i]].color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) b = Log.add(displayIncome(Object.keys(player.bars)[i], 'miniblack'), b);
+                    c = Log.add(c, displayIncome(Object.keys(player.bars)[i]));
+                }  
+                if (Log.get(b,'l') > Log.get(c,'l')) player.progress.push(10);
             }
             return
         case 11:
@@ -327,16 +330,15 @@ function pCheck(num) {
                 var b = 0;
                 var w = 0;
                 for (var i = 0; i < Object.keys(player.bars).length; i++) {
-                    if (SumOf(player.bars[Object.keys(player.bars)[i]].color) == 255 * 3) {
-                        w = Log.add(w,getSpec(Object.keys(player.bars)[i], income[Object.keys(player.bars)[i]]));
+                    if (player.specbar[Object.keys(player.bars)[i]]) {
+                        w = Log.add(w, displayIncome(Object.keys(player.bars)[i],'spectrum'));
                     }
                 }
                 for (var i = 0; i < Object.keys(player.bars).length; i++) {
-                    if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) {
-                        b = Log.add(b,Log.sub(getBlack(Object.keys(player.bars)[i], 1000, income[Object.keys(player.bars)[i]], w, player.spectrum), player.black));
-                    }
+                    if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b = Log.add(b, displayIncome(Object.keys(player.bars)[i], 'black'));
+                    if (player.bars[Object.keys(player.bars)[i]].color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) b = Log.add(displayIncome(Object.keys(player.bars)[i], 'miniblack'), b);
                 }
-                if (w > b) player.progress.push(11);
+                if (Log.get(w,'l') > Log.get(b,'l')) player.progress.push(11);
             }
             return
         case 12:
@@ -940,9 +942,9 @@ function switchTab(name, num, sub) {
 function displayIncome(name, index) {
     let num = 0;
     if (player.prism.active) {
-        if (index == "black") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name],1000), 0, player.spectrum), player.black),0);
-        else if (index == "miniBlack") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name], 1000), 0, player.spectrum,true), player.black),0);
-        else if (index == "spectrum") num = getSpec(name, income[name]);
+        if (index === "black") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name],1000), 0, player.spectrum), player.black),0);
+        else if (index === "miniBlack") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name], 1000), 0, player.spectrum,true), player.black),0);
+        else if (index === "spectrum") num = getSpec(name, income[name]);
         else num = Log.multi(income[name],getColorPotency(name,player.bars[name].color[index]));
     }else num = Log.multi(income[name], (player.spectrumLevel[1]+1));
     return(num)
