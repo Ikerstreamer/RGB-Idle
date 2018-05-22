@@ -15,7 +15,6 @@ var player = {
     prism: { active: false, potency: { points: 0, total: 0, red: -1, green: -1, blue: -1 }, specbar: { red: false, green: false, blue: false }, potencyEff: { red: 1 / 256, green: 1 / 256, blue: 1 / 256 }, },
     specbar: { red: false, green: false, blue: false},
     black: 0,
-    pop: false,
     AB: { red: true, green: true, blue: true },
     CM: 1,
     progress: [],
@@ -100,7 +99,7 @@ function gameLoop() {
     increase(Log.multi(auto, (dif / 1000)), dif);
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw(dif);
     if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
-    if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
+    if (SumOf(player.spectrumLevel) >= 13) document.getElementsByClassName("switch")[5].classList.remove("hidden");
     if (player.prism.active) document.getElementsByClassName("switch")[6].classList.remove("hidden");
     if (player.level.blue[3] >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
     if (player.money.blue >= 1) document.getElementsByClassName("switch")[1].classList.remove("hidden");
@@ -243,17 +242,10 @@ var render = {
                     }
                 }
             } else {
-                if(player.pop){
-                    document.getElementById(tempKey + "Button").childNodes[1].innerHTML = "L: " + formatNum(player.level[tempKey], 0);
-                    document.getElementById(tempKey + "Button").childNodes[2].innerHTML = "P: " + formatNum(price[tempKey]);
-                    document.getElementById(tempKey + "Button").childNodes[0].innerHTML = (tempKey.charAt(0).toUpperCase()).toString() + (tempKey.substr(1,tempKey.length-1)).toString();
-                    document.getElementById(tempKey + "Button").style.width = "unset";
-                }else{
                     document.getElementById(tempKey + "Button").childNodes[0].innerHTML = tempKey == "red" ? "Increase Click Strength" : "Increase Auto Strength";
                     document.getElementById(tempKey + "Button").style.width = "";
                     document.getElementById(tempKey + "Button").childNodes[2].innerHTML = "Price: " + formatNum(price[tempKey]) + " " + tempKey;
                     document.getElementById(tempKey + "Button").childNodes[1].innerHTML = "Level: " + formatNum(player.level[tempKey], 0);
-                }
             }
         }
         document.getElementById("spectrumCountRGB").innerHTML = formatNum(player.spectrum, 0) + " Spectrum";
@@ -411,8 +403,9 @@ function prismUpgrade(type, name) {
 
         if (name) {
             let pot = document.getElementById(name + 'pot');
-            pot.getElementsByClassName('amnt')[0].innerHTML = player.prism.potency[name];
             player.prism.potencyEff[name] = Math.pow(256, player.prism.potency[name]);
+            if (player.prism.potencyEff[name] === player.potencyEff[name]) pot.getElementsByClassName('amnt')[0].innerHTML = player.prism.potency[name];
+                else pot.getElementsByClassName('amnt')[0].innerHTML = (Math.log(player.potencyEff[name]) / Math.log(256)) + "(" + player.prism.potency[name] + ")";
         }
     }
 
@@ -575,7 +568,8 @@ function CalcSRgain() {
         SR = Log.pow(SR, Log.add(1,Log.div(Log.log(Cores,128),2)));
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
         document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + " Spectrum</b>";
-        document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.multi(Log.mod(SR, 1), 100)) + "% towards next";
+        if (Log.get(SR,'l') >= 3) document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.get(Log.div(SR,player.spectrumTimer/60000),'num')) + "/min";
+            else document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.multi(Log.mod(SR, 1), 100)) + "% towards next";
         if (player.advSpec.unlock) {
                 var prevmulti = player.advSpec.multi;
                 player.advSpec.multi = parseInt(document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value);
@@ -734,7 +728,7 @@ function setupPlayer() {
         }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
-        if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
+        if (SumOf(player.spectrumLevel) >= 13) document.getElementsByClassName("switch")[5].classList.remove("hidden");
         if (player.prism.active) document.getElementById("newupgrades").classList.remove("hidden");
         else document.getElementById("newupgrades").classList.add("hidden");
         if (SumOf(player.spectrumLevel) >= 15 ) {
@@ -771,9 +765,13 @@ function setupPlayer() {
             btn.childNodes[0].innerHTML = 'Escape the loss of power. Remove your negative potency.';
             btn.childNodes[2].innerHTML = 'This requires you to channel 100 spectrum.';
         }
-        document.getElementById('redpot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['red'];
-        document.getElementById('greenpot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['green'];
-        document.getElementById('bluepot').getElementsByClassName('amnt')[0].innerHTML = player.prism.potency['blue'];
+
+        let names = ['red', 'green', 'blue']
+        for (let i = 0; i < 3; i++) {
+            let pot = document.getElementById(names[i] + 'pot');
+            if (player.prism.potencyEff[names[i]] === player.potencyEff[names[i]]) pot.getElementsByClassName('amnt')[0].innerHTML = player.prism.potency[names[i]];
+            else pot.getElementsByClassName('amnt')[0].innerHTML = (Math.log(player.potencyEff[names[i]]) / Math.log(256)) + "(" + player.prism.potency[names[i]] + ")";
+        }
 
 
         //Should always be the last thing to happen
@@ -993,6 +991,7 @@ function pop(num) {
         }
         document.body.onclick = "";
         document.body.onmousemove = "";
+        window.removeEventListener("keydown", handleEsc);
     }
     function handleEsc(event) {
         let key = event.keyCode || event.which;
@@ -1000,10 +999,10 @@ function pop(num) {
             document.body.onclick = "";
             document.body.onmousemove = "";
             document.getElementsByClassName("popup")[num].style.visibility = "hidden";
-            window.removeEventListener("keypress", handleEsc);
+            window.removeEventListener("keydown", handleEsc);
         }
     }
-    window.addEventListener("keypress",handleEsc)
+    window.addEventListener("keydown",handleEsc)
 }
 
 window.addEventListener("keypress",function(event) {
