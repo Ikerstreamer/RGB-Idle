@@ -99,7 +99,7 @@ function gameLoop() {
     increase(Log.multi(auto, (dif / 1000)), dif);
     for (var i = 0; i < Object.keys(player.bars).length ; i++) player.bars[Object.keys(player.bars)[i]].draw(dif);
     if (player.level.green >= 1 && !player.unlock) document.getElementById("unlockBtn").classList.remove("hidden");
-    if (SumOf(player.spectrumLevel) >= 13) document.getElementsByClassName("switch")[5].classList.remove("hidden");
+    if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
     if (player.prism.active) document.getElementsByClassName("switch")[6].classList.remove("hidden");
     if (player.level.blue[3] >= 1) document.getElementById("spectrumDiv").classList.remove("hidden");
     if (player.money.blue >= 1) document.getElementsByClassName("switch")[1].classList.remove("hidden");
@@ -567,7 +567,6 @@ function CalcSRgain() {
         SR = Log.multi(SR, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
         if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
         if (player.progress.includes(9)) SR = Log.multi(SR, Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
-        SR = Log.pow(SR, Log.add(1,Log.div(Log.log(Cores,8),8)));
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
         document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + " Spectrum</b>";
         if (Log.get(SR,'l') >= 3) document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.get(Log.div(SR,player.spectrumTimer/60000),'num')) + "/min";
@@ -730,7 +729,7 @@ function setupPlayer() {
         }
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
-        if (SumOf(player.spectrumLevel) >= 13) document.getElementsByClassName("switch")[5].classList.remove("hidden");
+        if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
         if (player.prism.active) document.getElementById("newupgrades").classList.remove("hidden");
         else document.getElementById("newupgrades").classList.add("hidden");
         if (SumOf(player.spectrumLevel) >= 15 ) {
