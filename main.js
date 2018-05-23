@@ -342,11 +342,15 @@ function pCheck(num) {
             }
             return
         case 12:
-            if (!player.progress.includes(12) && (player.money.red == 2.56e256 || player.money.green == 2.56e256 || player.money.blue == 2.56e256)) player.progress.push(12);
+            if (!player.progress.includes(12) && Log.get(player.money.green,'n') === 0 && player.level.green === 0 && player.level.red === 1000) player.progress.push(12);
             return
         case 13:
-            if (!player.progress.includes(13) && player.black == 2.56e256) player.progress.push(13);
+            if (!player.progress.includes(13) && Log.get(player.black,'l') === 256) player.progress.push(13);
             return
+        case 14:
+            if (!player.progress.includes(14) && player.specbar.red && player.specbar.green && player.specbar.blue) player.progress.push(14);
+            return
+
     }          
 }
 
@@ -377,6 +381,7 @@ function increase(amnt, dif) {
     pCheck(13);
     pCheck(10);
     pCheck(11);
+    pCheck(12);
     pCheck(6);
    /* if (player.money.red > 2.56e256) player.money.red = 2.56e256;
     if (player.money.green > 2.56e256) player.money.green = 2.56e256;
@@ -565,7 +570,8 @@ function CalcSRgain() {
         SR = Log.max(Log.log(SR,1000), 0);
         SR = Log.multi(SR, Log.add(Log.div(player.specced, 100), 1));
         SR = Log.multi(SR, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
-        if (player.progress.includes(6)) SR = Log.multi(SR,Log.add(1,Log.div(player.level.blue[3], 10)));
+        if (player.progress.includes(6)) SR = Log.multi(SR, Log.add(1, Log.div(player.level.blue[3], 10)));
+        if (player.progress.includes(14)) SR = Log.multi(SR, Cores);
         if (player.progress.includes(9)) SR = Log.multi(SR, Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
         document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + " Spectrum</b>";
@@ -1049,6 +1055,7 @@ function simulateTime(time) {
     }
     for (let i = 0; i < names.length; i++) {
         if (SumOf(player.bars[names[i]].color) === 0) player.black = getBlack(names[i], time, bprod[i], prod.spec, player.spectrum);
+        if (temp.color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) player.black = getBlack(names[i], time, bprod[i], prod.spec, player.spectrum, true);
     }
     while (time > 0) {
         console.log(formatTime(Log.get(time, "n")) + " left to simulate");
@@ -1153,7 +1160,9 @@ function getColorPotency(name,color,prism) {
     if(potency < 1){
         return color / 1028;
     }
-    return Math.pow(potency * multi, color) - 1;
+    let ret = Math.pow(potency * multi, color) - 1;
+    if (player.progress.includes(12)) ret *= Math.pow(256, player.bars[name].color.filter(function (item) { return item === 0 }).length);
+    return ret;
 }
 
 
