@@ -12,6 +12,7 @@
     <div class="popup">The prism rises as you approach it, so many question you want it to answer yet it hovers there dead silent. You stick your hand out to reach for it and as you do all the light around you seems to fade. The blackness of the prism seems to consume everything, your spectrum fades out of exsistence.<br> The game is about to change, your 3 colored bars will no longer solely produce red, green and blue respectively. Now each bars production can be altered to produce a certain amount of the base 3 colors, your first prism mix is fixed.<br> Click here to proceed or Press 'esc' to cancel</div>
     <div class="popup">You have reached the limit of the amount of colors your computer can process. You can now alter these color to become unstable yet allow you further growth.<br> Each unstable color will halve autobuyer interval.<br>Click here to proceed</div>
     <div class="popup" style="font-size:1.5em">Your save has been copied to clipboard!</div>
+    <div class="popup" style="font-size:1.5em">You have finished a progress!</div>
     <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Settings', 2)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 3)">Stats</div><br>
     <div id="tabRGB" class="tab">
         <div style="width:100%;">
@@ -61,6 +62,7 @@
                     <tr><td><div id="spectrumButton6" class="button spec" onclick="buyUpgrade('spectrum', 6)"><div>Start with Blue Unlocked</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton7" class="button spec" onclick="buyUpgrade('spectrum', 7)"><div>Bar Gain Upgrades Scale per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton8" class="button spec" onclick="buyUpgrade('spectrum', 8)"><div>Increase Bonus per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                     <tr><td><div id="spectrumButton9" class="button spec" onclick="buyUpgrade('spectrum', 9)"><div>Auto Buy Max Blue Upgrades Every 2s</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton10" class="button spec" onclick="buyUpgrade('spectrum', 10)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton11" class="button spec" onclick="buyUpgrade('spectrum', 11)"><div>Auto Bonus Based on Red Lvl</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                     <tr><td><div id="spectrumButton12" class="button spec" onclick="buyUpgrade('spectrum', 12)"><div>Auto Bonus Based on Spectrum</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton13" class="button spec" onclick="buyUpgrade('spectrum', 13)"><div>Better Spectrum Gain Formula</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton14" class="button spec" onclick="buyUpgrade('spectrum', 14)"><div>Switch to GPU Rendering</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr class="hidden"><td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                 </table>
                 <div class="count hidden" id="newupgrades" style="width:80%;">New upgrades at e128 Black</div>
             </div>
@@ -98,12 +100,12 @@
                         <tr><td>And we're back!</td><td>Reach spectrum once again!</td><td>Unlock Potency Upgrades</td></tr>
                         <tr><td>"Grinding ain't fun!" - Hunter</td><td>Buy your first potency upgrade. ^^Unlocked here^^</td><td>Advanced spectrum options(yay, long runs)</td></tr>
                         <tr><td>Darkness I embrace you!</td><td>Do a 3 black bar prism when having over 1e50 black</td><td>Black gain is multiplied by core count</td></tr>
-                        <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1e64 or more blackness without autobuyers or hotkeys</td><td>Divides autobuyer interval by 8</td></tr>
+                        <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1000 or more blackness without autobuyers or hotkeys</td><td>Divides autobuyer interval by 8</td></tr>
                         <tr><td>Ooh, half way there!</td><td>Get all spliced color to have an exponent e128</td><td>Auto splice each color once when you click the spectrum button</td></tr>
                         <tr><td>Cores... who needs those!</td><td>Reach e64 blue without buying a single core upgrade</td><td>Spectrum gain is increase by 10% per core upgrade</td></tr>
                         <tr><td>Tick tock, tick tock...</td><td>You have to do something import...ant</td><td>Get a free clock speed upgrade every 5 mins(capped at 5)</td></tr>
                         <tr><td>Back to my roots!</td><td>Create the same old Red, Green and Blue bars as initially</td><td>Bars made of only 1 color produce a tiny bit of black</td></tr>
-                        <tr><td>Light flashes by you!</td><td>A spectrum that creates 100 Spectrum/sec</td><td>Spectrum gain is multiplied by log10(mins)</td></tr>
+                        <tr><td>Light flashes by you!</td><td>A spectrum that creates over 1M Spectrum/sec</td><td>Spectrum gain is multiplied by log10(mins)</td></tr>
                         <tr><td>"It's not a phase, mom!" - Boo</td><td>Have black per second exceed any other colors production</td><td>Blackness denominator is logarithmically reduced by 15%</td></tr>
                         <tr><td>The light always wins!</td><td>Have your spectrum per second be higher than your black per second</td><td>Spectrum bars are multiplied by log10(black)</td></tr>
                         <tr><td>"The best color" - Omsi</td><td>Get 1000 red lvls without producing any green</td><td>Bars produce based on how little of other colors the bar contains</td></tr>
@@ -141,6 +143,9 @@
             <tr><td></td></tr>
             <tr><td></td></tr>
         </table>
+        <br>
+        <h1>Important Info</h1>
+        <div style="font-size:25px" id="specstat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
     </div>
 </body>
 </html>
