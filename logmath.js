@@ -19,10 +19,14 @@ function num(input, force) {
     }else if(input.charAt(0).toLowerCase() === "e" && isFinite(parseFloat(input.replace(/e/i,"")))){
         this.typ = "log";
         this.val = parseFloat(input.replace(/e/i, ""));
-    }else if(isFinite(parseFloat(input))){
+    } else if (isFinite(parseFloat(input))) {
         this.typ = "num";
         this.val = parseFloat(input);
-    }else console.error("Invalid input, can not create a number!",input);
+    } else {
+        console.error("Invalid input, can not create a number! Setting value to 0.", input);
+        this.typ = "num";
+        this.val = 0;
+    }
 }
 
 const Log = {

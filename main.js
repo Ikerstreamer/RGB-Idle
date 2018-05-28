@@ -668,7 +668,7 @@ function formatNum(num, dp, type) {
             if (num < 10) return preHz[num] + "Hz";
             if (num < 20) return "X" + preHz[num%10] + "Hz";
             if (num == 20) return "bXHz";
-            var pre2 = ["b", "t", "q","Q","s","S"];
+            var pre2 = ["b", "t", "q","Q","s","S","O"];
             return pre2[Math.floor((num - 20) / 10)] + "X" + preHz[(num % 10)] + "Hz";
         }   
         return num / Math.pow(1024, Math.floor(Math.log(num) / Math.log(1024))) + createSuffix(Math.floor(Math.log(num) / Math.log(1024)));
@@ -1107,9 +1107,9 @@ function simulateTime(time) {
         let nextGreen = Log.div(Log.sub(price.green, player.money.green), prod.green);
         let nextBlue = Log.min(Log.min(Log.div(Log.sub(price.blue[0], player.money.blue), prod.blue), Log.div(Log.sub(price.blue[1], player.money.blue), prod.blue), Log.div(Log.sub(price.blue[2], player.money.blue), prod.blue)), Log.div(Log.sub(price.blue[3], player.money.blue), prod.blue));
         let nextUp = time;
-        if (player.AB.red) nextUp = Log.min(nextUp, nextRed);
-        if (player.AB.green) nextUp = Log.min(nextUp, nextGreen);
-        if (player.AB.blue) nextUp = Log.min(nextUp, nextBlue);
+        if (player.AB.red && player.spectrumLevel[9]) nextUp = Log.min(nextUp, nextRed);
+        if (player.AB.green && player.spectrumLevel[9]) nextUp = Log.min(nextUp, nextGreen);
+        if (player.AB.blue && player.spectrumLevel[9]) nextUp = Log.min(nextUp, nextBlue);
         let nextTime = Log.floor(Log.max(time / 100, 5000));
 
         if (Log.get(nextTime,"l") > Log.get(nextUp, "l")) {
@@ -1126,9 +1126,9 @@ function simulateTime(time) {
             player.spectrum = Log.add(player.spectrum, Log.div(Log.multi(prod.spec, Log.min(nextUp, time)), 1000));
             time = Log.sub(time,Log.min(nextUp, time));
         }
-        if(player.AB.red) while (buyUpgrade("red"));
-        if (player.AB.green) while (buyUpgrade("green"));
-        if (player.AB.blue) for (var i = 0; i < 4; i++) while (buyUpgrade("blue", i));
+        if(player.AB.red && player.spectrumLevel[4]) while (buyUpgrade("red"));
+        if (player.AB.green && player.spectrumLevel[5]) while (buyUpgrade("green"));
+        if (player.AB.blue && player.spectrumLevel[9]) for (var i = 0; i < 4; i++) while (buyUpgrade("blue", i));
         updateStats();
         let bprod = [Log.div(Log.multi(auto, IR), 256), Log.div(Log.multi(Log.multi(auto, IR), IG), 65536), Log.div(Log.multi(Log.multi(Log.multi(auto, IR), IG), IB), 16777216)];
         for (let i = 0; i < names.length; i++) if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255 && player.spectrumLevel[15] === 1) {
