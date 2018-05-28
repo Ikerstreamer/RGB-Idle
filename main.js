@@ -597,7 +597,7 @@ function CalcSRgain() {
         SR = Log.max(Log.multi(Log.multi(player.spliced.red, player.spliced.green), player.spliced.blue), 0);
         SR = Log.div(SR, 16777216);
         if (player.spectrumLevel[13]) SR = Log.pow(SR, Log.div(Cores, 256))
-        SR = Log.root(SR,4);
+        SR = Log.root(SR,3);
         SR = Log.max(Log.log(SR,1000), 0);
         SR = Log.multi(SR, Log.add(Log.div(player.specced, 100), 1));
         SR = Log.multi(SR, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
