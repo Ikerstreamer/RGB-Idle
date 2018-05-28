@@ -719,7 +719,7 @@ function setupPlayer() {
         if (loadedSave.version >= 1) player = Object.assign(player, loadedSave);
             if (player.version < 1.1) {
             for (var i = 0; i < 3; i++) player.spectrumLevel.push(-1);
-            player.prism = { active: false };
+            player.prism = { active: false,potency :{}, };
             player.AB = { red: true, green: true, blue: true };
             player.CM = 1;
             player.black = 0;
