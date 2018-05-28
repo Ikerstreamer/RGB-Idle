@@ -41,7 +41,7 @@ var RSS = 0;
 var PD = 0;
 var BPD = 0;
 var SR = 0;
-var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 30, 50, 75, 300, 500, 1500, 2500, 5000, 1e5, 1e8, 1e10];
+var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 30, 50, 75, 300, 500, 1500, 2500, 20000, 1e5, 1e8, 1e10];
 
 function bar(n,r,g,b,elemid) {
     this.name = n;
@@ -580,13 +580,13 @@ function updateStats() {
     Cores = Log.multi(Log.pow(2, player.level.blue[3]), (player.spectrumLevel[14] == 1 ? 8 : 1));
     Clock = Log.pow(2, Log.floor(Log.log(Log.pow(Log.add(2 , Log.log(Cores,6)), Log.add(player.level.blue[0], (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0))), 2)));
     click = Log.multi(Log.multi(Log.add(2,Log.div(player.level.red, 2)), Log.pow((1.15 + player.spectrumLevel[8] * 0.15), Log.floor(Log.div(player.level.red, 10)))), Math.log10(Math.max(player.CM,1)));
-    auto = Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(player.level.green, 16), Log.pow(Log.add(1.15 ,Log.multi( player.spectrumLevel[8], 0.15)), Log.floor(Log.div(player.level.green, 10)))), Clock),(player.spectrumLevel[0] == 1 ? Log.max(Log.log10(player.CM), 1) : 1)), (player.spectrumLevel[11] == 1 ? player.level.red : 1)), (player.spectrumLevel[12] == 1 ? Log.max(Log.floor(player.spectrum), 1) : 1));
+    auto = Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(player.level.green, 16), Log.pow(Log.add(1.15 ,Log.multi( player.spectrumLevel[8], 0.15)), Log.floor(Log.div(player.level.green, 10)))), Clock),(player.spectrumLevel[0] == 1 ? Math.max(Math.log10(player.CM), 1) : 1)), (player.spectrumLevel[11] == 1 ? player.level.red : 1)), (player.spectrumLevel[12] == 1 ? Log.max(Log.floor(player.spectrum), 1) : 1));
     price.red = Log.multi(5 , Log.pow(Log.add(1,Log.multi(Log.multi(0.1, Log.pow(1.05, Math.max((player.level.red / 100)-1,0))), PD)), player.level.red));
     price.green = Log.multi(5, Log.pow(Log.add(1,Log.multi(Log.multi(0.05, Log.pow(1.05, Math.max((player.level.green / 100)-1,0))), PD)), player.level.green));
     price.blue[0] = Log.pow(16, Log.max(Log.sub(player.level.blue[0],BPD),0));
     price.blue[1] = Log.multi(4, Log.pow(2, Log.max(Log.sub(player.level.blue[1],BPD),0)));
     price.blue[2] = Log.multi(8, Log.pow(2, Log.max(Log.sub(player.level.blue[2],BPD),0)));
-    price.blue[3] = Log.multi(1048576, Log.pow(Log.pow(512, Log.max(Log.floor(Log.multi(Log.max(Log.sub(player.level.blue[3], 4), 0),Log.add(1.25,Log.multi(Log.max(Log.sub(Log.floor(Log.div(player.level.blue[3],5)),1),0),0.05)))), 1)), player.level.blue[3]));
+    price.blue[3] = Log.multi(1048576, Log.pow(Log.pow(512, Log.max(Log.floor(Log.multi(Log.max(Log.sub(player.level.blue[3], 4), 0),Log.add(1.25,Log.multi(Log.max(Log.sub(Log.floor(Log.div(player.level.blue[3],5)),1),0),0.1)))), 1)), player.level.blue[3]));
     if (player.bars.red.mouse == 1) income.red = Log.div(Log.multi(Log.add(auto, Log.multi(click, 50)), IR), 256);
     else income.red = Log.div(Log.multi(auto, IR), 256);
     income.green = Log.div(Log.multi(income.red, IG), 256);
@@ -596,8 +596,8 @@ function updateStats() {
 function CalcSRgain() {
         SR = Log.max(Log.multi(Log.multi(player.spliced.red, player.spliced.green), player.spliced.blue), 0);
         SR = Log.div(SR, 16777216);
-        if (player.spectrumLevel[13]) SR = Log.pow(SR, Log.div(Cores, 128))
-        else SR = Log.root(SR,4);
+        if (player.spectrumLevel[13]) SR = Log.pow(SR, Log.div(Cores, 256))
+        SR = Log.root(SR,4);
         SR = Log.max(Log.log(SR,1000), 0);
         SR = Log.multi(SR, Log.add(Log.div(player.specced, 100), 1));
         SR = Log.multi(SR, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
