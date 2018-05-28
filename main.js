@@ -1049,14 +1049,12 @@ function simulateTime(time) {
     const color = { red: [player.bars.red.color[0], player.bars.green.color[0], player.bars.blue.color[0]], green: [player.bars.red.color[1], player.bars.green.color[1], player.bars.blue.color[1]], blue: [player.bars.red.color[2], player.bars.green.color[2], player.bars.blue.color[2]] };
     const names = ["red", "green", "blue"]; 
     const prod = { red: 0, green: 0, blue: 0, spec: 0 }
-    console.log(bprod,color);
     for (let i = 0; i < names.length; i++) if (player.specbar[names[i]]) {
         prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i]));
         for (let j = 0; j < names.length; j++) color[names[j]][i] = 0;
     }
     for (let i = 0; i < names.length; i++) {
         prod[names[i]] = color[names[i]].reduce(function (acc, val, j) {
-            console.log(names[j], val, getColorPotency(names[j], val));
             return Log.add(acc, Log.multi(bprod[j], (player.prism.active ? getColorPotency(names[j], val) : (player.spectrumLevel[1] + 1) * val / 255)))
 
         }, 0);
@@ -1066,7 +1064,6 @@ function simulateTime(time) {
         if (player.bars[names[i]].color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) player.black = getBlack(names[i], time, Log.div(bprod[i],1000), prod.spec, player.spectrum, true);
     }
     while (time > 0) {
-        console.log(prod);
         console.log(formatTime(Log.get(time, "n")) + " left to simulate");
         let nextRed = Log.div(Log.sub(price.red, player.money.red), prod.red);
         let nextGreen = Log.div(Log.sub(price.green, player.money.green), prod.green);
