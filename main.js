@@ -24,6 +24,7 @@ var player = {
 let resetplayer;
 
 var p3 = true;
+var p10 = 0;
 var ABInt = {red:2000,green:2000,blue:2000};
 var Cores = 1;
 var Clock = 1;
@@ -41,6 +42,7 @@ var RSS = 0;
 var PD = 0;
 var BPD = 0;
 var SR = 0;
+var SR5 = 0;
 var SpecPrice = [1, 1, 3, 5, 5, 7, 10, 30, 50, 75, 300, 500, 1500, 2500, 25000, 100000, 1e10, 1e13];
 
 function bar(n,r,g,b,elemid) {
@@ -166,7 +168,7 @@ var render = {
             row.cells[1].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[2].childNodes[0].value) + "," + Math.floor(row.cells[2].childNodes[2].value) + "," + Math.floor(row.cells[2].childNodes[4].value) + ")";
             var colors = ["Red: ", "Green: ", "Blue: "]
             if (row.cells[2].childNodes[0].value + row.cells[2].childNodes[2].value + row.cells[2].childNodes[4].value == 0) {
-                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.prism.potencyEff[temp]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(player.progress.includes(10) ? Log.pow(Log.multi(player.black,1e100), 0.85) : Log.max(Log.multi(player.black,1e100),1e100)) + "</sub>";
+                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.prism.potencyEff[temp]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(Log.multi(player.black,1e100)) + "</sub>";
                 blackBar = true;
             } else if (player.prism.specbar[temp]) row.cells[3].innerHTML = "Spectrum: log<sub>10</sub>(x)";
             else {
@@ -339,16 +341,22 @@ function pCheck(num) {
             return
         case 10:
             if (!player.progress.includes(10)) {
-                var b = 0;
-                var c = 0;
-                for (var i = 0; i < Object.keys(player.bars).length; i++){
-                    if (SumOf(player.bars[Object.keys(player.bars)[i]].color) === 0) b = Log.add(b, displayIncome(Object.keys(player.bars)[i],'black'));
-                    if (player.bars[Object.keys(player.bars)[i]].color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) b = Log.add(displayIncome(Object.keys(player.bars)[i], 'miniBlack'), b);
-                    c = Log.add(c, Log.add(Log.add(displayIncome(Object.keys(player.bars)[i], 0), displayIncome(Object.keys(player.bars)[i], 1)), displayIncome(Object.keys(player.bars)[i], 2)));
-                }
-                if (Log.get(b, 'l') > Log.get(c, 'l')) {
+                if (p10 === 10) {
                     player.progress.push(10);
-                    pop(3);
+                } else {
+                    let names = ['red','green','blue'];
+                    let pColor = [SumOf(player.bars.red.color),SumOf(player.bars.green.color),SumOf(player.bars.blue.color)];
+                    let nColor = [];
+                    for(let i = 0 ; i < 3; i++){
+                        var row = document.getElementById(names[i] + "Prism");
+                        let ret = [];
+                        for(j = 0; j < 5; j+=2){
+                            ret.push(Math.floor(parseFloat(row.cells[2].childNodes[j].value)))
+                        }
+                        nColor.push(SumOf(ret));
+                    }
+                    if ((nColor.every(function (val) { return val === 0 }) && pColor.every(function (val) { return val > 0 })) || (pColor.every(function (val) { return val === 0 }) && nColor.every(function (val) { return val > 0 }))) p10++;
+                    else p10 = 0;
                 }
             }
             return
@@ -418,7 +426,6 @@ function increase(amnt, dif) {
         temp.width = Log.mod(temp.width, 256);
     }
     pCheck(13);
-    pCheck(10);
     pCheck(11);
     pCheck(12);
     pCheck(6);
@@ -580,7 +587,7 @@ function updateStats() {
     Cores = Log.multi(Log.pow(2, player.level.blue[3]), (player.spectrumLevel[14] == 1 ? 8 : 1));
     Clock = Log.pow(2, Log.floor(Log.log(Log.pow(Log.add(2 , Log.log(Cores,6)), Log.add(player.level.blue[0], (player.progress.includes(7) ? Math.min(Math.floor(player.spectrumTimer / 300000), 5) : 0))), 2)));
     click = Log.multi(Log.multi(Log.add(2,Log.div(player.level.red, 2)), Log.pow((1.15 + player.spectrumLevel[8] * 0.15), Log.floor(Log.div(player.level.red, 10)))), Math.log10(Math.max(player.CM,1)));
-    auto = Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(player.level.green, 16), Log.pow(Log.add(1.15 ,Log.multi( player.spectrumLevel[8], 0.15)), Log.floor(Log.div(player.level.green, 10)))), Clock),(player.spectrumLevel[0] == 1 ? Math.max(Math.log10(player.CM), 1) : 1)), (player.spectrumLevel[11] == 1 ? player.level.red : 1)), (player.spectrumLevel[12] == 1 ? Log.max(Log.floor(Log.root(player.spectrum,1.5)), 1) : 1));
+    auto = Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(player.level.green, 16), Log.pow(Log.add(1.15 ,Log.multi( player.spectrumLevel[8], 0.15)), Log.floor(Log.div(player.level.green, 10)))), Clock),(player.spectrumLevel[0] == 1 ? Math.max(Math.log10(player.CM), 1) : 1)), (player.spectrumLevel[11] == 1 ? player.level.red : 1)), (player.spectrumLevel[12] == 1 ? Log.max(Log.floor(Log.root(player.spectrum,1.5)), 1) : 1)),Log.log10(player.black));
     price.red = Log.multi(5 , Log.pow(Log.add(1,Log.multi(Log.multi(0.1, Log.pow(1.05, Math.max((player.level.red / 100)-1,0))), PD)), player.level.red));
     price.green = Log.multi(5, Log.pow(Log.add(1,Log.multi(Log.multi(0.05, Log.pow(1.05, Math.max((player.level.green / 100)-1,0))), PD)), player.level.green));
     price.blue[0] = Log.pow(16, Log.max(Log.sub(player.level.blue[0],BPD),0));
@@ -594,6 +601,21 @@ function updateStats() {
 }
 
 function CalcSRgain() {
+    if (player.progress.includes(5)) {
+        SR5 = Log.add(player.spliced.red, Log.multi(player.money.red, player.level.blue[3] / 10));
+        SR5 = Log.multi(SR5, Log.add(player.spliced.green, Log.multi(player.money.green, player.level.blue[3] / 10)));
+        SR5 = Log.multi(SR5, Log.add(player.spliced.blue, Log.multi(player.money.blue, player.level.blue[3] / 10)));
+        SR5 = Log.max(SR5, 0);
+        SR5 = Log.div(SR5, 16777216);
+        if (player.spectrumLevel[13]) SR5 = Log.pow(SR5, Log.div(Cores, 256))
+        SR5 = Log.root(SR5, 3);
+        SR5 = Log.max(Log.log(SR5, 1000), 0);
+        SR5 = Log.multi(SR5, Log.add(Log.div(player.specced, 100), 1));
+        SR5 = Log.multi(SR5, Log.add(Log.div(Log.add(Log.floor(Log.div(player.level.green, 100)), Log.floor(Log.div(player.level.red, 100))), 10), 1));
+        if (player.progress.includes(6)) SR5 = Log.multi(SR5, Log.add(1, Log.div(player.level.blue[3], 10)));
+        if (player.progress.includes(9)) SR5 = Log.multi(SR5, Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
+        SR5 = Log.max(Log.sub(SR5, 1), 0);
+        }
         SR = Log.max(Log.multi(Log.multi(player.spliced.red, player.spliced.green), player.spliced.blue), 0);
         SR = Log.div(SR, 16777216);
         if (player.spectrumLevel[13]) SR = Log.pow(SR, Log.div(Cores, 256))
@@ -605,9 +627,12 @@ function CalcSRgain() {
         if (player.progress.includes(9)) SR = Log.multi(SR, Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1))));
         SR = Log.max(Log.sub(SR, 1),0);
         document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
-        document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + " Spectrum</b>";
-        if (Log.get(SR,'l') >= 3) document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.get(Log.div(SR,player.spectrumTimer/60000),'num')) + "/min";
-            else document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.multi(Log.mod(SR, 1), 100)) + "% towards next";
+        if (player.progress.includes(5) && Log.get(SR5,'l') > Log.get(Log.multi(SR,1.05),'l')) document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + "(" + formatNum(Log.floor(SR5), 0) + ") Spectrum</b>";
+        else document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(Log.floor(SR), 0) + " Spectrum</b>";
+        if (Log.get(SR, 'l') >= 3 || (player.progress.includes(5) && Log.get(SR5, 'l') >= 3 )) {
+            if (player.progress.includes(5)) document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.get(Log.div(SR5, player.spectrumTimer / 60000), 'num')) + "/min";
+                else document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.get(Log.div(SR, player.spectrumTimer / 60000), 'num')) + "/min";
+        } else document.getElementById("spectrumReset").childNodes[2].innerHTML = formatNum(Log.multi(Log.mod(SR, 1), 100)) + "% towards next";
         if (player.advSpec.unlock) {
                 var prevmulti = player.advSpec.multi;
                 player.advSpec.multi = parseInt(document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value);
@@ -651,9 +676,11 @@ function formatNum(num, dp, type) {
             num = Log.get(num,"log");
             let m = Math.pow(10, num % 1)
             let e = Math.floor(num);
-            if (num < 1000) return m.toFixed(1)+"e"+e;
-            else if (num < 1e36 && player.options.notation == "Default") return m.toFixed(0) + "e" + (e / Math.pow(1000, Math.floor(Math.log(e) / Math.log(1000)))).toFixed(2 - Math.floor(Math.log10(e / Math.pow(1000, Math.floor(Math.log(e) / Math.log(1000)))))) + suffix[Math.floor(Math.log(e) / Math.log(1000)) - 1];
-            else return "e" + (e / Math.pow(10, Math.floor(Math.log10(e)))).toFixed(1) + "e" + Math.floor(Math.log10(e));
+            if (num < 1000) return m.toFixed(1) + "e" + e;
+            else if (num < 100000) return m.toFixed(0) + "e" + e;
+            else if (num < 1000000) return "e" + e;
+            else if (num < 1e36) return "e" + (e / Math.pow(1000, Math.floor(Math.log(e) / Math.log(1000)))).toFixed(3 - Math.floor(Math.log10(e / Math.pow(1000, Math.floor(Math.log(e) / Math.log(1000)))))) + suffix[Math.floor(Math.log(e) / Math.log(1000)) - 1];
+            else return 'Too Big';
         }
     }
     if (dp == undefined) dp = 2;
@@ -704,7 +731,7 @@ function save(name) {
     if (name === 'reset') localStorage.setItem("RGBsave", btoa(JSON.stringify(resetplayer)));
     else {
         let temp = Object.assign({},player);
-        temp.bars = { red: { width: player.bars.red.width, color: player.bars.red.color }, green: { width: player.bars.green.width, color: player.bars.green.color }, blue: { width: player.bars.red.width, color: player.bars.blue.color }, };
+        temp.bars = { red: { width: Log.get(player.bars.red.width,'n'), color: player.bars.red.color }, green: { width: Log.get(player.bars.green.width,'n'), color: player.bars.green.color }, blue: { width: Log.get(player.bars.blue.width,'n'), color: player.bars.blue.color }, };
         localStorage.setItem("RGBsave", btoa(JSON.stringify(temp)));
     }
     console.log("Saved");
@@ -807,9 +834,13 @@ function load(name) {
         let temp = JSON.parse(atob(localStorage.getItem("RGBsave")));
         let tempSave = Object.assign({},temp);
         tempSave.bars = { red: new bar("red", temp.bars.red.color[0], temp.bars.red.color[1], temp.bars.red.color[2], "redBar"), green: new bar("green", temp.bars.green.color[0], temp.bars.green.color[1], temp.bars.green.color[2], "greenBar"), blue: new bar("blue", temp.bars.blue.color[0], temp.bars.blue.color[1], temp.bars.blue.color[2], "blueBar") };
-        tempSave.bars.red.width = temp.bars.red.width;
-        tempSave.bars.green.width = temp.bars.green.width;
-        tempSave.bars.blue.width = temp.bars.blue.width;
+        let names = ['red','green','blue'];
+        for (let i = 0; i < 3;i++){
+            if (isNaN(temp.bars[names[i]].width)) {
+                console.log(temp.bars[names[i]].width)
+                tempSave.bars[names[i]].width = 0;
+            } else tempSave.bars[names[i]].width = temp.bars[names[i]].width;
+                }
         return tempSave;
     } else return false;
 }
@@ -915,6 +946,7 @@ function mix(PC) {
     function mixReset() {
         var csum = 0;
         p3 = true;
+        pCheck(10);
         player.specbar = Object.assign(player.specbar, player.prism.specbar);
         player.potencyEff = Object.assign(player.potencyEff, player.prism.potencyEff);
             for (var i = 0; i < 3; i++) {
@@ -1121,7 +1153,7 @@ function getSpec(name, prod) {
 }
 
 function getBlack(name, time, prod, specprod, spectrum, mini) {
-    let A = player.progress.includes(10) ? 1.85 : 2;
+    let A = 2;
     if (mini) A = 3;
     let mults = Log.max(Log.multi(Log.multi(Log.multi(prod, player.potencyEff[name]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0);
     let blackThreshold = 1e100;
