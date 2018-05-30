@@ -168,7 +168,7 @@ var render = {
             row.cells[1].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[2].childNodes[0].value) + "," + Math.floor(row.cells[2].childNodes[2].value) + "," + Math.floor(row.cells[2].childNodes[4].value) + ")";
             var colors = ["Red: ", "Green: ", "Blue: "]
             if (row.cells[2].childNodes[0].value + row.cells[2].childNodes[2].value + row.cells[2].childNodes[4].value == 0) {
-                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.prism.potencyEff[temp]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(Log.multi(player.black,1e100)) + "</sub>";
+                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.prism.potencyEff[temp]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(Log.max(Log.multi(player.black,1e100),1e100)) + "</sub>";
                 blackBar = true;
             } else if (player.prism.specbar[temp]) row.cells[3].innerHTML = "Spectrum: log<sub>10</sub>(x)";
             else {
@@ -593,7 +593,7 @@ function updateStats() {
     price.blue[0] = Log.pow(16, Log.max(Log.sub(player.level.blue[0],BPD),0));
     price.blue[1] = Log.multi(4, Log.pow(2, Log.max(Log.sub(player.level.blue[1],BPD),0)));
     price.blue[2] = Log.multi(8, Log.pow(2, Log.max(Log.sub(player.level.blue[2],BPD),0)));
-    price.blue[3] = Log.multi(1048576, Log.pow(Log.pow(512, Log.max(Log.floor(Log.multi(Log.max(Log.sub(player.level.blue[3], 4), 0),Log.add(1.25,Log.multi(Log.pow(Log.max(Log.sub(Log.floor(Log.div(player.level.blue[3],5)),1),0),2),0.05)))), 1)), player.level.blue[3]));
+    price.blue[3] = Log.multi(1048576, Log.pow(Log.pow(512, Log.max(Log.floor(Log.multi(Log.max(Log.sub(player.level.blue[3], 4), 0),Log.add(1.25,Log.multi(Log.max(Log.sub(Log.floor(Log.div(player.level.blue[3],5)),1),0),0.075)))), 1)), player.level.blue[3]));
     if (player.bars.red.mouse == 1) income.red = Log.div(Log.multi(Log.add(auto, Log.multi(click, 50)), IR), 256);
     else income.red = Log.div(Log.multi(auto, IR), 256);
     income.green = Log.div(Log.multi(income.red, IG), 256);
