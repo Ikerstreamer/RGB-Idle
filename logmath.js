@@ -37,7 +37,7 @@ const Log = {
         }
         if (input.typ === type || type === input.typ.charAt(0) || type === undefined) return input.val;
         if (type === "num" || type === "n") {
-            if(isFinite(Math.pow(10,input.val)))return math.pow(10,input.val);
+            if(isFinite(Math.pow(10,input.val)))return Math.pow(10,input.val);
             return Math.pow(10,input.val % 1) + "e" + Math.floor(input.val);
         }
         if(type === "log" || type === "l") return Math.log10(input.val);

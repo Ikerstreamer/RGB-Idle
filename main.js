@@ -1141,7 +1141,7 @@ function formatTime(num){
 
 function getSpec(name, prod) {
     let blackmulti = 1;
-    if (player.progress.includes(11)) blackmulti = Log.max(Log.sqrt(Log.log10(player.black)), 1);
+    if (player.progress.includes(11)) blackmulti = Log.max(Log.sqrt(Log.max(Log.log10(player.black),0)), 1);
     let logprod = Log.floor(Log.max(Log.pow(Log.log(prod, 10),Log.log(Cores, 128)), 0));
     let coreMulti = 1;
     if (player.progress.includes(6)) coreMulti = Log.add(1, Log.div(player.level.blue[3], 10));
