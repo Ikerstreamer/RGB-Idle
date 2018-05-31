@@ -89,10 +89,12 @@
                         <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','green')">Make spectrum bar! Costs 10 potency</div>
                         <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','blue')">Make spectrum bar! Costs 10 potency</div>
                     </div>
+                    <br />
+                    <div class="button hidden" id="costReset" style="background:black; text-shadow:none; color:white;text-align:center;width:40%;margin:25px; border:groove;" onclick="prismUpgrade('cost')"><span>Reconfigure the prism to increase the maximum black it can process. </span><br><br> <span style="font-size:0.75em;" id="blackCostInfo">You are now ready to move on to a better prism! Pressing this button will reset you back to 1st prism, however you will retain log2(spectrum).</span></div>
                 </div>
             </div>
             <div id="tabProgress" class="tab">
-                <table align="center" style="font-size:25px;border-collapse:collapse;border:inset;border-color:black;border-width:3px;" border="1" cellspacing="2">
+                <table align="center" style="font-size:25px;border-collapse:collapse;border:inset;border-color:black;border-width:3px;" border="1" cellspacing="2" cellpadding="2">
                     <thead style="background-color:white">
                         <tr><td>Name</td><td>Desc.</td><td>Reward</td></tr>
                     </thead>
@@ -101,18 +103,18 @@
                         <tr><td>"Grinding ain't fun!" - Hunter</td><td>Buy your first potency upgrade. ^^Unlocked here^^</td><td>Advanced spectrum options(yay, long runs)</td></tr>
                         <tr><td>Darkness I embrace you!</td><td>Do a 3 black bar prism when having over 1e50 black</td><td>Black gain is multiplied by core count</td></tr>
                         <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1000 or more blackness without autobuyers or hotkeys</td><td>Divides autobuyer interval by 8</td></tr>
-                        <tr><td>Ooh, half way there!</td><td>Get all spliced color to have an exponent e128</td><td>Auto splice each color once when you click the spectrum button</td></tr>
+                        <tr><td>Ooh, half way there!</td><td>Get all spliced color to have an exponent of exactly 128</td><td>Auto splice each color once when you click the spectrum button</td></tr>
                         <tr><td>Cores... who needs those!</td><td>Reach e64 blue without buying a single core upgrade</td><td>Spectrum gain is increase by 10% per core upgrade</td></tr>
                         <tr><td>Tick tock, tick tock...</td><td>You have to do something import...ant</td><td>Get a free clock speed upgrade every 5 mins(capped at 5)</td></tr>
                         <tr><td>Back to my roots!</td><td>Create the same old Red, Green and Blue bars as initially</td><td>Bars made of only 1 color produce a tiny bit of black</td></tr>
                         <tr><td>Light flashes by you!</td><td>A spectrum that creates over 1M Spectrum/sec</td><td>Spectrum gain is multiplied by log10(mins)</td></tr>
-                        <tr><td>"It's not a phase, mom!" - Boo</td><td>Have black per second exceed any other colors production</td><td>Blackness denominator is logarithmically reduced by 15%</td></tr>
+                        <tr><td>"It's not a phase, mom!" - Boo</td><td>Switch between colored and black bars for 10 consecutive prisms</td><td>Color prod is increased by log10(black)</td></tr>
                         <tr><td>The light always wins!</td><td>Have your spectrum per second be higher than your black per second</td><td>Spectrum bars are multiplied by log10(black)</td></tr>
-                        <tr><td>"The best color" - Omsi</td><td>Get 1000 red lvls without producing any green</td><td>Bars produce based on how little of other colors the bar contains</td></tr>
+                        <tr><td>"The best color" - Omsi</td><td>Get 1000 red lvls without producing any green</td><td>Bars produce more based on how little of other colors the bar contains</td></tr>
                         <tr><td>My soul has been devoured!</td><td>Exceed e256 Blackness</td><td>Blackness is not reset on prism creation</td></tr>
-                        <tr><td>Gimme MOAR spectrum</td><td>Create a prism with 3 spectrum bars</td><td>Multiply spectrum gain by core count</td></tr>
+                        <tr><td>Gimme MOAR spectrum</td><td>Create a prism with 3 spectrum bars</td><td>Potency over 5 now effect spectrum bars</td></tr>
                     </tbody>
-                </table>
+                </table>    
             </div>
         </div>
     </div>
