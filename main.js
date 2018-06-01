@@ -425,8 +425,8 @@ function increase(amnt, dif) {
         var temp = player.bars[Object.keys(player.bars)[i]];
         temp.width = Log.add(temp.width, next);
         if (player.specbar[temp.name]) {
-            player.spectrum = Log.add(player.spectrum, Log.multi(getSpec(temp.name, Log.multi(Log.div(temp.width, 256), (dif / 1000))), (dif / 1000)));
-            specGain = Log.add(specGain,getSpec(temp.name, Log.multi(Log.div(temp.width, 256), (dif / 1000))));
+            player.spectrum = Log.add(player.spectrum, getSpec(temp.name, Log.div(temp.width, 256), dif ));
+            specGain = Log.add(specGain,getSpec(temp.name, Log.div(temp.width, 256), dif));
         } else {
             player.money.red = Log.add(player.money.red, Log.multi((player.prism.active ? getColorPotency(temp.name, temp.color[0]) : (player.spectrumLevel[1] + 1) * temp.color[0] / 255), Log.floor(Log.div(temp.width, 256))));
             player.money.green = Log.add(player.money.green, Log.multi((player.prism.active ? getColorPotency(temp.name, temp.color[1]) : (player.spectrumLevel[1] + 1) * temp.color[1]/255), Log.floor(Log.div(temp.width, 256))));
@@ -1008,7 +1008,7 @@ function displayIncome(name, index) {
     if (player.prism.active) {
         if (index === "black") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name],100), 0, player.spectrum), player.black),0);
         else if (index === "miniBlack") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name], 100), 0, player.spectrum, true), player.black), 0);
-        else if (index === "spectrum") num = getSpec(name, income[name]);
+        else if (index === "spectrum") num = getSpec(name, income[name],1000);
         else num = Log.multi(income[name],getColorPotency(name,player.bars[name].color[index]));
     }else num = Log.multi(income[name], (player.spectrumLevel[1]+1));
     return(num)
@@ -1106,7 +1106,7 @@ function simulateTime(time) {
     const names = ["red", "green", "blue"]; 
     const prod = { red: 0, green: 0, blue: 0, spec: 0 }
     for (let i = 0; i < names.length; i++) if (player.specbar[names[i]]) {
-        prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i]));
+        prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i] , 1000));
         for (let j = 0; j < names.length; j++) color[names[j]][i] = 0;
     }
     for (let i = 0; i < names.length; i++) {
@@ -1119,8 +1119,7 @@ function simulateTime(time) {
         if (SumOf(player.bars[names[i]].color) === 0) player.black = getBlack(names[i], time, Log.div(bprod[i],1000), prod.spec, player.spectrum);
         if (player.bars[names[i]].color.filter(function (item) { return item === 0 }).length == 2 && player.progress.includes(8)) player.black = getBlack(names[i], time, Log.div(bprod[i],1000), prod.spec, player.spectrum, true);
     }
-    while (time > 0) {
-        console.log(formatTime(Log.get(time, "n")) + " left to simulate");
+    while (Log.get(time,"n") > 0) {
         let nextRed = Log.div(Log.sub(price.red, player.money.red), prod.red);
         let nextGreen = Log.div(Log.sub(price.green, player.money.green), prod.green);
         let nextBlue = Log.min(Log.min(Log.div(Log.sub(price.blue[0], player.money.blue), prod.blue), Log.div(Log.sub(price.blue[1], player.money.blue), prod.blue), Log.div(Log.sub(price.blue[2], player.money.blue), prod.blue)), Log.div(Log.sub(price.blue[3], player.money.blue), prod.blue));
@@ -1128,7 +1127,7 @@ function simulateTime(time) {
         if (player.AB.red && player.spectrumLevel[9]) nextUp = Log.min(nextUp, nextRed);
         if (player.AB.green && player.spectrumLevel[9]) nextUp = Log.min(nextUp, nextGreen);
         if (player.AB.blue && player.spectrumLevel[9]) nextUp = Log.min(nextUp, nextBlue);
-        let nextTime = Log.floor(Log.max(time / 100, 5000));
+        let nextTime = Log.floor(Log.max(Log.div(time, 100), 5000));
 
         if (Log.get(nextTime,"l") > Log.get(nextUp, "l")) {
             player.money.red = Log.add(player.money.red, Log.div(Log.multi(prod.red, Log.min(nextTime, time)), 1000));
@@ -1148,9 +1147,10 @@ function simulateTime(time) {
         if (player.AB.green && player.spectrumLevel[5]) while (buyUpgrade("green"));
         if (player.AB.blue && player.spectrumLevel[9]) for (var i = 0; i < 4; i++) while (buyUpgrade("blue", i));
         updateStats();
+        prod.spec = 0;
         let bprod = [Log.div(Log.multi(auto, IR), 256), Log.div(Log.multi(Log.multi(auto, IR), IG), 65536), Log.div(Log.multi(Log.multi(Log.multi(auto, IR), IG), IB), 16777216)];
         for (let i = 0; i < names.length; i++) if (player.bars[names[i]].color[0] == 255 && player.bars[names[i]].color[1] == 255 && player.bars[names[i]].color[2] == 255 && player.spectrumLevel[15] === 1) {
-            prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i]));
+            prod.spec = Log.add(prod.spec, getSpec(names[i], bprod[i], 1000));
             for (let j = 0; j < names.length; j++) color[names[j]][i] = 0;
         }
         for (let i = 0; i < names.length; i++) {
@@ -1164,17 +1164,18 @@ function formatTime(num){
     return (num >= 3600000 ? Math.floor(num / 3600000) + " hours and " + Math.floor((num % 3600000) / 60000) + " mins" : (num >= 60000 ? Math.floor(num / 60000) + " mins and " + Math.floor((num % 60000) / 1000) + " secs" : (num >= 10000 ? Math.floor(num / 1000) + " secs" : (num > 0 ? Math.round(num) + " millis" : 0))));
 }
 
-function getSpec(name, prod) {
-    let blackmulti = 1;
-    if (player.progress.includes(11)) blackmulti = Log.max(Log.sqrt(Log.max(Log.log10(player.black),0)), 1);
-    let logprod = Log.floor(Log.max(Log.pow(Log.log(prod, 10),Log.log(Cores, 128)), 0));
+function getSpec(name, prod, time) {
+    let timeRatio = Log.div(time,1000);
+    let blackMulti = 1;
+    if (player.progress.includes(11)) blackMulti = Log.max(Log.sqrt(Log.max(Log.log10(player.black),0)), 1);
+    let logprod = Log.floor(Log.max(Log.pow(Log.log(Log.multi(prod,timeRatio), 10),Log.log(Cores, 128)), 0));
     let coreMulti = 1;
     if (player.progress.includes(6)) coreMulti = Log.add(1, Log.div(player.level.blue[3], 10));
     let timeMulti = 1;
     if (player.progress.includes(9)) timeMulti = Log.add(1, Log.log10(Log.max(Log.div(player.spectrumTimer, 60000), 1)));
     let potMulti = 1;
     if (player.progress.includes(14)) potMulti = Log.pow(16, (Log.floor(Log.div(Log.log(player.potencyEff[name], 256),5))));
-    return Log.multi(Log.multi(Log.multi(Log.multi(blackmulti, logprod), coreMulti), timeMulti),potMulti);
+    return Log.multi(Log.multi(Log.multi(Log.multi(Log.multi(blackMulti, logprod), coreMulti), timeMulti), potMulti), timeRatio);
 }
 
 function getBlack(name, time, prod, specprod, spectrum, mini) {
