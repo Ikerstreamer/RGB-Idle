@@ -464,13 +464,13 @@ function prismUpgrade(type, name) {
         let btn = document.getElementById('potencyBtn');
         
         btn.childNodes[0].innerHTML = 'You have ' + player.prism.potency.points + ' potency, out of a total of ' + player.prism.potency.total;
-        btn.childNodes[2].innerHTML = 'Increase potency by 2 for ' + formatNum(Math.pow(10, player.prism.potency.total/2 + 3),0) + ' Spectrum';
+        btn.childNodes[2].innerHTML = 'Increase potency by 2 for ' + formatNum(Log.pow(10, player.prism.potency.total/2 + 3),0) + ' Spectrum';
 
         if (name) {
             let pot = document.getElementById(name + 'pot');
-            player.prism.potencyEff[name] = Math.pow(256, player.prism.potency[name]);
-            if (player.prism.potencyEff[name] === player.potencyEff[name]) pot.getElementsByClassName('amnt')[0].innerHTML = player.prism.potency[name];
-                else pot.getElementsByClassName('amnt')[0].innerHTML = (Math.log(player.potencyEff[name]) / Math.log(256)) + "(" + player.prism.potency[name] + ")";
+            player.prism.potencyEff[name] = Log.pow(256, player.prism.potency[name]);
+            if (Log.get(player.prism.potencyEff[name],'l') === Log.get(player.potencyEff[name],'l')) pot.getElementsByClassName('amnt')[0].innerHTML = formatNum(player.prism.potency[name]);
+                else pot.getElementsByClassName('amnt')[0].innerHTML = formatNum(Log.log(player.potencyEff[name],256),0) + "(" + player.prism.potency[name] + ")";
         }
     }
 
@@ -1196,11 +1196,10 @@ function getColorPotency(name,color,prism) {
     if(potency < 1){
         return color / 512;
     }
-    let ret = Math.pow(potency * multi, color) - 1;
+    let ret = Log.sub(Log.pow(Log.multi(potency , multi), color),1);
     if (player.progress.includes(12)) {
-        if (prism) ret *= Math.pow(256, [parseFloat(document.getElementById(name + "Prism").cells[2].childNodes[0].value), parseFloat(document.getElementById(name + "Prism").cells[2].childNodes[2].value), parseFloat(document.getElementById(name + "Prism").cells[2].childNodes[4].value)].filter(function (item) { return item == 0 }).length);
-        else ret *= Math.pow(256, player.bars[name].color.filter(function (item) { return item === 0 }).length);
-        
+        if (prism) ret = Log.multi(ret, Log.pow(256, [parseFloat(document.getElementById(name + "Prism").cells[2].childNodes[0].value), parseFloat(document.getElementById(name + "Prism").cells[2].childNodes[2].value), parseFloat(document.getElementById(name + "Prism").cells[2].childNodes[4].value)].filter(function (item) { return item == 0 }).length));
+        else ret = Log.multi(ret,Log.pow(256, player.bars[name].color.filter(function (item) { return item === 0 }).length));
     }
     return ret;
 }
