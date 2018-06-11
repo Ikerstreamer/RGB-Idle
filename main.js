@@ -224,7 +224,7 @@ var render = {
         else document.getElementById("mixButton").innerHTML = "Activate the Prism and Embrace its Power!";
     },
     Upgrades : function(){
-        for (var i = 0; i < (player.spectrumLevel[15] == -1 ? 15 : player.spectrumLevel.length); i++) {
+        for (var i = 0; i < player.spectrumLevel.length ; i++) {
             if (i != 5 && i != 4 && i != 9) document.getElementById("spectrumButton" + i).childNodes[1].innerHTML = SUInfo(i);
             document.getElementById("spectrumButton" + i).childNodes[2].innerHTML = "Price: " + formatNum(SpecPrice[i], 0) + " Spectrum ";
             if (player.spectrumLevel[i] == 1) document.getElementById("spectrumButton" + i).classList.add("bought");
@@ -856,10 +856,10 @@ function setupPlayer() {
             while (player.spectrumLevel.length < 21) player.spectrumLevel.push(-1);
         if (player.unlock) document.getElementById('blueDiv').classList.remove('hidden');
         else document.getElementById('blueDiv').classList.add('hidden');
-        if (SumOf(player.spectrumLevel) >= 12) document.getElementsByClassName("switch")[5].classList.remove("hidden");
+        if (SumOf(player.spectrumLevel) >= 9) document.getElementsByClassName("switch")[5].classList.remove("hidden");
         if (player.prism.active) document.getElementById("newupgrades").classList.remove("hidden");
         else document.getElementById("newupgrades").classList.add("hidden");
-        if (SumOf(player.spectrumLevel) >= 15) {
+        if (SumOf(player.spectrumLevel) >= 12) {
             document.getElementById("spectrumButton0").parentElement.parentElement.parentElement.rows[5].classList.remove('hidden');
             document.getElementById("newupgrades").classList.add("hidden")
         } else {
