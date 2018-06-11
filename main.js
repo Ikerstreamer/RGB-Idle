@@ -178,7 +178,7 @@ var render = {
             document.getElementById("costReset").style.borderColor = 'white';
             document.getElementById("costReset").style.borderWidth = '5';
         } else {
-            document.getElementById("blackCostInfo").innerHTML = "Before you may destroy your "+ suffix(player.prism.cost) +" prism you must first conquer it using the power of the light. Get all bars to be completly white to fully overpower the darkness within the prism.";
+            document.getElementById("blackCostInfo").innerHTML = "Before you may destroy your " + suffix(player.prism.cost + 1) + " prism you must first conquer it using the power of the light. Get all bars to be completly white to fully overpower the darkness within the prism.";
             document.getElementById("costReset").style.borderColor = 'black';
         }
         for (var i = 0; i < 3; i++) {
@@ -298,8 +298,8 @@ var render = {
         else if (player.sleepingTime > 3.154e12) ret += ' Hey Philipe I am on to you, don\'t even try to hide it! You used simulateTime a bit to much there.';
         else if (player.sleepingTime + player.wastedTime > 3.154e+10) ret += ' You either love my game or you\'re Hunter, I can\'t tell which one.';
         else if (player.sleepingTime > player.wastedTime * 100) ret += ' Hello is anybody there? Wait if you are ready this pls stop sleeping so much! You are sleeping ' + (player.sleepingTime / player.wastedTime).toFixed(1) + 'x more then you are playing my game. I need more attention!';
-        else if(player.sleepingTime > player.wastedTime) ret += ' Luckily you\'ve spend ' + (player.sleepingTime/(player.wastedTime + player.sleepingTime) * 100).toFixed(1) + '% of that time sleeping(or other IRL things).';
-        else if(player.sleepingTime < player.wastedTime) ret += 'Your insane, or you really like my game... You have been online ' + (player.wastedTime/(player.wastedTime + player.sleepingTime) * 100).toFixed(1) + '% of the time you have spend playing this game.';
+        else if(player.sleepingTime > player.wastedTime) ret += ' Luckily you\'ve spent ' + (player.sleepingTime/(player.wastedTime + player.sleepingTime) * 100).toFixed(1) + '% of that time sleeping(or other IRL things).';
+        else if(player.sleepingTime < player.wastedTime) ret += 'Your insane, or you really like my game... You have been online ' + (player.wastedTime/(player.wastedTime + player.sleepingTime) * 100).toFixed(1) + '% of the time you have spent playing this game.';
         else if (Math.floor(player.sleepingTime%60000) === Math.floor(player.wastedTime%60000)) ret += 'How is this possible you have been online for the same amount of minutes you\'ve been offline. This is an anomally!';
         ret += '<br> Time online: ' + formatTime(player.wastedTime) + '<br> Time offline: '+ formatTime(player.sleepingTime);
         document.getElementById('timestat').innerHTML = ret;
@@ -445,6 +445,11 @@ function pCheck(num) {
                 pop(3);
             }
             return
+        case 17:
+            if (!player.progress.includes(17) && player.advSpec.time >= 3.6e6) {
+                player.progress.push(17);
+                pop(3);
+            }
     }          
 }
 
@@ -717,6 +722,7 @@ function CalcSRgain() {
         if (player.advSpec.unlock) {
                 var prevmulti = player.advSpec.multi;
                 player.advSpec.multi = parseInt(document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value);
+                if (player.progress.includes(17)) player.advSpec.multi *= 4;
                 if (player.advSpec.active && player.advSpec.multi != prevmulti) {
                     if (player.advSpec.multi == 1) player.advSpec.active = false;
                     player.advSpec.time *= player.advSpec.multi / prevmulti;
@@ -739,7 +745,8 @@ function CalcSRgain() {
                     document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
                     document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(player.advSpec.gain, 0) + " Spectrum</b>";
                     document.getElementById("spectrumReset").childNodes[2].innerHTML = "Adv spectrum complete!";
-                    document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi;
+                    if (player.progress.includes(17)) document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi/4;
+                    else document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi;
                 }
             }
         }
@@ -950,6 +957,7 @@ function reset(type, force) {
             if (player.advSpec.multi > 1 && !force) {
                 if (player.advSpec.active) {
                     if (player.advSpec.time <= player.spectrumTimer) {
+                        pCheck(17);
                         player.advSpec.active = false;
                         if (player.spectrumLevel[19] === 1) player.specced += Math.pow(player.advSpec.multi, 3);
                         else player.specced += player.advSpec.multi;
@@ -1145,14 +1153,23 @@ function pop(num) {
 
 window.addEventListener("keypress",function(event) {
     var key = event.keyCode || event.which;
-    p3 = false;
-    if (key == 114) while (buyUpgrade("red"));
-    if (key == 103) while (buyUpgrade("green"));
-    if (key >= 49 && key <= 52) while (buyUpgrade("blue", key % 49));
+    if (key == 114) {
+        while (buyUpgrade("red"));
+        p3 = false;
+    }
+    if (key == 103) {
+        while (buyUpgrade("green"));
+        p3 = false;
+    }
+    if (key >= 49 && key <= 52) {
+        while (buyUpgrade("blue", key % 49));
+        p3 = false;
+    }
     if (key == 109) {
         while (buyUpgrade("green"));
         while (buyUpgrade("red"));
         for (var i = 0; i < 4; i++) while (buyUpgrade("blue", i));
+        p3 = false;
     }
 }, false)
 window.addEventListener("keydown", function (event) {
