@@ -733,7 +733,7 @@ function CalcSRgain() {
                     if(i%10 === 0)num = Log.multi(num, 1-player.advSpec.reduce);
                 }
                 player.advSpec.gain = Log.floor(player.advSpec.gain);
-                if (player.progress.includes(17)) player.advSpec.gain *= 4;
+                if (player.progress.includes(17)) player.advSpec.gain = Log.multi(player.advSpec.gain, 4);
         if (player.advSpec.multi > 1) {
             document.getElementById("spectrumReset").childNodes[0].innerHTML = "<b>Start Advanced Spectrum</b>";
             document.getElementById("spectrumReset").childNodes[1].innerHTML = "";
