@@ -722,7 +722,6 @@ function CalcSRgain() {
         if (player.advSpec.unlock) {
                 var prevmulti = player.advSpec.multi;
                 player.advSpec.multi = parseInt(document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value);
-                if (player.progress.includes(17)) player.advSpec.multi *= 4;
                 if (player.advSpec.active && player.advSpec.multi != prevmulti) {
                     if (player.advSpec.multi == 1) player.advSpec.active = false;
                     player.advSpec.time *= player.advSpec.multi / prevmulti;
@@ -734,6 +733,7 @@ function CalcSRgain() {
                     if(i%10 === 0)num = Log.multi(num, 1-player.advSpec.reduce);
                 }
                 player.advSpec.gain = Log.floor(player.advSpec.gain);
+                if (player.progress.includes(17)) player.advSpec.gain *= 4;
         if (player.advSpec.multi > 1) {
             document.getElementById("spectrumReset").childNodes[0].innerHTML = "<b>Start Advanced Spectrum</b>";
             document.getElementById("spectrumReset").childNodes[1].innerHTML = "";
@@ -745,8 +745,7 @@ function CalcSRgain() {
                     document.getElementById("spectrumReset").childNodes[0].innerHTML = "Reset all progress and gain";
                     document.getElementById("spectrumReset").childNodes[1].innerHTML = "<b>" + formatNum(player.advSpec.gain, 0) + " Spectrum</b>";
                     document.getElementById("spectrumReset").childNodes[2].innerHTML = "Adv spectrum complete!";
-                    if (player.progress.includes(17)) document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi/4;
-                    else document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi;
+                    document.getElementById("advSpectrumReset").childNodes[1].childNodes[0].value = player.advSpec.multi;
                 }
             }
         }
@@ -959,6 +958,7 @@ function reset(type, force) {
                     if (player.advSpec.time <= player.spectrumTimer) {
                         pCheck(17);
                         player.advSpec.active = false;
+                        if (player.progress.includes(17)) player.advSpec.multi *= 4;
                         if (player.spectrumLevel[19] === 1) player.specced += Math.pow(player.advSpec.multi, 3);
                         else player.specced += player.advSpec.multi;
                         player.advSpec.multi = 1;
