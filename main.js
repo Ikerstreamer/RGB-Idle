@@ -190,7 +190,7 @@ var render = {
             row.cells[1].childNodes[0].style.backgroundColor = "rgb(" + Math.floor(row.cells[2].childNodes[0].value) + "," + Math.floor(row.cells[2].childNodes[2].value) + "," + Math.floor(row.cells[2].childNodes[4].value) + ")";
             var colors = ["Red: ", "Green: ", "Blue: "]
             if (row.cells[2].childNodes[0].value + row.cells[2].childNodes[2].value + row.cells[2].childNodes[4].value == 0) {
-                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.spectrumLevel[18] === 1 ? Log.pow(player.prism.potencyEff[temp], Log.add(1,Log.floor(Log.div(player.prism.potency[temp],7)))) : player.prism.potencyEff[temp]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(Log.max(Log.root(Log.multi(player.black, 1e100), 1 + player.prism.cost / 10), 1e100)) + "</sub>";
+                row.cells[3].innerHTML = "Black: <sup>" + formatNum(Log.multi(Log.multi(Log.multi(player.spectrum, player.spectrumLevel[18] === 1 ? Log.pow(player.prism.potencyEff[temp], Log.add(1,Log.floor(Log.div(player.prism.potency[temp],7)))) : player.prism.potencyEff[temp]), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0) + "</sup>&frasl;<sub> " + formatNum(Log.max(Log.root(Log.multi(player.black, 1e100), 1 + Math.min(player.prism.cost / 10,0.5)), 1e100)) + "</sub>";
                 blackBar = true;
             } else if (player.prism.specbar[temp]) {
                 if (player.progress.includes(14)) row.cells[3].innerHTML = "Spectrum: " + formatNum(Math.pow(16, Math.floor(player.prism.potency[temp] / 5)), 0) + "x log<sub>10</sub>(prod)";
@@ -1275,7 +1275,7 @@ function getSpec(name, prod, time) {
 }
 
 function getBlack(name, time, prod, specprod, spectrum, mini) {
-    let A = Math.pow(2,1/(1 + Math.max(player.prism.cost/10,0.5)));
+    let A = Math.pow(2,1/(1 + Math.min(player.prism.cost/10,0.5)));
     if (mini) A = 3;
     let mults;
     if(player.spectrumLevel[18] === 1) mults = Log.max(Log.multi(Log.multi(Log.multi(prod, Log.pow(player.potencyEff[name],Log.add(1,Log.floor(Log.div(Log.log(player.potencyEff[name],256),7))))), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0);
