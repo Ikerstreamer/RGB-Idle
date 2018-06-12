@@ -962,10 +962,10 @@ function reset(type, force) {
                         pCheck(17);
                         player.advSpec.active = false;
                         if (player.progress.includes(17)) player.advSpec.multi *= 4;
-                        if (player.spectrumLevel[19] === 1) player.specced += Math.pow(player.advSpec.multi, 2);
+                        if (player.spectrumLevel[19] === 1) player.specced += Math.pow(player.advSpec.multi, 3);
                         else player.specced += player.advSpec.multi;
                         player.advSpec.multi = 1;
-                        if (player.spectrumLevel[19] === 1) player.spectrum = Log.add(player.spectrum, Log.pow(player.advSpec.gain, 3));
+                        if (player.spectrumLevel[19] === 1) player.spectrum = Log.add(player.spectrum, Log.pow(player.advSpec.gain, 2));
                         else player.spectrum = Log.add(player.spectrum, player.advSpec.gain);
                     if (!force) player.previousSpectrums = [{ time: player.spectrumTimer, amount: player.advSpec.gain }, player.previousSpectrums[0], player.previousSpectrums[1], player.previousSpectrums[2], player.previousSpectrums[3]];
                 }else return
