@@ -752,7 +752,7 @@ function CalcSRgain() {
                 }
             }
         }
-        if (player.spectrumLevel[19] === 1) document.getElementById("advSpectrumReset").childNodes[2].innerHTML = formatNum(Log.pow(player.advSpec.gain,3), 0) + " Spectrum";
+        if (player.spectrumLevel[19] === 1) document.getElementById("advSpectrumReset").childNodes[2].innerHTML = formatNum(Log.pow(player.advSpec.gain,2), 0) + " Spectrum";
         else document.getElementById("advSpectrumReset").childNodes[2].innerHTML = formatNum(player.advSpec.gain, 0) + " Spectrum";
     }
    
@@ -962,7 +962,7 @@ function reset(type, force) {
                         pCheck(17);
                         player.advSpec.active = false;
                         if (player.progress.includes(17)) player.advSpec.multi *= 4;
-                        if (player.spectrumLevel[19] === 1) player.specced += Math.pow(player.advSpec.multi, 3);
+                        if (player.spectrumLevel[19] === 1) player.specced += Math.pow(player.advSpec.multi, 2);
                         else player.specced += player.advSpec.multi;
                         player.advSpec.multi = 1;
                         if (player.spectrumLevel[19] === 1) player.spectrum = Log.add(player.spectrum, Log.pow(player.advSpec.gain, 3));
