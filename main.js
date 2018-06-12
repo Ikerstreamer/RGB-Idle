@@ -1275,7 +1275,7 @@ function getSpec(name, prod, time) {
 }
 
 function getBlack(name, time, prod, specprod, spectrum, mini) {
-    let A = Math.pow(2,1/(1 + player.prism.cost/10));
+    let A = Math.pow(2,1/(1 + Math.max(player.prism.cost/10,0.5)));
     if (mini) A = 3;
     let mults;
     if(player.spectrumLevel[18] === 1) mults = Log.max(Log.multi(Log.multi(Log.multi(prod, Log.pow(player.potencyEff[name],Log.add(1,Log.floor(Log.div(Log.log(player.potencyEff[name],256),7))))), (player.spectrumLevel[1] + 1)), (player.progress.includes(3) ? Cores : 1)), 0);
