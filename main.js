@@ -205,7 +205,10 @@ var render = {
                 if (tempcount == 2) blackBar = true;
                 colorBar = true;
             }
-            if (player.prism.active) mixCost = Log.multi(mixCost, Log.pow(1.3*(player.prism.cost / 2 +1), Log.add(Log.add(Math.floor(parseInt(row.cells[2].childNodes[0].value)), Log.pow(Math.floor(parseInt(row.cells[2].childNodes[2].value)), 1.05)), Log.pow(Math.floor(parseInt(row.cells[2].childNodes[4].value)), 1.1))));
+            if (player.prism.active) {
+                if (player.prism.cost < 5) mixCost = Log.multi(mixCost, Log.pow(1.3 * (player.prism.cost / 2 + 1), Log.add(Log.add(Math.floor(parseInt(row.cells[2].childNodes[0].value)), Log.pow(Math.floor(parseInt(row.cells[2].childNodes[2].value)), 1.05)), Log.pow(Math.floor(parseInt(row.cells[2].childNodes[4].value)), 1.1))));
+                else mixCost = Log.multi(mixCost, Log.pow(1.3 * player.prism.cost, Log.add(Log.add(Math.floor(parseInt(row.cells[2].childNodes[0].value)), Log.pow(Math.floor(parseInt(row.cells[2].childNodes[2].value)), 1.05)), Log.pow(Math.floor(parseInt(row.cells[2].childNodes[4].value)), 1.1))));
+            }
 
             let node = document.getElementById('specpot').childNodes[i * 2 + 1];
             if (player.prism.specbar[temp]) {
