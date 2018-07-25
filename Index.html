@@ -2,44 +2,190 @@
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <link rel="stylesheet" type="text/css" href="interface.css"/>
+    <link rel="stylesheet" type="text/css" href="interface.css" />
+    <script type="text/javascript" src="Sha512.mini.js"></script>
+    <script type="text/javascript" src="logmath.js"></script>
     <script type="text/javascript" src="main.js"></script>
-    <meta charset="utf-8"/>
+    <script type="text/javascript" src="patterns.js"></script>
+    <script type="text/javascript" src="list.js"></script>
+    <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
+    <meta charset="utf-8" />
     <title>RGB Idle</title>
 </head>
 <body onload="init()">
-    <div class="button hidden switch" onclick="switchTab('RGB')">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum')">Spectrum</div>
+    <div class="popup">The prism rises as you approach it, so many question you want it to answer yet it hovers there dead silent. You stick your hand out to reach for it and as you do all the light around you seems to fade. The blackness of the prism seems to consume everything, your spectrum fades out of exsistence.<br> The game is about to change, your 3 colored bars will no longer solely produce red, green and blue respectively. Now each bars production can be altered to produce a certain amount of the base 3 colors, your first prism mix is fixed.<br> Click here to proceed or Press 'esc' to cancel</div>
+    <div class="popup">You have reached the limit of the amount of colors your computer can process. You can now alter these color to become unstable yet allow you further growth.<br> Each unstable color will halve autobuyer interval.<br>Click here to proceed</div>
+    <div class="popup" style="font-size:1.5em">Your save has been copied to clipboard!</div>
+    <div class="popup" style="font-size:1.5em">You have finished a progress!</div>
+    <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Pixels', 2)">Pixels</div><div class="button switch" onclick="switchTab('Settings', 3)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 4)">Stats</div><br>
     <div id="tabRGB" class="tab">
-    <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
-    <div class="progress">
-        <div id="redBar" class="bar"></div>
-    </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div>
+        <div style="width:100%;">
+            <div class="count hidden extra" id="spectrumCountRGB"></div><div class="count hidden extra" id="blackCountRGB"></div>
         </div>
-    <div id="greenDiv" style="padding-bottom:10px; padding-top:10px">
-        <div class="progress">
-            <div id="greenBar" class="bar"></div>
-        </div><div id="greenCount" class="count" style="color: rgb(0,255,0);"></div><div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div>
+        <div id="redDiv" style="padding-bottom:10px; padding-top:10px">
+            <div class="progress" style="cursor:pointer">
+                <div id="redBar" class="bar"></div>
+            </div><div id="redCount" class="count" style="color: red;"></div><div id="redButton" class="button" style="background: red;" onclick="buyUpgrade('red')"><div>Increase Click Strength</div><div>Level 0</div><div>Price 5 Red</div></div><div id="redReduce" class="button hidden" style="background: red;width:100px" onclick="reduceProd('red')">Break Red</div>
         </div>
-    <div id="unlockBtn" class="hidden" onclick="unlockBlue()">Buy Blue bar for 50 green!</div>
-    <div id="blueDiv" class="hidden" style="padding-bottom:10px; padding-top:10px">       
-        <div class="progress">
-            <div id="blueBar" class="bar"></div>
-        </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
-        <br>
-        <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Red Speed Multi</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Decrease Price Scaling</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>Increase Spectrum Gain</div><div>level 0</div><div>Price 50 blue</div><div></div></div>
+
+        <div id="greenDiv" style="padding-bottom:10px; padding-top:10px">
+            <div class="progress">
+                <div id="greenBar" class="bar"></div>
+            </div>
+            <div id="greenCount" class="count" style="color: rgb(0,255,0);"></div>
+            <div id="greenButton" style="background: rgb(0,255,0);" class="button" onclick="buyUpgrade('green')"><div>Increase Auto Red Speed</div><div>Level 0</div><div>Price 5 Green</div></div>
+            <div id="greenReduce" class="button hidden" style="background: rgb(0,255,0);width:100px;" onclick="reduceProd('green')">Break Green</div>
+        </div>
+        <div id="unlockBtn" class="hidden button" onclick="unlockBlue()" style="background:rgb(0,0,255); font-size:40px">Buy Blue bar for 50 green!</div>
+        <div id="blueDiv" class="hidden" style="padding-bottom:10px; padding-top:10px">
+            <div style="margin-bottom:10px">
+                <div class="progress">
+                    <div id="blueBar" class="bar"></div>
+                </div><div id="blueCount" class="count" style="color: rgb(0,0,255);"></div>
+            </div>
+            <div id="blueButton0" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 0)"><div>Increase Clock Speed</div><div>Level 0</div><div>Price 5 blue</div><div></div></div><div id="blueButton1" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 1)"><div>Increase Red Bar Gain</div><div>Level 0</div><div>Price 10 blue</div><div></div></div><div id="blueButton2" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 2)"><div>Increase Green Bar Gain</div><div>Level 0</div><div>Price 15 blue</div><div></div></div><div id="blueButton3" style="background: rgb(0,0,255);" class="button" onclick="buyUpgrade('blue', 3)"><div>More Cores</div><div>level 0</div><div>Price 50 blue</div><div></div></div><div id="blueReduce" class="button hidden" style="background: blue;width:100px" onclick="reduceProd('blue')">Break Blue</div>
+        </div>
+        <div id="spectrumDiv" class="hidden" style="width: 100%; padding-bottom:10px; padding-top:10px; align-self:center; text-align:center;">
+            <div class="button" id="redSplice" onclick="spliceColor('red')" style="background: rgb(255,0,0);"><div>Splice 10% red into a spectrum</div><div>Spliced red:</div></div>
+            <div class="button" id="greenSplice" onclick="spliceColor('green')" style="background: rgb(0,255,0);"><div>Splice 10% green into a spectrum</div><div>Spliced green:</div></div>
+            <div class="button" id="blueSplice" onclick="spliceColor('blue')" style="background: rgb(0,0,255);"><div>Splice 10% of your blue into a spectrum</div><div>Spliced blue:</div></div>
+            <br>
+            <br>
+            <div id="spectrumReset" onclick="reset(1)" class="button" style=" background:white; text-shadow:none;  color:black;"><div>Reset all progress and gain</div><div></div><div></div></div><div id="advSpectrumReset" onclick="" class="button hidden" style=" background:white; text-shadow:none;  color:black;"><div>Multi your spectrum</div><div><input type="range" min="1" max="50" value="1" class="slider black" onchange="CalcSRgain()" /></div><div></div></div>
+        </div>
     </div>
-        <div id="spectrumDiv" class="hidden" style="width: 100%; padding-bottom:10px; padding-top:10px; align-self:center; text-align:center; color:black;">
-            <div id="spectrumReset" onclick="reset(1)" class="button" style=" background:white; text-shadow:none;"><div >Reset all progress and gain</div><div></div></div>
-        </div>
-        </div>
     <div id="tabSpectrum" class="hidden tab">
-       <div id="spectrumCount" class="count" style="text-align:center; width:100%;"></div><br>
-        <div style="text-align:center">
-        <div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Increase Red Speed Multi Effect</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Increase the Tickspeed for Auto Red</div><div>Level 0/100</div><div>Price 5 Spectrum</div><div></div></div>
-        <br>
-        <div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Increase Red Bar's Output</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Increase Green Bar's Ouput</div><div>Level 0/50</div><div>Price 5 Spectrum</div><div></div></div>
-        <br>
-        <div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Increase Speed Based on Red</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Start With blue Unlocked</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div>
+        <div style="text-align:center;padding-top:100px;font-size:25px"><p>I wish I had a dual core processor that could actualy simulate a full spectrum.</p></div>
+        <div style="text-align:center" class="hidden">
+            <div id="spectrumCount" class="count" style="text-align:center; width:90%;"></div><br>
+            <div class="button switch active" onclick="switchTab('Upgrades', 0, 'Spectrum')">Upgrades</div><div class="button hidden switch" onclick="switchTab('Prism', 1, 'Spectrum')">Prism</div><div class="button hidden switch" onclick="switchTab('Progress', 2, 'Spectrum')">Progress</div>
+            <div id="tabUpgrades" class="tab">
+                <table align="center">
+                    <tr><td><div id="spectrumButton0" class="button spec" onclick="buyUpgrade('spectrum', 0)"><div>Click Multi Effects Auto</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton1" class="button spec" onclick="buyUpgrade('spectrum', 1)"><div>Double Output of All Bars</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton2" class="button spec" onclick="buyUpgrade('spectrum', 2)"><div>Double Bar Gain (R&G)</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton3" class="button spec" onclick="buyUpgrade('spectrum', 3)"><div>Click Multi only Resets on Spectrum</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton4" class="button spec" onclick="buyUpgrade('spectrum', 4)"><div>Auto Buy Max Red Level Every 2s</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton5" class="button spec" onclick="buyUpgrade('spectrum', 5)"><div>Auto Buy Max Green Level Every 2s</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton6" class="button spec" onclick="buyUpgrade('spectrum', 6)"><div>Start with Blue Unlocked</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton7" class="button spec" onclick="buyUpgrade('spectrum', 7)"><div>Bar Gain Upgrades Scale per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton8" class="button spec" onclick="buyUpgrade('spectrum', 8)"><div>Increase Bonus per 10</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton9" class="button spec" onclick="buyUpgrade('spectrum', 9)"><div>Auto Buy Max Blue Upgrades Every 2s</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton10" class="button spec" onclick="buyUpgrade('spectrum', 10)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton11" class="button spec" onclick="buyUpgrade('spectrum', 11)"><div>Auto Bonus Based on Red Lvl</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr><td><div id="spectrumButton12" class="button spec" onclick="buyUpgrade('spectrum', 12)"><div>Auto Bonus Based on Spectrum</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton13" class="button spec" onclick="buyUpgrade('spectrum', 13)"><div>Better Spectrum Gain Formula</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton14" class="button spec" onclick="buyUpgrade('spectrum', 14)"><div>Switch to GPU Rendering</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr class="hidden"><td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr class="hidden"><td><div id="spectrumButton18" class="button spec" onclick="buyUpgrade('spectrum', 18)"><div>Potencies Effect on Black Bars is Massivly Increased Every 7 Potency</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton19" class="button spec" onclick="buyUpgrade('spectrum', 19)"><div>Adv. Spec Gain is Squared for Spectrum and Cubed for Specced</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton20" class="button spec" onclick="buyUpgrade('spectrum', 20)"><div>Black Will be Used to Purchase Red and Green Upgrades When Needed</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                </table>
+                <div class="count hidden" id="newupgrades" style="width:80%;">New upgrades at e128 Black</div>
+            </div>
+            <div id="tabPrism" class="tab">
+                <table align="center" style="margin-top:5px;table-layout:fixed">
+                    <tr id="redPrism"><td><h1>1:</h1></td><td><div style="background-color:rgb(255,0,0)" class="prismColor"> </div> </td><td><input type="range" min="0" max="255" value="52" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left;width:300px;"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td></tr>
+                    <tr id="greenPrism"><td><h1>2:</h1></td><td><div style="background-color:rgb(0,255,0)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="26" class="slider red" /><br /><input type="range" min="0" max="255" value="52" class="slider green" /><br /><input type="range" min="0" max="255" value="14" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td></tr>
+                    <tr id="bluePrism"><td><h1>3:</h1></td><td><div style="background-color:rgb(0,0,255)" class="prismColor"> </div></td><td><input type="range" min="0" max="255" value="0" class="slider red" /><br /><input type="range" min="0" max="255" value="0" class="slider green" /><br /><input type="range" min="0" max="255" value="0" class="slider blue" /></td><td style="font-size:25px;text-align:left"><span>Red: 0</span><br><span>Green: 0</span><br><span>Blue: 0</span></td></tr>
+                </table>
+                <br />
+                <div>
+                    <div id="mixButton" class="button" style="background:white; text-shadow:none; color:black;margin-top:25px;" onclick="mix()">Create a New Spectrum Mix <br></div>
+                    <div id="blackCount" class="count" style="text-align:center; width:90%;"></div>
+                </div>
+                <div id="potencydiv" class="hidden">
+                    <div id="potencyBtn" class="button" style="margin:25px;background-color:white;border:black inset 2px; width:25%" onclick="prismUpgrade('potency')"><div style="font-size:1.20em">Escape the loss of power. Remove your negative potency.</div><br /><div style="font-size:0.75em">This requires you to channel 100 spectrum.</div></div>
+                    <br />
+                    <div class="button " id="redpot" style="background:white; text-shadow:none; color:black;height:100%;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 1st bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span style="background-color:darkgreen; border-top-left-radius:5px;border-top-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('add','red')">+</span><span style="background-color:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('sub','red')">-</span></div></div>
+                    <div class="button " id="greenpot" style="background:white; text-shadow:none; color:black;height:100%;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 2nd bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span style="background-color:darkgreen; border-top-left-radius:5px;border-top-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('add','green')">+</span><span style="background-color:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('sub','green')">-</span></div></div>
+                    <div class="button " id="bluepot" style="background:white; text-shadow:none; color:black;height:100%;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 3rd bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span style="background-color:darkgreen; border-top-left-radius:5px;border-top-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('add','blue')">+</span><span style="background-color:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('sub','blue')">-</span></div></div>
+                    <br />
+                    <div id="specpot" class="hidden">
+                        <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','red')">Make spectrum bar! Costs 10 potency</div>
+                        <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','green')">Make spectrum bar! Costs 10 potency</div>
+                        <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','blue')">Make spectrum bar! Costs 10 potency</div>
+                    </div>
+                    <br />
+                    <div class="button hidden" id="costReset" style="background:black; text-shadow:none; color:white;text-align:center;width:40%;margin:25px; border:groove;" onclick="prismUpgrade('cost')"><span>Reconfigure the prism to increase the maximum black it can process. </span><br><br> <span style="font-size:0.75em;" id="blackCostInfo">You are now ready to move on to a better prism! Pressing this button will reset you back to 1st prism, however you will retain log2(spectrum).</span></div>
+                </div>
+            </div>
+            <div id="tabProgress" class="tab">
+                <table align="center" style="font-size:25px;border-collapse:collapse;border:inset;border-color:black;border-width:3px;" border="1" cellspacing="2" cellpadding="2">
+                    <thead style="background-color:white">
+                        <tr><td>Name</td><td>Desc.</td><td>Reward</td></tr>
+                    </thead>
+                    <tbody id="achieves">
+                        <tr><td>And we're back!</td><td>Reach spectrum once again!</td><td>Unlock Potency Upgrades</td></tr>
+                        <tr><td>"Grinding ain't fun!" - Hunter</td><td>Buy your first potency upgrade. ^^Unlocked here^^</td><td>Advanced spectrum options(yay, long runs)</td></tr>
+                        <tr><td>Darkness I embrace you!</td><td>Do a 3 black bar prism when having over 1e50 black</td><td>Black gain is multiplied by core count</td></tr>
+                        <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1000 or more blackness without autobuyers or hotkeys</td><td>Divides autobuyer interval by 8</td></tr>
+                        <tr><td>Ooh, half way there!</td><td>Get all spliced color to have an exponent of exactly 128</td><td>Auto splice each color once when you click the spectrum button</td></tr>
+                        <tr><td>Cores... who needs those!</td><td>Reach e64 blue without buying a single core upgrade</td><td>Spectrum gain is increase by 10% per core upgrade</td></tr>
+                        <tr><td>Tick tock, tick tock...</td><td>You have to do something import...ant</td><td>Get a free clock speed upgrade every 6 mins(capped at 10)</td></tr>
+                        <tr><td>Back to my roots!</td><td>Create the same old Red, Green and Blue bars as initially</td><td>Bars made of only 1 color produce a tiny bit of black</td></tr>
+                        <tr><td>Light flashes by you!</td><td>A spectrum that creates over 1M Spectrum/sec</td><td>Spectrum gain is multiplied by log10(mins)</td></tr>
+                        <tr><td>"It's not a phase, mom!" - Boo</td><td>Switch between colored and black bars for 10 consecutive prisms</td><td>Prod is increased by log10(black)</td></tr>
+                        <tr><td>The light always wins!</td><td>Have your spectrum per second be higher than your black per second</td><td>Spectrum bars are multiplied by log10(black)</td></tr>
+                        <tr><td>"The best color" - Omsi</td><td>Get 1000 red lvls without producing any green</td><td>Bars produce more based on how little of other colors the bar contains</td></tr>
+                        <tr><td>My soul has been devoured!</td><td>Exceed e256 Blackness</td><td>Blackness is not reset on prism creation</td></tr>
+                        <tr><td>Gimme MOAR spectrum</td><td>Create a prism with 3 spectrum bars</td><td>Every 5 potency now increase spectrum bars gain by 16x</td></tr>
+                        <tr><td>"YOU BROKE IT!!! again..." - Philipe</td><td>Break your first prism</td><td>Blackness denominator is reduced based on amount of broken prisms</td></tr>
+                        <tr><td>Look at my insane specs</td><td>Reach 10k specced stat</td><td>Specced multi effects spectrum bars with reduced effect.</td></tr>
+                        <tr><td>Am I playing RG?</td><td>Finish an Adv. spectrum that lasts over 1 hour</td><td>Adv. spec are 4x as strong(specced and spectrum)</td></tr>
+                    </tbody>
+                </table>    
+            </div>
+        </div>
+    </div>
+    <div id="tabPixels" class="hidden tab">
+        <div style="width:100%;text-align:center">
+            <div class="count extra" id="RedPixels" style="color:red">0 Red</div><div class="count extra" id="GreenPixels" style="color:rgb(0,255,0)">0 Green</div><div class="count extra" id="BluePixels" style="color:rgb(0,0,255)">0 Blue</div><div class="count extra" id="WhitePixels" style="color:white">0 White</div><div class="count extra" id="BlackPixels" style="color:rgb(0,0,0)">0 Black</div>
+            <div style="text-align:center"><div class="button switch active" onclick="switchTab('Gain', 0, 'Pixels')">Gain</div><div class="button switch" onclick="switchTab('Create', 1, 'Pixels')">Create</div><div class="button switch" onclick="switchTab('Activate', 2, 'Pixels')">Activate</div></div>
+            <div id="tabGain" class="tab">
+                </div>
+            <div id="tabCreate" class="tab">
+                <table style="width:50%; background:white;" cellspacing="1" border="1" cellpadding="50" id="cGrid" align="center">
+                    <tr><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td></tr>
+                </table>
+                <div id="pcosts"></div>
+                <button onclick="pix.select('r')">Red</button><button onclick="pix.select('g')">Green</button><button onclick="pix.select('b')">Blue</button><button onclick="pix.add()">New</button><button onclick="pix.check()">Check</button><button onclick="pix.exp('grid')">Export</button>
+            </div>
+            <div id="tabActivate" class="tab">
+            </div>
+            </div>
+        
+        </div>
+        <div id="tabSettings" class="hidden tab">
+            <div class="count" style="text-align:center; width:90%;"> Settings</div><br>
+            <div style="text-align:center">
+                <table align="center">
+                    <tr><td><div class="button setting" onclick="save()"><div>Save Game</div></div></td><td><div class="button setting" onclick="save('Export')"><div>Export</div></div></td><td><div class="button setting" onclick="load('Import')"><div>Import</div></div></td><td><div class="button setting" onclick="reset()"><div>Reset Game</div></div></td></tr>
+                    <tr><td><div class="button setting" onclick="flip('fast')"><div>Fast Mode</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('fps')"><div>FPS/UPS</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('notation')"><div>Notation</div><div>Off</div></div></td></tr>
+                </table>
+                <h1>Hot Keys</h1>
+                <p style="font-size:25px">
+                    Space: Holds down red <br>
+                    R: Max buy red upgrades <br>
+                    A: Toggle autobuyers<br>
+                    G: Max buy green upgrades<br>
+                    1-4: Max buy Blue Upgrades<br>
+                    M: Max All
+                </p>
+                <br />
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                    <input type="hidden" name="cmd" value="_s-xclick">
+                    <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                </form>
+
+            </div>
+        </div>
+        <div id="tabStats" class="hidden tab" style="text-align:center">
+            <h1>Last 5 Spectrums</h1>
+            <table align="center" id="last5" style="font-size:25px">
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+                <tr><td></td></tr>
+            </table>
+            <br>
+            <h1>Important Info</h1>
+            <div style="width:50%;margin-left:25%;">
+                <div style="font-size:25px" id="timestat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
+                <div style="font-size:25px" id="specstat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
             </div>
         </div>
 </body>
