@@ -166,6 +166,43 @@
     position: absolute;
     z-index: 1;
 }
+
+
+.gSeg {
+    display: inline-block;
+    width: 19%;
+}
+
+
+.gButton {
+    border-radius: 10px;
+    font-size: 0.625vw;
+    font-family: Verdana;
+    width: 95%;
+    margin: 5px;
+    padding: 5px;
+    line-height: 1.5;
+    cursor: pointer;
+    height:5vw;
+}
+.potchange {
+    width: 100%;
+    display: block;
+    height:2.5vw;
+    font-size:2vw;
+}
+    
+.potchange.min {
+        background-color: red;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+}
+.potchange.plus {
+    background-color: darkgreen;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
 @media screen and (max-width: 1660px) {
     .progress {
         background: #D3D3D3;

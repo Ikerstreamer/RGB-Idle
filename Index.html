@@ -5,8 +5,8 @@
     <link rel="stylesheet" type="text/css" href="interface.css" />
     <script type="text/javascript" src="Sha512.mini.js"></script>
     <script type="text/javascript" src="logmath.js"></script>
-    <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript" src="patterns.js"></script>
+    <script type="text/javascript" src="main.js"></script>
     <script type="text/javascript" src="list.js"></script>
     <script src='https://cdn1.kongregate.com/javascripts/kongregate_api.js'></script>
     <meta charset="utf-8" />
@@ -17,7 +17,7 @@
     <div class="popup">You have reached the limit of the amount of colors your computer can process. You can now alter these color to become unstable yet allow you further growth.<br> Each unstable color will halve autobuyer interval.<br>Click here to proceed</div>
     <div class="popup" style="font-size:1.5em">Your save has been copied to clipboard!</div>
     <div class="popup" style="font-size:1.5em">You have finished a progress!</div>
-    <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch" onclick="switchTab('Pixels', 2)">Pixels</div><div class="button switch" onclick="switchTab('Settings', 3)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 4)">Stats</div><br>
+    <div class="button switch active" onclick="switchTab('RGB', 0)">RGB</div><div class="button hidden switch" onclick="switchTab('Spectrum', 1)">Spectrum</div><div class="button switch hidden" onclick="switchTab('Pixels', 2)">Pixels</div><div class="button switch" onclick="switchTab('Settings', 3)">Settings</div><div class="button switch hidden" onclick="switchTab('Stats', 4)">Stats</div><br>
     <div id="tabRGB" class="tab">
         <div style="width:100%;">
             <div class="count hidden extra" id="spectrumCountRGB"></div><div class="count hidden extra" id="blackCountRGB"></div>
@@ -85,9 +85,9 @@
                 <div id="potencydiv" class="hidden">
                     <div id="potencyBtn" class="button" style="margin:25px;background-color:white;border:black inset 2px; width:25%" onclick="prismUpgrade('potency')"><div style="font-size:1.20em">Escape the loss of power. Remove your negative potency.</div><br /><div style="font-size:0.75em">This requires you to channel 100 spectrum.</div></div>
                     <br />
-                    <div class="button " id="redpot" style="background:white; text-shadow:none; color:black;height:100%;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 1st bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span style="background-color:darkgreen; border-top-left-radius:5px;border-top-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('add','red')">+</span><span style="background-color:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('sub','red')">-</span></div></div>
-                    <div class="button " id="greenpot" style="background:white; text-shadow:none; color:black;height:100%;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 2nd bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span style="background-color:darkgreen; border-top-left-radius:5px;border-top-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('add','green')">+</span><span style="background-color:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('sub','green')">-</span></div></div>
-                    <div class="button " id="bluepot" style="background:white; text-shadow:none; color:black;height:100%;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 3rd bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span style="background-color:darkgreen; border-top-left-radius:5px;border-top-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('add','blue')">+</span><span style="background-color:red;border-bottom-left-radius:5px;border-bottom-right-radius:5px;width:100%;display:block" onclick="prismUpgrade('sub','blue')">-</span></div></div>
+                    <div class="button " id="redpot" style="background:white; text-shadow:none; color:black;height:5vw;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 1st bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span class="potchange plus" onclick="prismUpgrade('add','red')">+</span><span class="potchange min" onclick="prismUpgrade('sub','red')">-</span></div></div>
+                    <div class="button " id="greenpot" style="background:white; text-shadow:none; color:black;height:5vw;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 2nd bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span class="potchange plus" onclick="prismUpgrade('add','green')">+</span><span class="potchange min" onclick="prismUpgrade('sub','green')">-</span></div></div>
+                    <div class="button " id="bluepot" style="background:white; text-shadow:none; color:black;height:5vw;text-align:center"><div style="display:inline-block; vertical-align:central; margin-top:10px;float:left; width:75%;font-size:0.85em;line-height:150%;">The 3rd bar's potency is currently <span class="amnt">0</span></div><div style="width:20%; display:inline-block;font-size:35px;float:right"><span class="potchange plus" onclick="prismUpgrade('add','blue')">+</span><span class="potchange min" onclick="prismUpgrade('sub','blue')">-</span></div></div>
                     <br />
                     <div id="specpot" class="hidden">
                         <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','red')">Make spectrum bar! Costs 10 potency</div>
@@ -122,71 +122,172 @@
                         <tr><td>Look at my insane specs</td><td>Reach 10k specced stat</td><td>Specced multi effects spectrum bars with reduced effect.</td></tr>
                         <tr><td>Am I playing RG?</td><td>Finish an Adv. spectrum that lasts over 1 hour</td><td>Adv. spec are 4x as strong(specced and spectrum)</td></tr>
                     </tbody>
-                </table>    
+                </table>
             </div>
         </div>
     </div>
     <div id="tabPixels" class="hidden tab">
         <div style="width:100%;text-align:center">
             <div class="count extra" id="RedPixels" style="color:red">0 Red</div><div class="count extra" id="GreenPixels" style="color:rgb(0,255,0)">0 Green</div><div class="count extra" id="BluePixels" style="color:rgb(0,0,255)">0 Blue</div><div class="count extra" id="WhitePixels" style="color:white">0 White</div><div class="count extra" id="BlackPixels" style="color:rgb(0,0,0)">0 Black</div>
-            <div style="text-align:center"><div class="button switch active" onclick="switchTab('Gain', 0, 'Pixels')">Gain</div><div class="button switch" onclick="switchTab('Create', 1, 'Pixels')">Create</div><div class="button switch" onclick="switchTab('Activate', 2, 'Pixels')">Activate</div></div>
+            <div style="text-align:center"><div class="button switch active" onclick="switchTab('Gain', 0, 'Pixels')">Gain</div><div class="button switch" onclick="switchTab('Create', 1, 'Pixels')">Create</div><div class="button switch" onclick="switchTab('Reboot', 2, 'Pixels')">Reboot</div></div>
             <div id="tabGain" class="tab">
+                <div class="gSeg">
+                    <div id="redCountP" class="count extra" style="color: red;"></div>
+                    <br>
+                    <div class="gButton" style="background-color:red" onclick="pix.sim('red')">
+                        Use your red production to simulate a red pixel.
+                        <br>This will square root your red production until you reboot.
+                        <br>Your next simulation requirres you to have <span id="redpc"></span> red.
+                    </div>
+                    <br>
+                    <div id="redCountS" class="count extra" style="color: red;"> selected for simulation.</div>
                 </div>
-            <div id="tabCreate" class="tab">
-                <table style="width:50%; background:white;" cellspacing="1" border="1" cellpadding="50" id="cGrid" align="center">
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td></tr>
-                </table>
-                <div id="pcosts"></div>
-                <button onclick="pix.select('r')">Red</button><button onclick="pix.select('g')">Green</button><button onclick="pix.select('b')">Blue</button><button onclick="pix.select('l')">White</button><button onclick="pix.select('d')">Black</button><button onclick="pix.add()">New</button><button onclick="pix.check()">Check</button><button onclick="pix.exp('grid')">Export</button>
-            </div>
-            <div id="tabActivate" class="tab">
-            </div>
-            </div>
-        
-        </div>
-        <div id="tabSettings" class="hidden tab">
-            <div class="count" style="text-align:center; width:90%;"> Settings</div><br>
-            <div style="text-align:center">
-                <table align="center">
-                    <tr><td><div class="button setting" onclick="save()"><div>Save Game</div></div></td><td><div class="button setting" onclick="save('Export')"><div>Export</div></div></td><td><div class="button setting" onclick="load('Import')"><div>Import</div></div></td><td><div class="button setting" onclick="reset()"><div>Reset Game</div></div></td></tr>
-                    <tr><td><div class="button setting" onclick="flip('fast')"><div>Fast Mode</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('fps')"><div>FPS/UPS</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('notation')"><div>Notation</div><div>Off</div></div></td></tr>
-                </table>
-                <h1>Hot Keys</h1>
-                <p style="font-size:25px">
-                    Space: Holds down red <br>
-                    R: Max buy red upgrades <br>
-                    A: Toggle autobuyers<br>
-                    G: Max buy green upgrades<br>
-                    1-4: Max buy Blue Upgrades<br>
-                    M: Max All
-                </p>
-                <br />
-                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
-                    <input type="hidden" name="cmd" value="_s-xclick">
-                    <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
-                    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                    <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                </form>
+                <div class="gSeg">
+                    <div id="greenCountP" class="count extra" style="color: rgb(0,255,0);"></div>
+                    <br>
+                    <div class="gButton" style="background-color:rgb(0,255,0)" onclick="pix.sim('green')">
+                        Use your green production to simulate a green pixel.
+                        <br>This will square root your green production until you reboot.
+                        <br>Your next simulation requirres you to have <span id="greenpc"></span> green.
+                    </div>
+                    <br>
+                    <div id="greenCountS" class="count extra" style="color: rgb(0,255,0);"> selected for simulation.</div>
+                </div>
+                <div class="gSeg">
+                    <div id="blueCountP" class="count extra" style="color: blue;"></div>
+                    <br>
+                    <div class="gButton" style="background-color:blue" onclick="pix.sim('blue')">
+                        Use your blue production to simulate a blue pixel.
+                        <br>This will square root your blue production until you reboot.<br>
+                        Your next simulation requirres you to have <span id="bluepc"></span> blue.
+                    </div>
+                    <br>
+                    <div id="blueCountS" class="count extra" style="color: blue;"> selected for simulation.</div>
+
+                </div>
+                <div class="gSeg">
+                    <div class="count extra" id="spectrumCountP"></div>
+                    <br>
+                    <div class="gButton" style="background-color:white" onclick="pix.sim('white')">
+                        Use your spectrum production to simulate a white pixel.
+                        <br>This will square root your spectrum production until you reboot.
+                        <br>Your next simulation requirres you to have <span id="specpc"></span> spectrum.
+                    </div>
+                    <br>
+                    <div id="spectrumCountS" class="count extra" style="color: white;"> selected for simulation.</div>
+                </div>
+                <div class="gSeg">
+                    <div class="count extra" id="blackCountP" style="color:black" onclick="pix.sim('black')"></div>
+                    <br>
+                    <div class="gButton" style="background-color:black">
+                        Use your blue production to simulate a blue pixel.
+                        <br>This will square root your blue production until you reboot.
+                        <br>Your next simulation requirres you to have <span id="blackpc"></span> black.
+                    </div>
+                    <br>
+                    <div id="blackCountS" class="count extra" style="color: black;"> selected for simulation.</div>
+                </div>
+                <div class="button" id="simStart" style="background:black; text-shadow:none; color:white;text-align:center;width:40%;margin:25px; border:groove; height:7vw;font-size:1vw" onclick="pix.simStart()"><span>Reset back to the start of this break(without reseting your potency) and start the simulation of the selected pixels. Your production will be lowered as specified above.</span><br><br> <span style="font-size:0.75em;" id="simAmntInfo"> You can currently simulate 3 pixels at once, break more to increase this amount.</span></div>
+                <div class="button" id="simDisc" style="background:black; text-shadow:none; color:white;text-align:center;width:40%;margin:25px; border:groove;height:7vw;font-size:1vw" onclick="pix.simStart()"><span>Reset back to the start of this break(without reseting your potency) and remove all your current unspent pixels. The negative effect from discarded pixels will be removed too.</span><br><br> <span style="font-size:0.75em;" id="simAmntInfo"> Doing this will give you a chance to simulate different pixels.</span></div>
 
             </div>
         </div>
-        <div id="tabStats" class="hidden tab" style="text-align:center">
-            <h1>Last 5 Spectrums</h1>
-            <table align="center" id="last5" style="font-size:25px">
-                <tr><td></td></tr>
-                <tr><td></td></tr>
-                <tr><td></td></tr>
-                <tr><td></td></tr>
-                <tr><td></td></tr>
-            </table>
-            <br>
-            <h1>Important Info</h1>
-            <div style="width:50%;margin-left:25%;">
-                <div style="font-size:25px" id="timestat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
-                <div style="font-size:25px" id="specstat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
+        <div id="tabCreate" class="tab">
+            <div style="float:left; width:10%; text-align:center;font-size:4vw;vertical-align: middle;line-height: 6vw;cursor:pointer ">
+                <div id="selcRed" style="background-color:red;width:60%;height:6vw;margin-left:10%;cursor:pointer" onclick="pix.select('r')"></div>
+                <div id="selcGreen" style="background-color:rgb(0,255,0);width:60%;height:6vw;margin-left:10%;cursor:pointer" onclick="pix.select('g')"></div>
+                <div id="selcBlue" style="background-color:blue;width:60%;height:6vw;margin-left:10%;cursor:pointer" onclick="pix.select('b')"></div>
+                <div id="selcWhite" style="background-color:white;width:60%;height:6vw;margin-left:10%;cursor:pointer" onclick="pix.select('w')"></div>
+                <div id="selcDark" style="background-color:black;width:60%;height:6vw;margin-left:10%;cursor:pointer" onclick="pix.select('d')"></div>
+            </div>
+            <div style="width:30%; display:inline-block">
+                <table id="cGrid" cellspacing="1" border="1" style="table-layout:fixed;width:100%;cursor:url(Img/paintbrush.png),auto;">
+                    <tr><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td></tr>
+                    <tr><td></td><td></td><td></td></tr>
+                </table>
+            </div><div onclick="pix.check()" style="background-image:url(Img/arrow.png);display:inline-block;background-repeat:no-repeat;background-size:cover;width:5%;height:5vw;margin-bottom:12.5vw;margin-left:50px;margin-right:50px;cursor:pointer"></div>
+            <div style="width:30%; display:inline-block; border:thin black solid; height:30vw;" id="frameStore">
+
+
+            </div>
+            <div style="width:10%;display:inline-block;align-self:center" id="frameInfo">
+
+
+            </div>
+            <button onclick="pix.exp('grid')">Export</button>
+        </div>
+
+        <div id="tabReboot" class="tab">
+            <div style="height:30vw;display:flex">
+            <div style="width:15%; display:inline-block;margin-left:5%;">
+                <span style="font-size:1.4vw">On Computer</span>
+                <div style="width:100%; display:inline-block; border:thin black solid; height:30vw;" id="rebootFrame">
+
+
+                </div>
+            </div>
+                <div class="button" id="rebootBtn" style="background:black;text-shadow:none;display:inline-block; color:white;text-align:center;width:50%;margin-left:5%;margin-top:10%; border:groove;height:10vw;font-size:1.1vw;padding:10px" onclick="pix.reboot()">
+                    <div>
+                        My computer is starting to slow down due to all the pixels I have created. If I reboot my computer it should stop all the slowdowns but will wipe everything. I have an extrenal hard drive that can hold a single pattern. I wonder how hard it would be to rebuild my work. I guess there's only one way to find out!
+                    </div>
+                    <br/>
+                    <div style="font-size:0.8em">
+                        Click the patterns to transfer them from the computer to the HDD.
+                        <br />Your hardrive can only hold 1 pattern.
+                    </div>
+
+            </div>
+            <div style="width:15%; display:inline-block; margin-left:5%;">
+                <span style="font-size:1.4vw">On External HDD</span>
+                <div style="width:100%; display:inline-block; border:thin black solid; height:30vw;" id="rebootSelect">
+
+                </div>
+                </div>
             </div>
         </div>
+    </div>
+    <div id="tabSettings" class="hidden tab">
+        <div class="count" style="text-align:center; width:90%;"> Settings</div><br>
+        <div style="text-align:center">
+            <table align="center">
+                <tr><td><div class="button setting" onclick="save()"><div>Save Game</div></div></td><td><div class="button setting" onclick="save('Export')"><div>Export</div></div></td><td><div class="button setting" onclick="load('Import')"><div>Import</div></div></td><td><div class="button setting" onclick="reset()"><div>Reset Game</div></div></td></tr>
+                <tr><td><div class="button setting" onclick="flip('fast')"><div>Fast Mode</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('fps')"><div>FPS/UPS</div><div>Off</div></div></td><td><div class="button setting" onclick="flip('notation')"><div>Notation</div><div>Off</div></div></td></tr>
+            </table>
+            <h1>Hot Keys</h1>
+            <p style="font-size:25px">
+                Space: Holds down red <br>
+                R: Max buy red upgrades <br>
+                A: Toggle autobuyers<br>
+                G: Max buy green upgrades<br>
+                1-4: Max buy Blue Upgrades<br>
+                M: Max All
+            </p>
+            <br />
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
+
+        </div>
+    </div>
+    <div id="tabStats" class="hidden tab" style="text-align:center">
+        <h1>Last 5 Spectrums</h1>
+        <table align="center" id="last5" style="font-size:25px">
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+            <tr><td></td></tr>
+        </table>
+        <br>
+        <h1>Important Info</h1>
+        <div style="width:50%;margin-left:25%;">
+            <div style="font-size:25px" id="timestat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
+            <div style="font-size:25px" id="specstat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
+        </div>
+    </div>
 </body>
 </html>
