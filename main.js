@@ -129,7 +129,7 @@ function gameLoop() {
         for (var i = 15; i < 18; i++) player.spectrumLevel[i] = 0;
         document.getElementById("newupgrades").classList.add('hidden');
     }
-    if (player.pixelFrames.length > 0 || player.prism.cost >= 5) {
+    if (player.pixelFrames.length > 0 || player.prism.cost >= 3) {
         document.getElementsByClassName("switch")[2].classList.remove("hidden");
     }
     render[tab]();
@@ -341,7 +341,7 @@ var render = {
         document.getElementById('redCountS').innerHTML = formatNum(pix.simCost.red,0) + ' Selected';
         document.getElementById('greenCountS').innerHTML = formatNum(pix.simCost.green,0) + ' Selected';
         document.getElementById('blueCountS').innerHTML = formatNum(pix.simCost.blue, 0) + ' Selected';
-        document.getElementById('simAmntInfo').innerHTML =  'You can currently simulate '+(player.prism.cost - 2)+' pixels at once, break more to increase this amount.'
+        document.getElementById('simAmntInfo').innerHTML = 'You can currently simulate ' + (Math.min(player.prism.cost - 1, 2)) + ' pixels at once, break more to increase this amount.'
     },
     Create: function () {
         let len1 = document.getElementById('cGrid').rows.length;
@@ -475,7 +475,7 @@ let pix = {
         if (shift) {
             if (pix.simCost[n] > 0) pix.simCost[n]--;
         } else {
-            if (SumOf(Object.keys(pix.simCost).map(function (val) { return pix.simCost[val] })) >= player.prism.cost - 2) return;
+            if (SumOf(Object.keys(pix.simCost).map(function (val) { return pix.simCost[val] })) >= Math.min(player.prism.cost - 1,2) ) return;
             if (n === 'white' && Log.get(player.spectrum, 'l') < Log.get(Log.pow(1e32, pix.simCost.white + 1), 'l')) return;
             if (n === 'black' && Log.get(player.black, 'l') < Log.get(Log.pow(new num('e256'), pix.simCost.black + 1), 'l')) return;
             if (Object.keys(player.money).includes(n) && Log.get(player.money[n], 'l') < Log.get(Log.pow(new num('e256'), pix.simCost[n] + 1), 'l')) return;
