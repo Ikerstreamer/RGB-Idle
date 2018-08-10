@@ -489,6 +489,7 @@ let pix = {
             player.pixels[arr[i]].cur += this.simCost[arr[i]];
             player.pixels[arr[i]].max += this.simCost[arr[i]];
         }
+        this.simCost = { red: 0, green: 0, blue: 0, white: 0, black: 0 };
         reset(1, true);
         player.spectrum = Log.add(Log.log(player.spectrum, 2),player.pixelStats.startBonus.white);
         player.black = player.pixelStats.startBonus.black;
