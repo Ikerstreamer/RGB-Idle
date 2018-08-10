@@ -1383,11 +1383,12 @@ function switchTab(name, num, sub) {
 
 function displayIncome(name, index) {
     let num = 0;
+    let arr = ['red','blue','green']
     if (player.prism.active) {
         if (index === "black") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name],100), 0, player.spectrum), player.black),0);
-        else if (index === "miniBlack") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name], 100), 0, player.spectrum, true), player.black), 0);
+        else if (index === "miniBlack") num = Log.max(Log.sub(getBlack(name, 1000, Log.div(income[name], 100), 0, player.spectrum, true), player.black),0);
         else if (index === "spectrum") num = getSpec(name, income[name],1000);
-        else num = Log.root(Log.multi(income[name],getColorPotency(name,player.bars[name].color[index])),Log.pow(1.25,player.pixels[name].max));
+        else num = Log.root(Log.multi(income[name],getColorPotency(name,player.bars[name].color[index])),Log.pow(1.25,player.pixels[arr[index]].max));
     }else num = Log.multi(income[name], (player.spectrumLevel[1]+1));
     return(num)
 }
