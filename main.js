@@ -652,7 +652,7 @@ function SUInfo(num){
         case 12:
             return "Current Multi: " + formatNum(Log.max(Log.floor(player.spectrum),1), 0) + "x";
         case 14:
-            return "Base Core Count: " + (player.spectrumLevel[13] == 1 ? 8 : 1);
+            return "Base Core Count: " + (player.spectrumLevel[14] == 1 ? 8 : 1);
         case 16:
             return "Increase Blue: ~" + formatNum(Log.round(Log.div(IB,256)));
         default:
