@@ -1046,7 +1046,7 @@ function mix(PC) {
         }
     }
     if(!blackBar && !player.progress.includes(13)) if (!confirm("You are about to create a prism that has no way of creating blackness!\n Are you sure you want to do this?")) return;
-    if (!colorBar) if (!confirm("You are about to create a prism that has no production for colors(this means u can't fesible make black for next prism)!\n Are you sure you want to do this?")) return;
+    if (!colorBar) if (!confirm("You are about to create a prism that has no production for colors (This means you can't fesibly make black for next prism)!\n Are you sure you want to do this?")) return;
     if (Log.get(player.black ,"log") >= Log.get(mixCost,"log")) {
         pCheck(3);
         pCheck(4);
