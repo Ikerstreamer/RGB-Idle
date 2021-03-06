@@ -63,6 +63,7 @@
                     <tr><td><div id="spectrumButton9" class="button spec" onclick="buyUpgrade('spectrum', 9)"><div>Auto Buy Max Blue Upgrades Every 2s</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton10" class="button spec" onclick="buyUpgrade('spectrum', 10)"><div>Decrease Price Scaling (R&G)</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton11" class="button spec" onclick="buyUpgrade('spectrum', 11)"><div>Auto Bonus Based on Red Lvl</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                     <tr><td><div id="spectrumButton12" class="button spec" onclick="buyUpgrade('spectrum', 12)"><div>Auto Bonus Based on Spectrum</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton13" class="button spec" onclick="buyUpgrade('spectrum', 13)"><div>Better Spectrum Gain Formula</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton14" class="button spec" onclick="buyUpgrade('spectrum', 14)"><div>Switch to GPU Rendering</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                     <tr class="hidden"><td><div id="spectrumButton15" class="button spec" onclick="buyUpgrade('spectrum', 15)"><div>Your Prism can Create Spectrum Bars</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton16" class="button spec" onclick="buyUpgrade('spectrum', 16)"><div>Increase Blue = Product of Increase R&G</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton17" class="button spec" onclick="buyUpgrade('spectrum', 17)"><div>Price Reduction for First 3 Blue Upgrades Based on R&G Lvls</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
+                    <tr class="hidden"><td><div id="spectrumButton18" class="button spec" onclick="buyUpgrade('spectrum', 18)"><div>Potencies Effect on Black Bars is Massivly Increased Every 7 Potency</div><div>Not bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton19" class="button spec" onclick="buyUpgrade('spectrum', 19)"><div>Adv. Spec Gain is Squared for Spectrum and Cubed for Specced</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td><td><div id="spectrumButton20" class="button spec" onclick="buyUpgrade('spectrum', 20)"><div>Black Will be Used to Purchase Red and Green Upgrades When Needed</div><div>Not Bought</div><div>Price 5 Spectrum</div><div></div></div></td></tr>
                 </table>
                 <div class="count hidden" id="newupgrades" style="width:80%;">New upgrades at e128 Black</div>
             </div>
@@ -89,6 +90,8 @@
                         <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','green')">Make spectrum bar! Costs 10 potency</div>
                         <div class="button " style="background:white; text-shadow:none; color:black;height:100%;text-align:center" onclick="prismUpgrade('specbar','blue')">Make spectrum bar! Costs 10 potency</div>
                     </div>
+                    <br />
+                    <div class="button hidden" id="costReset" style="background:black; text-shadow:none; color:white;text-align:center;width:40%;margin:25px; border:groove;" onclick="prismUpgrade('cost')"><span>Reconfigure the prism to increase the maximum black it can process. </span><br><br> <span style="font-size:0.75em;" id="blackCostInfo">You are now ready to move on to a better prism! Pressing this button will reset you back to 1st prism, however you will retain log2(spectrum).</span></div>
                 </div>
             </div>
             <div id="tabProgress" class="tab">
@@ -103,16 +106,19 @@
                         <tr><td>Guess I'll have to do it myself!</td><td>Prism with 1000 or more blackness without autobuyers or hotkeys</td><td>Divides autobuyer interval by 8</td></tr>
                         <tr><td>Ooh, half way there!</td><td>Get all spliced color to have an exponent of exactly 128</td><td>Auto splice each color once when you click the spectrum button</td></tr>
                         <tr><td>Cores... who needs those!</td><td>Reach e64 blue without buying a single core upgrade</td><td>Spectrum gain is increase by 10% per core upgrade</td></tr>
-                        <tr><td>Tick tock, tick tock...</td><td>You have to do something import...ant</td><td>Get a free clock speed upgrade every 5 mins(capped at 5)</td></tr>
+                        <tr><td>Tick tock, tick tock...</td><td>You have to do something import...ant</td><td>Get a free clock speed upgrade every 6 mins(capped at 10)</td></tr>
                         <tr><td>Back to my roots!</td><td>Create the same old Red, Green and Blue bars as initially</td><td>Bars made of only 1 color produce a tiny bit of black</td></tr>
                         <tr><td>Light flashes by you!</td><td>A reset that creates over 1M Spectrum/sec</td><td>Spectrum gain is multiplied by log10(mins)</td></tr>
-                        <tr><td>"It's not a phase, mom!" - Boo</td><td>Switch between colored and black bars for 10 consecutive prisms</td><td>Color prod is increased by log10(black)</td></tr>
+                        <tr><td>"It's not a phase, mom!" - Boo</td><td>Switch between colored and black bars for 10 consecutive prisms</td><td>Color prodution is increased by log10(black)</td></tr>
                         <tr><td>The light always wins!</td><td>Have your spectrum per second be higher than your black per second</td><td>Spectrum bars are multiplied by log10(black)</td></tr>
                         <tr><td>"The best color" - Omsi</td><td>Get 1000 red lvls without producing any green</td><td>Bars produce more based on how little of other colors the bar contains</td></tr>
                         <tr><td>My soul has been devoured!</td><td>Exceed e256 Blackness</td><td>Blackness is not reset on prism creation</td></tr>
-                        <tr><td>Gimme MOAR spectrum</td><td>Create a prism with 3 spectrum bars</td><td>Potency over 5 now effect spectrum bars</td></tr>
+                        <tr><td>Gimme MOAR spectrum</td><td>Create a prism with 3 spectrum bars</td><td>Every 5 potency now increase spectrum bars gain by 16x</td></tr>
+                        <tr><td>"YOU BROKE IT!!! again..." - Philipe</td><td>Break your first prism</td><td>Blackness denominator is reduced based on amount of broken prisms</td></tr>
+                        <tr><td>Look at my insane specs</td><td>Reach 10k specced stat</td><td>Specced multi effects spectrum bars with reduced effect.</td></tr>
+                        <tr><td>Am I playing RG?</td><td>Finish an Adv. spectrum that lasts over 1 hour</td><td>Adv. spec are 4x as strong(specced and spectrum)</td></tr>
                     </tbody>
-                </table>
+                </table>    
             </div>
         </div>
     </div>
@@ -132,6 +138,14 @@
                 1-4: Max buy Blue Upgrades<br>
                 M: Max All
             </p>
+            <br />
+            <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+                <input type="hidden" name="cmd" value="_s-xclick">
+                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+                <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+            </form>
+
         </div>
     </div>
     <div id="tabStats" class="hidden tab" style="text-align:center">
@@ -145,7 +159,10 @@
         </table>
         <br>
         <h1>Important Info</h1>
-        <div style="font-size:25px" id="specstat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
+        <div style="width:50%;margin-left:25%;">
+            <div style="font-size:25px" id="timestat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
+            <div style="font-size:25px" id="specstat">Times specced is  currently x. This multiplies your spectrum gain by x.</div>
+        </div>
     </div>
 </body>
 </html>
